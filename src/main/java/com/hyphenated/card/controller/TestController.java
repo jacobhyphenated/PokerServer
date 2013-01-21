@@ -14,6 +14,7 @@ import com.hyphenated.card.Deck;
 import com.hyphenated.card.domain.BoardEntity;
 import com.hyphenated.card.domain.Game;
 import com.hyphenated.card.domain.GameType;
+import com.hyphenated.card.domain.HandEntity;
 import com.hyphenated.card.domain.Player;
 import com.hyphenated.card.eval.FSMHandRankEvaluatorFactory;
 import com.hyphenated.card.eval.HandRank;
@@ -168,6 +169,21 @@ public class TestController {
 		for(Player p : game.getPlayers()){
 			out += "<br /><br />Player: " + p.getName() + "(" + p.getId() + ")";
 		}
+		if(game.getCurrentHand() != null){
+			out += "<br /><br />current hand: " + game.getCurrentHand().getId();
+		}
 		return new ModelAndView("board", "board", out);
+	}
+	
+	@RequestMapping("/pokergame/hand")
+	public ModelAndView startHand(@RequestParam long gameId){
+		Game game = gameService.getGameById(gameId, true);
+		HandEntity hand = pokerHandService.startNewHand(game);
+		ModelAndView mv = new ModelAndView("board");
+		mv.addObject("board", "Hand Created: " + hand.getId() + "<br /><br /> Number of players: " 
+				+hand.getPlayers().size());
+		String boardCards = Arrays.toString(hand.getBoard().getBoardCards().toArray());
+		mv.addObject("boardid", "Board:" + boardCards);
+		return mv;
 	}
 }

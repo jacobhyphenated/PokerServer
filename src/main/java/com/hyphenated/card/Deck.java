@@ -31,6 +31,15 @@ public class Deck {
 		}
 	}
 	
+	/**
+	 * Initialize a deck using a pre existing list of cards
+	 * @param cards List of cards, assumed correctly shuffled
+	 */
+	public Deck(List<Card> cards){
+		this.cards = new LinkedList<Card>();
+		this.cards.addAll(cards);
+	}
+	
 	public void initDeck(){
 		cards = new LinkedList<Card>();
 		cards.addAll(Arrays.asList(Card.values()));
@@ -46,5 +55,13 @@ public class Deck {
 	 */
 	public Card dealCard(){
 		return cards.remove(0);
+	}
+	
+	/**
+	 * Get the cards in the deck in the form of a list
+	 * @return
+	 */
+	public List<Card> exportDeck(){
+		return cards;
 	}
 }

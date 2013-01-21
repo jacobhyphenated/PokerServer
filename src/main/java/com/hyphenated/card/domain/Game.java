@@ -26,6 +26,7 @@ public class Game {
 	private String name;
 	private boolean isStarted;
 	private Set<Player> players;
+	private HandEntity currentHand;
 	
 	@Column(name="game_id")
 	@Id
@@ -85,5 +86,14 @@ public class Game {
 	}
 	public void setStarted(boolean isStarted) {
 		this.isStarted = isStarted;
+	}
+	
+	@OneToOne(fetch=FetchType.EAGER)
+	@JoinColumn(name="current_hand_id")
+	public HandEntity getCurrentHand() {
+		return currentHand;
+	}
+	public void setCurrentHand(HandEntity currentHand) {
+		this.currentHand = currentHand;
 	}
 }

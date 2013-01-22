@@ -38,8 +38,26 @@ public interface PokerHandService {
 	 * Handle the flop for the hand
 	 * @param hand {@link HandEntity} that owns the board the flop will be on
 	 * @return updated hand with {@link BoardEntity} containing the flop
+	 * @throws IllegalStateException if the hand is not in a state to expect the flop.
 	 */
-	public HandEntity flop(HandEntity hand);
+	public HandEntity flop(HandEntity hand) throws IllegalStateException;
+	
+	/**
+	 * Handle the turn for the hand
+	 * @param hand {@link HandEntity} that owns the board the turn will be on
+	 * @return updated hand with {@link BoardEntity} containing the turn
+	 * @throws IllegalStateException if the hand is not in a state to expect a turn card.
+	 * This may be because there is already a turn card, or there is no flop yet.
+	 */
+	public HandEntity turn(HandEntity hand) throws IllegalStateException;
+	
+	/**
+	 * Handle the river card for the hand
+	 * @param hand {@link HandEntity} that owns the board the river will be on
+	 * @return updated hand with {@link BoardEntity} containing the river card
+	 * @throws IllegalStateException if the hand is not in a state to expect a river card.
+	 */
+	public HandEntity river(HandEntity hand) throws IllegalStateException;
 
 	/**
 	 * Get the board - all community cards (flop, turn, river)

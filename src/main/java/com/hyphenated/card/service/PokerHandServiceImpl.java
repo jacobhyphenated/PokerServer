@@ -74,7 +74,10 @@ public class PokerHandServiceImpl implements PokerHandService {
 
 	@Override
 	@Transactional
-	public HandEntity flop(HandEntity hand) {
+	public HandEntity flop(HandEntity hand) throws IllegalStateException {
+		if(hand.getBoard().getFlop1() != null){
+			throw new IllegalStateException("Unexpected Flop.");
+		}
 		//Re-attach to persistent context for this transaction (Lazy Loading stuff)
 		hand = handDao.merge(hand);
 		
@@ -85,7 +88,42 @@ public class PokerHandServiceImpl implements PokerHandService {
 		board.setFlop2(d.dealCard());
 		board.setFlop3(d.dealCard());
 		hand.setCards(d.exportDeck());
-		boardDao.merge(board);
+		boardDao.save(board);
+		return handDao.merge(hand);
+	}
+	
+	@Override
+	@Transactional
+	public HandEntity turn(HandEntity hand) throws IllegalStateException{
+		if(hand.getBoard().getFlop1() == null || hand.getBoard().getTurn()!= null){
+			throw new IllegalStateException("Unexpected Turn.");
+		}
+		//Re-attach to persistent context for this transaction (Lazy Loading stuff)
+		hand = handDao.merge(hand);
+		Deck d = new Deck(hand.getCards());
+		d.shuffleDeck();
+		BoardEntity board = hand.getBoard();
+		board.setTurn(d.dealCard());
+		hand.setCards(d.exportDeck());
+		boardDao.save(board);
+		return handDao.merge(hand);
+	}
+	
+	@Override
+	@Transactional
+	public HandEntity river(HandEntity hand) throws IllegalStateException{
+		if(hand.getBoard().getFlop1() == null || hand.getBoard().getTurn() == null 
+				|| hand.getBoard().getRiver() != null){
+			throw new IllegalStateException("Unexpected River.");
+		}
+		//Re-attach to persistent context for this transaction (Lazy Loading stuff)
+		hand = handDao.merge(hand);
+		Deck d = new Deck(hand.getCards());
+		d.shuffleDeck();
+		BoardEntity board = hand.getBoard();
+		board.setRiver(d.dealCard());
+		hand.setCards(d.exportDeck());
+		boardDao.save(board);
 		return handDao.merge(hand);
 	}
 	

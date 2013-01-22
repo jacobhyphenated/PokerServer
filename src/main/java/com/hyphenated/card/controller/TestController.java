@@ -209,4 +209,28 @@ public class TestController {
 		mv.addObject("boardid", "Board:" + boardCards);
 		return mv;
 	}
+	
+	@RequestMapping("pokergame/hand/turn")
+	public ModelAndView handTurn(@RequestParam long handId){
+		HandEntity hand = pokerHandService.getHandById(handId);
+		hand = pokerHandService.turn(hand);
+		ModelAndView mv = new ModelAndView("board");
+		mv.addObject("board", "Hand: " + hand.getId() + "<br /><br /> Number of players: " 
+				+hand.getPlayers().size());
+		String boardCards = Arrays.toString(hand.getBoard().getBoardCards().toArray());
+		mv.addObject("boardid", "Board:" + boardCards);
+		return mv;
+	}
+	
+	@RequestMapping("pokergame/hand/river")
+	public ModelAndView handRiver(@RequestParam long handId){
+		HandEntity hand = pokerHandService.getHandById(handId);
+		hand = pokerHandService.river(hand);
+		ModelAndView mv = new ModelAndView("board");
+		mv.addObject("board", "Hand: " + hand.getId() + "<br /><br /> Number of players: " 
+				+hand.getPlayers().size());
+		String boardCards = Arrays.toString(hand.getBoard().getBoardCards().toArray());
+		mv.addObject("boardid", "Board:" + boardCards);
+		return mv;
+	}
 }

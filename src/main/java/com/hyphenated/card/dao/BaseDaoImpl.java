@@ -50,4 +50,10 @@ public class BaseDaoImpl<T> implements BaseDao<T> {
 		getSession().saveOrUpdate(objToSave);
 		return objToSave;
 	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public T merge(T objToMerge){
+		return (T) getSession().merge(objToMerge);
+	}
 }

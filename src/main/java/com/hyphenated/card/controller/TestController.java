@@ -186,4 +186,27 @@ public class TestController {
 		mv.addObject("boardid", "Board:" + boardCards);
 		return mv;
 	}
+	
+	@RequestMapping("pokergame/hand/get")
+	public ModelAndView getHand(@RequestParam long handId){
+		HandEntity hand = pokerHandService.getHandById(handId);
+		ModelAndView mv = new ModelAndView("board");
+		mv.addObject("board", "Hand: " + hand.getId() + "<br /><br /> Number of players: " 
+				+hand.getPlayers().size());
+		String boardCards = Arrays.toString(hand.getBoard().getBoardCards().toArray());
+		mv.addObject("boardid", "Board:" + boardCards);
+		return mv;
+	}
+	
+	@RequestMapping("pokergame/hand/flop")
+	public ModelAndView handFlop(@RequestParam long handId){
+		HandEntity hand = pokerHandService.getHandById(handId);
+		hand = pokerHandService.flop(hand);
+		ModelAndView mv = new ModelAndView("board");
+		mv.addObject("board", "Hand: " + hand.getId() + "<br /><br /> Number of players: " 
+				+hand.getPlayers().size());
+		String boardCards = Arrays.toString(hand.getBoard().getBoardCards().toArray());
+		mv.addObject("boardid", "Board:" + boardCards);
+		return mv;
+	}
 }

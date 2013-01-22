@@ -36,8 +36,9 @@ public class Deck {
 	 * @param cards List of cards, assumed correctly shuffled
 	 */
 	public Deck(List<Card> cards){
-		this.cards = new LinkedList<Card>();
-		this.cards.addAll(cards);
+		//this.cards = new LinkedList<Card>();
+		//this.cards.addAll(cards);
+		this.cards = cards;
 	}
 	
 	public void initDeck(){

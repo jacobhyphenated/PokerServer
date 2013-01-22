@@ -33,6 +33,13 @@ public interface PokerHandService {
 	 * @return HandEntity with attached persistence context
 	 */
 	public HandEntity saveHand(HandEntity hand);
+	
+	/**
+	 * Handle the flop for the hand
+	 * @param hand {@link HandEntity} that owns the board the flop will be on
+	 * @return updated hand with {@link BoardEntity} containing the flop
+	 */
+	public HandEntity flop(HandEntity hand);
 
 	/**
 	 * Get the board - all community cards (flop, turn, river)

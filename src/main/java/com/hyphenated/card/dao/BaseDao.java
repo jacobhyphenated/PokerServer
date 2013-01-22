@@ -40,6 +40,14 @@ public interface BaseDao<T> {
 	public T save(T objToSave);
 	
 	/**
+	 * Merge a transient object with an existing persistent context object. Used for updating
+	 * Existing objects that have left the persistence context
+	 * @param objToMerge
+	 * @return object with persistent context attached
+	 */
+	public T merge(T objToMerge);
+	
+	/**
 	 * Remove a persistent object from the database
 	 * 
 	 * @param objToRemove Attached object to remove

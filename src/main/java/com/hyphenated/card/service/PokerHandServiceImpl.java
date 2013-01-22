@@ -36,8 +36,6 @@ public class PokerHandServiceImpl implements PokerHandService {
 		HandEntity hand = new HandEntity();
 		hand.setBlindLevel(BlindLevel.BLIND_10_20); //TODO get blind level from game type
 		//hand.setCurrentToAct(null); TODO service call to get current player to act for new hand from game.
-		Deck d = new Deck(true);
-		hand.setCards(d.exportDeck());
 		hand.setGame(game);
 		Set<Player> participatingPlayers = new HashSet<Player>();
 		for(Player p : game.getPlayers()){
@@ -45,7 +43,10 @@ public class PokerHandServiceImpl implements PokerHandService {
 				participatingPlayers.add(p);
 			}
 		}
+		//TODO deal starting cards to players
 		hand.setPlayers(participatingPlayers);
+		Deck d = new Deck(true);
+		hand.setCards(d.exportDeck());
 		
 		BoardEntity b = new BoardEntity();
 		boardDao.save(b);
@@ -68,6 +69,24 @@ public class PokerHandServiceImpl implements PokerHandService {
 	@Transactional
 	public HandEntity saveHand(HandEntity hand) {
 		return handDao.save(hand);
+	}
+	
+
+	@Override
+	@Transactional
+	public HandEntity flop(HandEntity hand) {
+		//Re-attach to persistent context for this transaction (Lazy Loading stuff)
+		hand = handDao.merge(hand);
+		
+		Deck d = new Deck(hand.getCards());
+		d.shuffleDeck();
+		BoardEntity board = hand.getBoard();
+		board.setFlop1(d.dealCard());
+		board.setFlop2(d.dealCard());
+		board.setFlop3(d.dealCard());
+		hand.setCards(d.exportDeck());
+		boardDao.merge(board);
+		return handDao.merge(hand);
 	}
 	
 	@Override

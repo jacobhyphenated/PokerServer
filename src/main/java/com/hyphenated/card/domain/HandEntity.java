@@ -3,6 +3,7 @@ package com.hyphenated.card.domain;
 import java.util.List;
 import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
@@ -14,8 +15,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
@@ -28,7 +29,7 @@ public class HandEntity {
 	private long id;
 	private Game game;
 	private BoardEntity board;
-	private Set<Player> players;
+	private Set<PlayerHand> players;
 	private Player currentToAct;
 	private BlindLevel blindLevel;
 	private List<Card> cardList;
@@ -61,14 +62,11 @@ public class HandEntity {
 		this.board = board;
 	}
 	
-	@ManyToMany(fetch=FetchType.EAGER)
-	@JoinTable(name="player_hand",
-		joinColumns=@JoinColumn(name="hand_id"),
-		inverseJoinColumns=@JoinColumn(name="player_id"))
-	public Set<Player> getPlayers() {
+	@OneToMany(fetch=FetchType.EAGER, mappedBy="handEntity",cascade={CascadeType.ALL})
+	public Set<PlayerHand> getPlayers() {
 		return players;
 	}
-	public void setPlayers(Set<Player> players) {
+	public void setPlayers(Set<PlayerHand> players) {
 		this.players = players;
 	}
 	

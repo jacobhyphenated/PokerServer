@@ -1,6 +1,7 @@
 package com.hyphenated.card.service;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
@@ -79,8 +80,8 @@ public class GameServiceImpl implements GameService {
 
 	@Override
 	public List<Player> getSortedListOfPlayers(List<Player> players) {
-		// TODO Auto-generated method stub
-		return null;
+		Collections.sort(players);
+		return players;
 	}
 
 	@Override

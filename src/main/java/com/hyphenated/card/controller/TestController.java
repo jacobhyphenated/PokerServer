@@ -140,4 +140,11 @@ public class TestController {
 		mv.addObject("boardid", out);
 		return mv;
 	}
+	
+	@RequestMapping("pokergame/hand/end")
+	public ModelAndView endHand(@RequestParam long handId){
+		HandEntity hand = pokerHandService.getHandById(handId);
+		pokerHandService.endHand(hand);
+		return new ModelAndView("board", "board", "ended hand " + hand.getId());
+	}
 }

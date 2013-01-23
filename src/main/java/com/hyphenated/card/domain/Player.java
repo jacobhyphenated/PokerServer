@@ -8,10 +8,11 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 @Entity
 @Table(name="player")
-public class Player {
+public class Player implements Comparable<Player>{
 
 	private long id;
 	private Game game;
@@ -89,5 +90,11 @@ public class Player {
 			return name.hashCode();
 		}
 		return (int) id;
+	}
+	
+	@Override
+	@Transient
+	public int compareTo(Player p){
+		return this.getGamePosition() - p.getGamePosition();
 	}
 }

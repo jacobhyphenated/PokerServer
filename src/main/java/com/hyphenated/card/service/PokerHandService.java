@@ -19,6 +19,15 @@ public interface PokerHandService {
 	public HandEntity startNewHand(Game game);
 	
 	/**
+	 * End the hand. Update dependencies on Players, position, dealer, big blind, etc.
+	 * <br /><br />
+	 * Be aware, once a hand has ended, it will no longer be tied directly to the game
+	 * and cannot be retrieved through game.getCurrentHand()
+	 * @param hand Hand to be finished.
+	 */
+	public void endHand(HandEntity hand);
+	
+	/**
 	 * Get the hand from the persistence context based on the unique id
 	 * @param id unique id for the hand
 	 * @return {@link HandEntity}

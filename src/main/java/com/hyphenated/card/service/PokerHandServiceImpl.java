@@ -1,5 +1,6 @@
 package com.hyphenated.card.service;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -7,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.hyphenated.card.Card;
 import com.hyphenated.card.Deck;
 import com.hyphenated.card.dao.GameDao;
 import com.hyphenated.card.dao.HandDao;
@@ -57,6 +59,20 @@ public class PokerHandServiceImpl implements PokerHandService {
 		game.setCurrentHand(hand);
 		gameDao.save(game);
 		return hand;
+	}
+	
+	@Override
+	@Transactional
+	public void endHand(HandEntity hand){
+		hand = handDao.merge(hand);
+		Game game = hand.getGame();
+		game.setCurrentHand(null);
+		//TODO move dealer button/bb
+		gameDao.merge(game);
+		
+		//Remove Deck from database.  No need to keep that around anymore
+		hand.setCards(new ArrayList<Card>());
+		handDao.merge(hand);
 	}
 
 	@Override

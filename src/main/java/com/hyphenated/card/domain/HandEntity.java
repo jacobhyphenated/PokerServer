@@ -53,7 +53,7 @@ public class HandEntity {
 		this.game = game;
 	}
 	
-	@OneToOne(fetch=FetchType.EAGER)
+	@OneToOne(fetch=FetchType.EAGER, cascade={CascadeType.ALL})
 	@JoinColumn(name="board_id")
 	public BoardEntity getBoard() {
 		return board;

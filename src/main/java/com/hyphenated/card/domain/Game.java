@@ -2,6 +2,7 @@ package com.hyphenated.card.domain;
 
 import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -27,6 +28,7 @@ public class Game {
 	private boolean isStarted;
 	private Set<Player> players;
 	private HandEntity currentHand;
+	private GameStructure gameStructure;
 	
 	@Column(name="game_id")
 	@Id
@@ -95,5 +97,14 @@ public class Game {
 	}
 	public void setCurrentHand(HandEntity currentHand) {
 		this.currentHand = currentHand;
+	}
+	
+	@OneToOne(fetch=FetchType.EAGER, cascade={CascadeType.ALL})
+	@JoinColumn(name="game_structure_id")
+	public GameStructure getGameStructure() {
+		return gameStructure;
+	}
+	public void setGameStructure(GameStructure gameStructure) {
+		this.gameStructure = gameStructure;
 	}
 }

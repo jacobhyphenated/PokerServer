@@ -8,11 +8,6 @@
 		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.1.xsd
 		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.1.xsd">
 
-    <context:annotation-config/>
-	<context:component-scan base-package="com.hyphenated.card">
-		 <context:exclude-filter type="annotation" expression="org.springframework.stereotype.Controller"/>    
-	</context:component-scan>
-
 	<bean id="sessionFactory"
 		class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
 		<property name="hibernateProperties">
@@ -49,10 +44,5 @@
 		<property name="sessionFactory"><ref bean="sessionFactory" /></property>
 	</bean>
 	<tx:annotation-driven transaction-manager="transactionManager" />
-
-<!-- 	<bean id="hibernateTemplate" class="org.springframework.orm.hibernate3.HibernateTemplate">
-		<property name="sessionFactory" ref="sessionFactory"/>
-		<property name="flushMode" value="2"/>eager flushing
-	</bean> -->
 
 </beans>

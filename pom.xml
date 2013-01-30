@@ -28,6 +28,11 @@
 		<artifactId>spring-orm</artifactId>
 		<version>${org.springframework-version}</version>
 	</dependency>
+	<dependency>
+		<groupId>org.springframework</groupId>
+		<artifactId>spring-jdbc</artifactId>
+		<version>${org.springframework-version}</version>
+	</dependency>
 	<!-- Hibernate -->
 	<dependency>
 		<groupId>org.hibernate</groupId>
@@ -61,11 +66,6 @@
         <artifactId>javassist</artifactId>
         <version>3.12.1.GA</version>
     </dependency>
-    <!-- <dependency>
-		<groupId>org.hsqldb</groupId>
-		<artifactId>hsqldb</artifactId>
-		<version>2.2.4</version>
-	</dependency> -->
 	<!-- MySQL database driver -->
 	<dependency>
 		<groupId>mysql</groupId>
@@ -112,6 +112,12 @@
 		<artifactId>dbunit</artifactId>
 		<scope>test</scope>
 		<version>2.4.8</version>
+	</dependency>
+	<dependency>
+		<groupId>org.hsqldb</groupId>
+		<artifactId>hsqldb</artifactId>
+		<version>2.2.4</version>
+		<scope>test</scope>
 	</dependency>
 	<dependency>
 		<groupId>org.springframework</groupId>

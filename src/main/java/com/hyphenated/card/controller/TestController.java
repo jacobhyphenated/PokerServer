@@ -1,7 +1,6 @@
 package com.hyphenated.card.controller;
 
 import java.util.Arrays;
-import java.util.Calendar;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -84,12 +83,10 @@ public class TestController {
 	@RequestMapping("/pokergame/start")
 	public ModelAndView startGame(@RequestParam long gameId){
 		Game game = gameService.getGameById(gameId, false);
-		Calendar cal = Calendar.getInstance();
-		cal.add(Calendar.MINUTE, game.getGameStructure().getBlindLength());
-		game.getGameStructure().setCurrentBlindEndTime(cal.getTime());
-		game = gameService.saveGame(game);
+		game = gameService.startGame(game);
+		
 		return new ModelAndView("board", "board", "Blind level: " + game.getGameStructure().getCurrentBlindLevel().toString() + 
-				", Ends: "+ game.getGameStructure().getCurrentBlindEndTime().toString());
+				", Ends: "+ game.getGameStructure().getCurrentBlindEndTime());
 	}
 	
 	@RequestMapping("/pokergame/hand")

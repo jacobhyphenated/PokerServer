@@ -11,7 +11,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.hyphenated.card.dao.GameDao;
 import com.hyphenated.card.dao.PlayerDao;
+import com.hyphenated.card.domain.BlindLevel;
 import com.hyphenated.card.domain.Game;
+import com.hyphenated.card.domain.GameStructure;
 import com.hyphenated.card.domain.GameType;
 import com.hyphenated.card.domain.Player;
 
@@ -41,6 +43,34 @@ public class GameServiceImpl implements GameService {
 	@Transactional
 	public Game saveGame(Game game){
 		return gameDao.save(game);
+	}
+	
+	@Override
+	@Transactional
+	public Game startGame(Game game){
+		//Set started flag
+		game.setStarted(true);
+		game = gameDao.merge(game);
+		
+		//Start at the first blind level for the game
+		GameStructure gs = game.getGameStructure();
+		List<BlindLevel> blinds = gs.getBlindLevels();
+		Collections.sort(blinds);
+		gs.setCurrentBlindLevel(blinds.get(0));
+		
+		//Get all players associated with the game. 
+		//Assign random position.  Save the player.
+		List<Player> players = new ArrayList<Player>();
+		players.addAll(game.getPlayers());
+		Collections.shuffle(players);
+		for(int i = 0; i < players.size(); i++){
+			Player p = players.get(i);
+			p.setGamePosition(i+1);
+			playerDao.merge(p);
+		}
+		
+		//Save and return the updated game
+		return gameDao.merge(game);
 	}
 	
 	@Override

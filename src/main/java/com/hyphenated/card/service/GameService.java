@@ -31,6 +31,17 @@ public interface GameService {
 	public Game saveGame(Game game);
 	
 	/**
+	 * Start a game. This begins the current game tracking.  Setup of the game is completed.  If it
+	 * is a tournament, all players should be registered at this time.<br /><br />
+	 * 
+	 * This will assign starting positions to all of the players.  This will not start the blind level,
+	 * that will happen at the start of the first hand.
+	 * @param game
+	 * @return
+	 */
+	public Game startGame(Game game);
+	
+	/**
 	 * Add a new player to an existing game
 	 * @param game game to add the player to
 	 * @param player {@link Player} to add to the game

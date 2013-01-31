@@ -12,7 +12,6 @@ import com.hyphenated.card.Card;
 import com.hyphenated.card.Deck;
 import com.hyphenated.card.dao.GameDao;
 import com.hyphenated.card.dao.HandDao;
-import com.hyphenated.card.domain.BlindLevel;
 import com.hyphenated.card.domain.BoardEntity;
 import com.hyphenated.card.domain.Game;
 import com.hyphenated.card.domain.HandEntity;
@@ -32,8 +31,7 @@ public class PokerHandServiceImpl implements PokerHandService {
 	@Transactional
 	public HandEntity startNewHand(Game game) {
 		HandEntity hand = new HandEntity();
-		hand.setBlindLevel(BlindLevel.BLIND_10_20); //TODO get blind level from game type
-		//hand.setCurrentToAct(null); TODO service call to get current player to act for new hand from game.
+		hand.setBlindLevel(game.getGameStructure().getCurrentBlindLevel()); //TODO get blind level from game type
 		hand.setGame(game);
 		
 		Deck d = new Deck(true);
@@ -50,6 +48,7 @@ public class PokerHandServiceImpl implements PokerHandService {
 			}
 		}
 		hand.setPlayers(participatingPlayers);
+		//hand.setCurrentToAct(null); TODO service call to get current player to act for new hand from game.
 		
 		BoardEntity b = new BoardEntity();
 		hand.setBoard(b);

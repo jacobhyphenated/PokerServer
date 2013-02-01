@@ -3,6 +3,9 @@ package com.hyphenated.card.service;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertNotNull;
+
+import java.util.Date;
 
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +18,7 @@ import com.hyphenated.card.domain.CommonTournamentFormats;
 import com.hyphenated.card.domain.Game;
 import com.hyphenated.card.domain.GameStructure;
 import com.hyphenated.card.domain.GameType;
+import com.hyphenated.card.domain.HandEntity;
 import com.hyphenated.card.domain.Player;
 
 public class HandServiceTest extends AbstractSpringTest {
@@ -39,6 +43,120 @@ public class HandServiceTest extends AbstractSpringTest {
 		for(Player p : game.getPlayers()){
 			assertTrue(p.getGamePosition() > 0);
 		}
+	}
+	
+	@Test
+	public void testFirstHandInGame(){
+		Game game = setupGame();
+		assertEquals(BlindLevel.BLIND_10_20, game.getGameStructure().getCurrentBlindLevel());
+		assertNull(game.getGameStructure().getCurrentBlindEndTime());
+		
+		HandEntity hand = handService.startNewHand(game);
+		assertTrue(hand.getId() > 0);
+		assertEquals(BlindLevel.BLIND_10_20, hand.getBlindLevel());
+		assertNotNull(game.getGameStructure().getCurrentBlindEndTime());
+		assertEquals(hand.getBlindLevel(), game.getGameStructure().getCurrentBlindLevel());
+		assertEquals(4, hand.getPlayers().size());
+		assertNotNull(hand.getBoard());
+		assertTrue(hand.getBoard().getId() > 0);
+		assertNull(hand.getBoard().getFlop1());
+	}
+	
+	@Test
+	public void testBlindLevelIncrease(){
+		Game game = setupGame();
+		HandEntity hand = handService.startNewHand(game);
+		assertEquals(BlindLevel.BLIND_10_20, hand.getBlindLevel());
+		assertNotNull(game.getGameStructure().getCurrentBlindEndTime());
+		long firstBoardId = hand.getBoard().getId();
+		
+		game.getGameStructure().setCurrentBlindEndTime(new Date(new Date().getTime() - 100));
+		HandEntity nextHand = handService.startNewHand(game);
+		
+		assertEquals(BlindLevel.BLIND_15_30, nextHand.getBlindLevel());
+		assertEquals(nextHand.getBlindLevel(), game.getGameStructure().getCurrentBlindLevel());
+		assertTrue(game.getGameStructure().getCurrentBlindEndTime().getTime() > new Date().getTime());
+		assertTrue(nextHand.getBoard().getId() != firstBoardId);
+	}
+	
+	@Test
+	public void testFlop(){
+		Game game = setupGame();
+		HandEntity hand = handService.startNewHand(game);
+		assertNull(hand.getBoard().getFlop1());
+		
+		hand = handService.flop(hand);
+		assertTrue(hand.getBoard().getFlop1() != null);
+		assertTrue(hand.getBoard().getFlop2() != null);
+		assertTrue(hand.getBoard().getFlop3() != null);
+	}
+	
+	@Test
+	public void testTurn(){
+		Game game = setupGame();
+		HandEntity hand = handService.startNewHand(game);
+		hand = handService.flop(hand);
+		assertNull(hand.getBoard().getTurn());
+		assertNotNull(hand.getBoard().getFlop1());
+		
+		hand = handService.turn(hand);
+		assertNotNull(hand.getBoard().getTurn());
+		assertNull(hand.getBoard().getRiver());
+	}
+	
+	@Test
+	public void testRiver(){
+		Game game = setupGame();
+		HandEntity hand = handService.startNewHand(game);
+		hand = handService.flop(hand);
+		hand = handService.turn(hand);
+		hand = handService.river(hand);
+		
+		assertNotNull(hand.getBoard().getFlop3());
+		assertNotNull(hand.getBoard().getTurn());
+		assertNotNull(hand.getBoard().getRiver());
+	}
+	
+	@Test(expected=IllegalStateException.class)
+	public void testDuplicateFlop(){
+		Game game = setupGame();
+		HandEntity hand = handService.startNewHand(game);
+		hand = handService.flop(hand);
+		hand = handService.flop(hand);
+	}
+	
+	@Test(expected=IllegalStateException.class)
+	public void testFaildedTurn(){
+		Game game = setupGame();
+		HandEntity hand = handService.startNewHand(game);
+		hand = handService.turn(hand);
+	}
+	
+	@Test(expected=IllegalStateException.class)
+	public void testDuplicateTurn(){
+		Game game = setupGame();
+		HandEntity hand = handService.startNewHand(game);
+		hand = handService.flop(hand);
+		hand = handService.turn(hand);
+		hand = handService.turn(hand);
+	}
+	
+	@Test(expected=IllegalStateException.class)
+	public void testFailedRiver(){
+		Game game = setupGame();
+		HandEntity hand = handService.startNewHand(game);
+		hand = handService.flop(hand);
+		hand = handService.river(hand);
+	}
+	
+	@Test(expected=IllegalStateException.class)
+	public void testDuplicateRiver(){
+		Game game = setupGame();
+		HandEntity hand = handService.startNewHand(game);
+		hand = handService.flop(hand);
+		hand = handService.turn(hand);
+		hand = handService.river(hand);
+		hand = handService.river(hand);
 	}
 	
 	private Game setupGame(){

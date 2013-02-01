@@ -1,7 +1,11 @@
 package com.hyphenated.card.service;
 
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Collections;
+import java.util.Date;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +16,7 @@ import com.hyphenated.card.Card;
 import com.hyphenated.card.Deck;
 import com.hyphenated.card.dao.GameDao;
 import com.hyphenated.card.dao.HandDao;
+import com.hyphenated.card.domain.BlindLevel;
 import com.hyphenated.card.domain.BoardEntity;
 import com.hyphenated.card.domain.Game;
 import com.hyphenated.card.domain.HandEntity;
@@ -31,7 +36,9 @@ public class PokerHandServiceImpl implements PokerHandService {
 	@Transactional
 	public HandEntity startNewHand(Game game) {
 		HandEntity hand = new HandEntity();
-		hand.setBlindLevel(game.getGameStructure().getCurrentBlindLevel()); //TODO get blind level from game type
+		updateBlindLevel(game);
+		hand.setBlindLevel(game.getGameStructure().getCurrentBlindLevel()); 
+		
 		hand.setGame(game);
 		
 		Deck d = new Deck(true);
@@ -137,6 +144,36 @@ public class PokerHandServiceImpl implements PokerHandService {
 		board.setRiver(d.dealCard());
 		hand.setCards(d.exportDeck());
 		return handDao.merge(hand);
+	}
+	
+	
+	private void updateBlindLevel(Game game){
+		if(game.getGameStructure().getCurrentBlindEndTime() == null){
+			//Start the blind
+			setNewBlindEndTime(game);
+		}
+		else if(game.getGameStructure().getCurrentBlindEndTime().before(new Date())){
+			//Time has expired, next blind level
+			List<BlindLevel> blinds = game.getGameStructure().getBlindLevels();
+			Collections.sort(blinds);
+			boolean nextBlind = false;
+			for(BlindLevel blind : blinds){
+				if(nextBlind){
+					game.getGameStructure().setCurrentBlindLevel(blind);
+					setNewBlindEndTime(game);
+					break;
+				}
+				if(blind == game.getGameStructure().getCurrentBlindLevel()){
+					nextBlind = true;
+				}
+			}
+		}
+	}
+	
+	private void setNewBlindEndTime(Game game){
+		Calendar c = Calendar.getInstance();
+		c.add(Calendar.MINUTE, game.getGameStructure().getBlindLength());
+		game.getGameStructure().setCurrentBlindEndTime(c.getTime());
 	}
 
 }

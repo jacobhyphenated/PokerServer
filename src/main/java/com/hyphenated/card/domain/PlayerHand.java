@@ -18,7 +18,7 @@ import com.hyphenated.card.holder.Hand;
 
 @Entity
 @Table(name="player_hand")
-public class PlayerHand {
+public class PlayerHand implements Comparable<PlayerHand>{
 
 	private long id;
 	private Player player;
@@ -82,5 +82,11 @@ public class PlayerHand {
 			return null;
 		}
 		return new Hand(card1, card2);
+	}
+	
+	@Transient
+	@Override
+	public int compareTo(PlayerHand o) {
+		return this.getPlayer().compareTo(o.getPlayer());
 	}
 }

@@ -51,6 +51,9 @@ public class GameServiceImpl implements GameService {
 		//Set started flag
 		game.setStarted(true);
 		game = gameDao.merge(game);
+		if(game.getPlayers().size() < 2){
+			throw new IllegalStateException("Not Enough Players");
+		}
 		
 		//Start at the first blind level for the game
 		GameStructure gs = game.getGameStructure();
@@ -68,6 +71,12 @@ public class GameServiceImpl implements GameService {
 			p.setGamePosition(i+1);
 			playerDao.merge(p);
 		}
+		
+		//Set Button and Big Blind.  Button is position 1 (index 0)
+		Collections.sort(players);
+		game.setPlayerInBTN(players.get(0));
+		//If the game is heads up, BB is the other player.  Otherwise the BB is 2 players from the button
+		game.setPlayerInBB((players.size() == 2)? players.get(1) : players.get(2));
 		
 		//Save and return the updated game
 		return gameDao.merge(game);

@@ -6,6 +6,9 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.Set;
 
 import org.junit.Test;
@@ -74,6 +77,54 @@ public class GameServiceTest extends AbstractSpringTest {
 		for(Player p : game.getPlayers()){
 			assertTrue(p.getGamePosition() > 0);
 		}
+	}
+	
+	@Test(expected=IllegalStateException.class)
+	public void testCantStartGamePlayers(){
+		Game game = gameService.saveGame(createTestGame());
+		gameService.addNewPlayerToGame(game, new Player());
+		
+		flushAndClear();
+		game = gameService.getGameById(game.getId(), true);
+		assertNotNull(game.getPlayers());
+		gameService.startGame(game);
+	}
+	
+	@Test
+	public void testAssignPlayersWithTwo(){
+		Game game = gameService.saveGame(createTestGame());
+		addPlayersToGame(game);
+		
+		flushAndClear();
+		
+		game = gameService.getGameById(game.getId(), false);
+		game = gameService.startGame(game);
+		assertNotNull(game.getPlayerInBB());
+		assertNotNull(game.getPlayerInBTN());
+		
+		List<Player> players = new ArrayList<Player>();
+		players.addAll(game.getPlayers());
+		Collections.sort(players);
+		assertEquals(players.get(0), game.getPlayerInBTN());
+		assertEquals(players.get(1), game.getPlayerInBB());
+	}
+	
+	@Test
+	public void testAssignPlayersWithMany(){
+		Game game = gameService.saveGame(createTestGame());
+		addPlayersToGame(game);
+		addPlayersToGame(game);
+		
+		flushAndClear();
+		
+		game = gameService.getGameById(game.getId(), false);
+		game = gameService.startGame(game);
+		
+		List<Player> players = new ArrayList<Player>();
+		players.addAll(game.getPlayers());
+		Collections.sort(players);
+		assertEquals(players.get(0), game.getPlayerInBTN());
+		assertEquals(players.get(2), game.getPlayerInBB());
 	}
 	
 	private Game createTestGame(){

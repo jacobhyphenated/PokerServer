@@ -1,11 +1,14 @@
 package com.hyphenated.card.service;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.assertNotNull;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
+import java.util.List;
 
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +23,7 @@ import com.hyphenated.card.domain.GameStructure;
 import com.hyphenated.card.domain.GameType;
 import com.hyphenated.card.domain.HandEntity;
 import com.hyphenated.card.domain.Player;
+import com.hyphenated.card.domain.PlayerHand;
 
 public class HandServiceTest extends AbstractSpringTest {
 
@@ -159,6 +163,23 @@ public class HandServiceTest extends AbstractSpringTest {
 		hand = handService.river(hand);
 	}
 	
+	@Test
+	public void testNextToActAtStart(){
+		Game game = setupGame();
+		Player bbPlayer = game.getPlayerInBB();
+		assertNotNull(bbPlayer);
+		Player btnPlayer = game.getPlayerInBTN();
+		assertNotNull(btnPlayer);
+		
+		HandEntity hand = handService.startNewHand(game);
+		List<PlayerHand> players = new ArrayList<PlayerHand>();
+		players.addAll(hand.getPlayers());
+		Collections.sort(players);
+		assertEquals(btnPlayer, players.get(0).getPlayer());
+		assertEquals(bbPlayer, players.get(2).getPlayer());
+		assertEquals("Check Next Player to Act is after BB", players.get(3).getPlayer(), hand.getCurrentToAct());
+	}
+	
 	private Game setupGame(){
 		Game game = new Game();
 		game.setName("Test Game");
@@ -172,8 +193,6 @@ public class HandServiceTest extends AbstractSpringTest {
 		gs.setStartingChips(2000);
 		gs.setCurrentBlindLevel(BlindLevel.BLIND_10_20);
 		game.setGameStructure(gs);
-		
-		game = gameDao.save(game);
 		
 		Player p1 = new Player();
 		p1.setName("Player 1");
@@ -202,6 +221,10 @@ public class HandServiceTest extends AbstractSpringTest {
 		p4.setChips(gs.getStartingChips());
 		p4.setGamePosition(4);
 		playerDao.save(p4);
+		
+		game.setPlayerInBTN(p1);
+		game.setPlayerInBB(p3);
+		game = gameDao.save(game);
 		
 		flushAndClear();
 		

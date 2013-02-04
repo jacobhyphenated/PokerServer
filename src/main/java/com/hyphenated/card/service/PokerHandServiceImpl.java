@@ -55,7 +55,18 @@ public class PokerHandServiceImpl implements PokerHandService {
 			}
 		}
 		hand.setPlayers(participatingPlayers);
-		//hand.setCurrentToAct(null); TODO service call to get current player to act for new hand from game.
+		
+		//Sort and get the next player to act (immediately after the big blind)
+		List<PlayerHand> players = new ArrayList<PlayerHand>();
+		players.addAll(participatingPlayers);
+		Collections.sort(players);
+		Player nextToAct = null;
+		for(int i = 0; i < players.size(); i++){
+			if(players.get(i).getPlayer().equals(game.getPlayerInBB())){
+				nextToAct = (i == players.size() - 1) ? players.get(0).getPlayer() : players.get(i+1).getPlayer();
+			}
+		}
+		hand.setCurrentToAct(nextToAct);
 		
 		BoardEntity b = new BoardEntity();
 		hand.setBoard(b);

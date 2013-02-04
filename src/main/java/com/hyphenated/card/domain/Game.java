@@ -23,6 +23,7 @@ public class Game {
 	private long id;
 	private int playersRemaining;
 	private Player playerInBB;
+	private Player playerInBTN;
 	private GameType gameType;
 	private String name;
 	private boolean isStarted;
@@ -55,6 +56,15 @@ public class Game {
 	}
 	public void setPlayerInBB(Player playerInBB) {
 		this.playerInBB = playerInBB;
+	}
+	
+	@OneToOne
+	@JoinColumn(name="btn_player_id")
+	public Player getPlayerInBTN(){
+		return playerInBTN;
+	}
+	public void setPlayerInBTN(Player playerInBTN){
+		this.playerInBTN = playerInBTN;
 	}
 	
 	@Column(name="game_type")

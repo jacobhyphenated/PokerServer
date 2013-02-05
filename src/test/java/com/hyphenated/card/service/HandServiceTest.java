@@ -244,8 +244,102 @@ public class HandServiceTest extends AbstractSpringTest {
 		hand = handService.startNewHand(game);
 		assertEquals("Less One player", players.size() - 1, hand.getPlayers().size());
 		assertEquals(game.getPlayerInBTN(), players.get(1).getPlayer());
-		assertEquals(players.get(0).getPlayer(), handService.getPlayerInBB(hand));
 		assertEquals(players.get(3).getPlayer(), handService.getPlayerInSB(hand));
+		assertEquals(players.get(0).getPlayer(), handService.getPlayerInBB(hand));
+	}
+	
+	@Test
+	public void testEndHandWithEliminationSB(){
+		Game game = setupGame();
+		HandEntity hand = handService.startNewHand(game);
+		
+		List<PlayerHand> players = new ArrayList<PlayerHand>();
+		players.addAll(hand.getPlayers());
+		Collections.sort(players);
+		assertEquals(handService.getPlayerInBB(hand), players.get(2).getPlayer());
+		
+		players.get(1).getPlayer().setChips(0);
+
+		flushAndClear();
+		
+		game = gameDao.findById(game.getId());
+		handService.endHand(game.getCurrentHand());
+		hand = handService.startNewHand(game);
+		assertEquals("Less One player", players.size() - 1, hand.getPlayers().size());
+		assertEquals(game.getPlayerInBTN(), players.get(2).getPlayer());
+		assertEquals(players.get(3).getPlayer(), handService.getPlayerInSB(hand));
+		assertEquals(players.get(0).getPlayer(), handService.getPlayerInBB(hand));
+	}
+	
+	@Test
+	public void testEndHandWithEliminationNextBB(){
+		Game game = setupGame();
+		HandEntity hand = handService.startNewHand(game);
+		
+		List<PlayerHand> players = new ArrayList<PlayerHand>();
+		players.addAll(hand.getPlayers());
+		Collections.sort(players);
+		assertEquals(handService.getPlayerInBB(hand), players.get(2).getPlayer());
+		
+		players.get(3).getPlayer().setChips(0);
+
+		flushAndClear();
+		
+		game = gameDao.findById(game.getId());
+		handService.endHand(game.getCurrentHand());
+		hand = handService.startNewHand(game);
+		assertEquals("Less One player", players.size() - 1, hand.getPlayers().size());
+		assertEquals(game.getPlayerInBTN(), players.get(1).getPlayer());
+		assertEquals(players.get(2).getPlayer(), handService.getPlayerInSB(hand));
+		assertEquals(players.get(0).getPlayer(), handService.getPlayerInBB(hand));
+	}
+	
+	@Test
+	public void testEndHandWithEliminationToHeadsUp(){
+		Game game = setupGame();
+		HandEntity hand = handService.startNewHand(game);
+		
+		List<PlayerHand> players = new ArrayList<PlayerHand>();
+		players.addAll(hand.getPlayers());
+		Collections.sort(players);
+		assertEquals(handService.getPlayerInBB(hand), players.get(2).getPlayer());
+		
+		players.get(3).getPlayer().setChips(0);
+		players.get(0).getPlayer().setChips(0);
+
+		flushAndClear();
+		
+		game = gameDao.findById(game.getId());
+		handService.endHand(game.getCurrentHand());
+		hand = handService.startNewHand(game);
+		assertEquals("Less Two players", players.size() - 2, hand.getPlayers().size());
+		assertEquals(game.getPlayerInBTN(), players.get(1).getPlayer());
+		assertEquals(players.get(1).getPlayer(), handService.getPlayerInSB(hand));
+		assertEquals(players.get(2).getPlayer(), handService.getPlayerInBB(hand));	
+	}
+	
+	@Test
+	public void testEndHandWithEliminationToHeadsUpOther(){
+		Game game = setupGame();
+		HandEntity hand = handService.startNewHand(game);
+		
+		List<PlayerHand> players = new ArrayList<PlayerHand>();
+		players.addAll(hand.getPlayers());
+		Collections.sort(players);
+		assertEquals(handService.getPlayerInBB(hand), players.get(2).getPlayer());
+		
+		players.get(3).getPlayer().setChips(0);
+		players.get(1).getPlayer().setChips(0);
+
+		flushAndClear();
+		
+		game = gameDao.findById(game.getId());
+		handService.endHand(game.getCurrentHand());
+		hand = handService.startNewHand(game);
+		assertEquals("Less Two players", players.size() - 2, hand.getPlayers().size());
+		assertEquals(game.getPlayerInBTN(), players.get(2).getPlayer());
+		assertEquals(players.get(2).getPlayer(), handService.getPlayerInSB(hand));
+		assertEquals(players.get(0).getPlayer(), handService.getPlayerInBB(hand));	
 	}
 	
 	private Game setupGame(){

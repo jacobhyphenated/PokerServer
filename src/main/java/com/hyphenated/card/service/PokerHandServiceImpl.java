@@ -81,12 +81,22 @@ public class PokerHandServiceImpl implements PokerHandService {
 
 		List<PlayerHand> players = new ArrayList<PlayerHand>();
 		//For all players in the hand, remove any who are out of chips (eliminated)
+		int count = 0;
 		for(PlayerHand p : hand.getPlayers()){
 			if(p.getPlayer().getChips() != 0){
 				players.add(p);
+				count++;
+			}
+			else if(p.getPlayer().equals(game.getPlayerInBTN())){
+				//If the player on the Button has been eliminated, we still need this player
+				//in the list so that we calculate next button from its position
+				players.add(p);
 			}
 		}
-		game.setPlayersRemaining(players.size());
+		game.setPlayersRemaining(count);
+		if(count < 2){
+			//TODO end game
+		}
 		
 		//Rotate Button.  Use Simplified Moving Button algorithm (for ease of coding)
 		//This means we always rotate button.  Blinds will be next two active players.  May skip blinds.

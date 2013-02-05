@@ -3,6 +3,7 @@ package com.hyphenated.card.service;
 import com.hyphenated.card.domain.BoardEntity;
 import com.hyphenated.card.domain.Game;
 import com.hyphenated.card.domain.HandEntity;
+import com.hyphenated.card.domain.Player;
 
 /**
  * Service to handle operations related to a poker hand.  Tracks the board state and players.
@@ -65,5 +66,19 @@ public interface PokerHandService {
 	 * @throws IllegalStateException if the hand is not in a state to expect a river card.
 	 */
 	public HandEntity river(HandEntity hand) throws IllegalStateException;
+	
+	/**
+	 * Gets the player who is the Small Blind for this hand.
+	 * @param hand {@link HandEntity} 
+	 * @return {@link Player} who is the Small Blind
+	 */
+	public Player getPlayerInSB(HandEntity hand);
+	
+	/**
+	 * Gets the player who is the Big Blind for this hand
+	 * @param hand {@link HandEntity}
+	 * @return {@link Player} who is the Big Blind
+	 */
+	public Player getPlayerInBB(HandEntity hand);
 
 }

@@ -22,7 +22,6 @@ public class Game {
 
 	private long id;
 	private int playersRemaining;
-	private Player playerInBB;
 	private Player playerInBTN;
 	private GameType gameType;
 	private String name;
@@ -47,15 +46,6 @@ public class Game {
 	}
 	public void setPlayersRemaining(int playersRemaining) {
 		this.playersRemaining = playersRemaining;
-	}
-	
-	@OneToOne
-	@JoinColumn(name="bb_player_id")
-	public Player getPlayerInBB() {
-		return playerInBB;
-	}
-	public void setPlayerInBB(Player playerInBB) {
-		this.playerInBB = playerInBB;
 	}
 	
 	@OneToOne

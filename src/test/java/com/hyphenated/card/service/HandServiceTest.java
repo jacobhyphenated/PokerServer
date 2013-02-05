@@ -64,6 +64,13 @@ public class HandServiceTest extends AbstractSpringTest {
 		assertNotNull(hand.getBoard());
 		assertTrue(hand.getBoard().getId() > 0);
 		assertNull(hand.getBoard().getFlop1());
+		
+		List<PlayerHand> players = new ArrayList<PlayerHand>();
+		players.addAll(hand.getPlayers());
+		Collections.sort(players);
+		assertEquals(players.get(0).getPlayer(), game.getPlayerInBTN());
+		assertEquals(players.get(1).getPlayer(), handService.getPlayerInSB(hand));
+		assertEquals(players.get(2).getPlayer(), handService.getPlayerInBB(hand));
 	}
 	
 	@Test
@@ -166,18 +173,79 @@ public class HandServiceTest extends AbstractSpringTest {
 	@Test
 	public void testNextToActAtStart(){
 		Game game = setupGame();
-		Player bbPlayer = game.getPlayerInBB();
-		assertNotNull(bbPlayer);
 		Player btnPlayer = game.getPlayerInBTN();
 		assertNotNull(btnPlayer);
 		
 		HandEntity hand = handService.startNewHand(game);
+		Player bbPlayer = handService.getPlayerInBB(hand);
+		assertNotNull(bbPlayer);
+		
 		List<PlayerHand> players = new ArrayList<PlayerHand>();
 		players.addAll(hand.getPlayers());
 		Collections.sort(players);
 		assertEquals(btnPlayer, players.get(0).getPlayer());
 		assertEquals(bbPlayer, players.get(2).getPlayer());
 		assertEquals("Check Next Player to Act is after BB", players.get(3).getPlayer(), hand.getCurrentToAct());
+	}
+	
+	@Test
+	public void testEndHand(){
+		Game game = setupGame();
+		HandEntity hand = handService.startNewHand(game);
+		Player bbPlayer = handService.getPlayerInBB(hand);
+		
+		List<PlayerHand> players = new ArrayList<PlayerHand>();
+		players.addAll(hand.getPlayers());
+		Collections.sort(players);
+		assertEquals(bbPlayer, players.get(2).getPlayer());
+		
+		handService.endHand(hand);
+		assertEquals(game.getPlayerInBTN(), players.get(1).getPlayer());
+		
+		hand = handService.startNewHand(game);
+		assertEquals(players.get(3).getPlayer(), handService.getPlayerInBB(hand));
+		assertEquals(players.get(2).getPlayer(), handService.getPlayerInSB(hand));
+		
+		handService.endHand(hand);
+		hand = handService.startNewHand(game);
+		assertEquals(game.getPlayerInBTN(), players.get(2).getPlayer());
+		assertEquals(players.get(0).getPlayer(), handService.getPlayerInBB(hand));
+		assertEquals(players.get(3).getPlayer(), handService.getPlayerInSB(hand));
+		
+		handService.endHand(hand);
+		hand = handService.startNewHand(game);
+		assertEquals(game.getPlayerInBTN(), players.get(3).getPlayer());
+		assertEquals(players.get(1).getPlayer(), handService.getPlayerInBB(hand));
+		assertEquals(players.get(0).getPlayer(), handService.getPlayerInSB(hand));
+		
+		handService.endHand(hand);
+		hand = handService.startNewHand(game);
+		assertEquals(game.getPlayerInBTN(), players.get(0).getPlayer());
+		assertEquals(players.get(2).getPlayer(), handService.getPlayerInBB(hand));
+		assertEquals(players.get(1).getPlayer(), handService.getPlayerInSB(hand));
+	}
+	
+	@Test
+	public void testEndHandWithElimination(){
+		Game game = setupGame();
+		HandEntity hand = handService.startNewHand(game);
+		
+		List<PlayerHand> players = new ArrayList<PlayerHand>();
+		players.addAll(hand.getPlayers());
+		Collections.sort(players);
+		assertEquals(handService.getPlayerInBB(hand), players.get(2).getPlayer());
+		
+		players.get(2).getPlayer().setChips(0);
+
+		flushAndClear();
+		
+		game = gameDao.findById(game.getId());
+		handService.endHand(game.getCurrentHand());
+		hand = handService.startNewHand(game);
+		assertEquals("Less One player", players.size() - 1, hand.getPlayers().size());
+		assertEquals(game.getPlayerInBTN(), players.get(1).getPlayer());
+		assertEquals(players.get(0).getPlayer(), handService.getPlayerInBB(hand));
+		assertEquals(players.get(3).getPlayer(), handService.getPlayerInSB(hand));
 	}
 	
 	private Game setupGame(){
@@ -223,7 +291,6 @@ public class HandServiceTest extends AbstractSpringTest {
 		playerDao.save(p4);
 		
 		game.setPlayerInBTN(p1);
-		game.setPlayerInBB(p3);
 		game = gameDao.save(game);
 		
 		flushAndClear();

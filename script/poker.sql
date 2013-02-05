@@ -43,7 +43,6 @@ DROP TABLE IF EXISTS `game`;
 CREATE TABLE `game` (
   `game_id` int(11) NOT NULL AUTO_INCREMENT,
   `players_left` int(11) NOT NULL,
-  `bb_player_id` int(11) DEFAULT NULL,
   `game_type` varchar(15) NOT NULL,
   `name` varchar(50) DEFAULT NULL,
   `is_started` tinyint(1) NOT NULL,
@@ -174,4 +173,4 @@ CREATE TABLE `player_hand` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2013-02-04 13:51:57
+-- Dump completed on 2013-02-05 10:37:29

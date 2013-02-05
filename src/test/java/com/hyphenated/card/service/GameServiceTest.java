@@ -99,14 +99,12 @@ public class GameServiceTest extends AbstractSpringTest {
 		
 		game = gameService.getGameById(game.getId(), false);
 		game = gameService.startGame(game);
-		assertNotNull(game.getPlayerInBB());
 		assertNotNull(game.getPlayerInBTN());
 		
 		List<Player> players = new ArrayList<Player>();
 		players.addAll(game.getPlayers());
 		Collections.sort(players);
 		assertEquals(players.get(0), game.getPlayerInBTN());
-		assertEquals(players.get(1), game.getPlayerInBB());
 	}
 	
 	@Test
@@ -124,7 +122,6 @@ public class GameServiceTest extends AbstractSpringTest {
 		players.addAll(game.getPlayers());
 		Collections.sort(players);
 		assertEquals(players.get(0), game.getPlayerInBTN());
-		assertEquals(players.get(2), game.getPlayerInBB());
 	}
 	
 	private Game createTestGame(){

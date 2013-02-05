@@ -59,13 +59,7 @@ public class PokerHandServiceImpl implements PokerHandService {
 		//Sort and get the next player to act (immediately after the big blind)
 		List<PlayerHand> players = new ArrayList<PlayerHand>();
 		players.addAll(participatingPlayers);
-		Collections.sort(players);
-		Player nextToAct = null;
-		for(int i = 0; i < players.size(); i++){
-			if(players.get(i).getPlayer().equals(game.getPlayerInBB())){
-				nextToAct = (i == players.size() - 1) ? players.get(0).getPlayer() : players.get(i+1).getPlayer();
-			}
-		}
+		Player nextToAct = getNextPlayerInGameOrder(players, this.getPlayerInBB(hand));
 		hand.setCurrentToAct(nextToAct);
 		
 		BoardEntity b = new BoardEntity();
@@ -84,10 +78,24 @@ public class PokerHandServiceImpl implements PokerHandService {
 		hand = handDao.merge(hand);
 		Game game = hand.getGame();
 		game.setCurrentHand(null);
-		//TODO move dealer button/bb
+
+		List<PlayerHand> players = new ArrayList<PlayerHand>();
+		//For all players in the hand, remove any who are out of chips (eliminated)
+		for(PlayerHand p : hand.getPlayers()){
+			if(p.getPlayer().getChips() != 0){
+				players.add(p);
+			}
+		}
+		game.setPlayersRemaining(players.size());
+		
+		//Rotate Button.  Use Simplified Moving Button algorithm (for ease of coding)
+		//This means we always rotate button.  Blinds will be next two active players.  May skip blinds.
+		Player nextButton = this.getNextPlayerInGameOrder(players, game.getPlayerInBTN());
+		game.setPlayerInBTN(nextButton);
+		
 		gameDao.merge(game);
 		
-		//Remove Deck from database.  No need to keep that around anymore
+		//Remove Deck from database. No need to keep that around anymore
 		hand.setCards(new ArrayList<Card>());
 		handDao.merge(hand);
 	}
@@ -157,6 +165,30 @@ public class PokerHandServiceImpl implements PokerHandService {
 		return handDao.merge(hand);
 	}
 	
+	@Override
+	public Player getPlayerInSB(HandEntity hand){
+		Player button = hand.getGame().getPlayerInBTN();
+		//Heads up the Button is the Small Blind
+		if(hand.getPlayers().size() == 2){
+			return button;
+		}
+		List<PlayerHand> players = new ArrayList<PlayerHand>();
+		players.addAll(hand.getPlayers());
+		return getNextPlayerInGameOrder(players, button);
+	}
+	
+	@Override
+	public Player getPlayerInBB(HandEntity hand){
+		Player button = hand.getGame().getPlayerInBTN();
+		List<PlayerHand> players = new ArrayList<PlayerHand>();
+		players.addAll(hand.getPlayers());
+		Player leftOfButton = getNextPlayerInGameOrder(players, button);
+		//Heads up, the player who is not the Button is the Big blind
+		if(hand.getPlayers().size() == 2){
+			return leftOfButton;
+		}
+		return getNextPlayerInGameOrder(players, leftOfButton);
+	}
 	
 	private void updateBlindLevel(Game game){
 		if(game.getGameStructure().getCurrentBlindEndTime() == null){
@@ -185,6 +217,19 @@ public class PokerHandServiceImpl implements PokerHandService {
 		Calendar c = Calendar.getInstance();
 		c.add(Calendar.MINUTE, game.getGameStructure().getBlindLength());
 		game.getGameStructure().setCurrentBlindEndTime(c.getTime());
+	}
+	
+	private Player getNextPlayerInGameOrder(List<PlayerHand> players, Player startPlayer){
+		//Sorted list by game order
+		Collections.sort(players);
+		for(int i = 0; i < players.size(); i++){
+			//Find the player we are starting at
+			if(players.get(i).getPlayer().equals(startPlayer)){
+				//The next player is either the next in the list, or the first in the list if startPlayer is at the end
+				return (i == players.size() - 1) ? players.get(0).getPlayer() : players.get(i+1).getPlayer();
+			}
+		}
+		return null;
 	}
 
 }

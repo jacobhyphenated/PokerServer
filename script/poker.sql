@@ -98,6 +98,9 @@ CREATE TABLE `hand` (
   `game_id` int(11) NOT NULL,
   `player_to_act_id` int(11) DEFAULT NULL,
   `blind_level` varchar(25) NOT NULL,
+  `pot` int(11) DEFAULT NULL,
+  `bet_amount` int(11) DEFAULT NULL,
+  `total_bet_amount` int(11) DEFAULT NULL,
   PRIMARY KEY (`hand_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=557057 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -160,6 +163,7 @@ CREATE TABLE `player_hand` (
   `hand_id` int(11) NOT NULL,
   `card1` varchar(25) DEFAULT NULL,
   `card2` varchar(25) DEFAULT NULL,
+  `bet_amount` int(11) DEFAULT NULL,
   PRIMARY KEY (`player_hand_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=196611 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -173,4 +177,4 @@ CREATE TABLE `player_hand` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2013-02-05 10:37:29
+-- Dump completed on 2013-03-04 16:02:57

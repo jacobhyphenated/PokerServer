@@ -33,6 +33,9 @@ public class HandEntity {
 	private Player currentToAct;
 	private BlindLevel blindLevel;
 	private List<Card> cardList;
+	private int pot;
+	private int totalBetAmount;
+	private int lastBetAmount;
 	
 	@Id
 	@GeneratedValue(strategy=GenerationType.TABLE)
@@ -97,5 +100,35 @@ public class HandEntity {
 	}
 	public void setCards(List<Card> cards){
 		cardList = cards;
+	}
+	
+	@Column(name="pot")
+	public int getPot() {
+		return pot;
+	}
+	public void setPot(int pot) {
+		this.pot = pot;
+	}
+	
+	@Column(name="total_bet_amount")
+	public int getTotalBetAmount() {
+		return totalBetAmount;
+	}
+	public void setTotalBetAmount(int betAmount) {
+		this.totalBetAmount = betAmount;
+	}
+	
+	@Column(name="bet_amount")
+	
+	/**
+	 * In No Limit poker, the minimum bet size is twice the previous bet.  Use this field to determine
+	 * what that amount would be.
+	 * @return The last bet/raise amount
+	 */
+	public int getLastBetAmount() {
+		return lastBetAmount;
+	}
+	public void setLastBetAmount(int lastBetAmount) {
+		this.lastBetAmount = lastBetAmount;
 	}
 }

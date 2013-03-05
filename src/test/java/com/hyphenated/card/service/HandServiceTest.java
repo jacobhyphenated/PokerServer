@@ -342,6 +342,53 @@ public class HandServiceTest extends AbstractSpringTest {
 		assertEquals(players.get(0).getPlayer(), handService.getPlayerInBB(hand));	
 	}
 	
+	@Test
+	public void testHandSetupWithChipBetsAndBlinds(){
+		Game game = setupGame();
+		HandEntity hand = handService.startNewHand(game);
+		int smallBlind = hand.getBlindLevel().getSmallBlind();
+		int bigBlind = hand.getBlindLevel().getBigBlind();
+		assertEquals(smallBlind + bigBlind , hand.getPot());
+		assertEquals(bigBlind, hand.getTotalBetAmount());
+		
+		List<PlayerHand> players = new ArrayList<PlayerHand>();
+		players.addAll(hand.getPlayers());
+		Collections.sort(players);
+		assertEquals(handService.getPlayerInBB(hand), players.get(2).getPlayer());
+		assertEquals(bigBlind, players.get(2).getBetAmount());
+		assertEquals(2000 - bigBlind, players.get(2).getPlayer().getChips());
+		
+		assertEquals(handService.getPlayerInSB(hand), players.get(1).getPlayer());
+		assertEquals(smallBlind, players.get(1).getBetAmount());
+		assertEquals(2000 - smallBlind, players.get(1).getPlayer().getChips());
+		
+		flushAndClear();
+		
+		//End game and start a new one.  See that chip stacks and pot size are correct for new hand
+		game = gameDao.findById(game.getId());
+		handService.endHand(game.getCurrentHand());
+		hand = handService.startNewHand(game);
+		players = new ArrayList<PlayerHand>();
+		players.addAll(hand.getPlayers());
+		Collections.sort(players);
+		
+		assertEquals(handService.getPlayerInBB(hand), players.get(3).getPlayer());
+		assertEquals(bigBlind, players.get(3).getBetAmount());
+		assertEquals(2000 - bigBlind, players.get(3).getPlayer().getChips());
+		
+		assertEquals(handService.getPlayerInSB(hand), players.get(2).getPlayer());
+		assertEquals(smallBlind, players.get(2).getBetAmount());
+		assertEquals(2000 - bigBlind - smallBlind, players.get(2).getPlayer().getChips());
+		
+		assertEquals(0, players.get(1).getBetAmount());
+		assertEquals(2000 - smallBlind, players.get(1).getPlayer().getChips());
+		
+		//Flop should clear betting round amount values
+		assertEquals(bigBlind, hand.getTotalBetAmount());
+		hand = handService.flop(hand);
+		assertEquals(0, hand.getTotalBetAmount());
+	}
+	
 	private Game setupGame(){
 		Game game = new Game();
 		game.setName("Test Game");

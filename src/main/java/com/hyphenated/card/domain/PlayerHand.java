@@ -25,6 +25,7 @@ public class PlayerHand implements Comparable<PlayerHand>{
 	private HandEntity handEntity;
 	private Card card1;
 	private Card card2;
+	private int betAmount;
 	
 	@Id
 	@GeneratedValue(strategy=GenerationType.TABLE)
@@ -70,6 +71,14 @@ public class PlayerHand implements Comparable<PlayerHand>{
 	}
 	public void setCard2(Card card2) {
 		this.card2 = card2;
+	}
+	
+	@Column(name="bet_amount")
+	public int getBetAmount() {
+		return betAmount;
+	}
+	public void setBetAmount(int betAmount) {
+		this.betAmount = betAmount;
 	}
 	
 	/**

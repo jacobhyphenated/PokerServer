@@ -12,6 +12,8 @@ public enum PlayerStatus {
 	SEATING,
 	/** Waiting for another player to act */
 	WAITING,
+	/** Player is still in the hand, but has committed all of his/her chips and will take no further action */
+	ALL_IN,
 	/** Won chips in the previous hand.  The old English for won is winnan. */
 	WON_HAND,
 	/** Post the Small Blind for this hand */

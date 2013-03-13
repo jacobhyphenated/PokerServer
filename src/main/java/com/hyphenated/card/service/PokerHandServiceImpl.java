@@ -22,6 +22,7 @@ import com.hyphenated.card.domain.Game;
 import com.hyphenated.card.domain.HandEntity;
 import com.hyphenated.card.domain.Player;
 import com.hyphenated.card.domain.PlayerHand;
+import com.hyphenated.card.util.PlayerUtil;
 
 @Service
 public class PokerHandServiceImpl implements PokerHandService {
@@ -59,7 +60,7 @@ public class PokerHandServiceImpl implements PokerHandService {
 		//Sort and get the next player to act (immediately after the big blind)
 		List<PlayerHand> players = new ArrayList<PlayerHand>();
 		players.addAll(participatingPlayers);
-		Player nextToAct = getNextPlayerInGameOrderPH(players, this.getPlayerInBB(hand));
+		Player nextToAct = PlayerUtil.getNextPlayerInGameOrderPH(players, this.getPlayerInBB(hand));
 		hand.setCurrentToAct(nextToAct);
 		
 		//Register the Forced Small and Big Blind bets as part of the hand
@@ -69,12 +70,14 @@ public class PokerHandServiceImpl implements PokerHandService {
 			if(ph.getPlayer().equals(smallBlind)){
 				int sbBet = Math.min(hand.getBlindLevel().getSmallBlind(), smallBlind.getChips());
 				ph.setBetAmount(sbBet);
+				ph.setRoundBetAmount(sbBet);
 				smallBlind.setChips(smallBlind.getChips() - sbBet);
 				
 			}
 			else if(ph.getPlayer().equals(bigBlind)){
 				int bbBet = Math.min(hand.getBlindLevel().getBigBlind(), bigBlind.getChips());
 				ph.setBetAmount(bbBet);
+				ph.setRoundBetAmount(bbBet);
 				bigBlind.setChips(bigBlind.getChips() - bbBet);
 			}
 			
@@ -125,7 +128,7 @@ public class PokerHandServiceImpl implements PokerHandService {
 		
 		//Rotate Button.  Use Simplified Moving Button algorithm (for ease of coding)
 		//This means we always rotate button.  Blinds will be next two active players.  May skip blinds.
-		Player nextButton = this.getNextPlayerInGameOrder(players, game.getPlayerInBTN());
+		Player nextButton = PlayerUtil.getNextPlayerInGameOrder(players, game.getPlayerInBTN());
 		game.setPlayerInBTN(nextButton);
 		
 		gameDao.merge(game);
@@ -164,8 +167,7 @@ public class PokerHandServiceImpl implements PokerHandService {
 		board.setFlop2(d.dealCard());
 		board.setFlop3(d.dealCard());
 		hand.setCards(d.exportDeck());
-		hand.setTotalBetAmount(0);
-		hand.setLastBetAmount(0);
+		resetRoundValues(hand);
 		return handDao.merge(hand);
 	}
 	
@@ -182,8 +184,7 @@ public class PokerHandServiceImpl implements PokerHandService {
 		BoardEntity board = hand.getBoard();
 		board.setTurn(d.dealCard());
 		hand.setCards(d.exportDeck());
-		hand.setTotalBetAmount(0);
-		hand.setLastBetAmount(0);
+		resetRoundValues(hand);
 		return handDao.merge(hand);
 	}
 	
@@ -201,8 +202,7 @@ public class PokerHandServiceImpl implements PokerHandService {
 		BoardEntity board = hand.getBoard();
 		board.setRiver(d.dealCard());
 		hand.setCards(d.exportDeck());
-		hand.setTotalBetAmount(0);
-		hand.setLastBetAmount(0);
+		resetRoundValues(hand);
 		return handDao.merge(hand);
 	}
 	
@@ -215,7 +215,7 @@ public class PokerHandServiceImpl implements PokerHandService {
 		}
 		List<PlayerHand> players = new ArrayList<PlayerHand>();
 		players.addAll(hand.getPlayers());
-		return getNextPlayerInGameOrderPH(players, button);
+		return PlayerUtil.getNextPlayerInGameOrderPH(players, button);
 	}
 	
 	@Override
@@ -223,12 +223,12 @@ public class PokerHandServiceImpl implements PokerHandService {
 		Player button = hand.getGame().getPlayerInBTN();
 		List<PlayerHand> players = new ArrayList<PlayerHand>();
 		players.addAll(hand.getPlayers());
-		Player leftOfButton = getNextPlayerInGameOrderPH(players, button);
+		Player leftOfButton = PlayerUtil.getNextPlayerInGameOrderPH(players, button);
 		//Heads up, the player who is not the Button is the Big blind
 		if(hand.getPlayers().size() == 2){
 			return leftOfButton;
 		}
-		return getNextPlayerInGameOrderPH(players, leftOfButton);
+		return PlayerUtil.getNextPlayerInGameOrderPH(players, leftOfButton);
 	}
 	
 	private void updateBlindLevel(Game game){
@@ -260,25 +260,21 @@ public class PokerHandServiceImpl implements PokerHandService {
 		game.getGameStructure().setCurrentBlindEndTime(c.getTime());
 	}
 	
-	private Player getNextPlayerInGameOrder(List<Player> players, Player startPlayer){
-		//Sorted list by game order
-		Collections.sort(players);
-		for(int i = 0; i < players.size(); i++){
-			//Find the player we are starting at
-			if(players.get(i).equals(startPlayer)){
-				//The next player is either the next in the list, or the first in the list if startPlayer is at the end
-				return (i == players.size() - 1) ? players.get(0) : players.get(i+1);
-			}
+	private void resetRoundValues(HandEntity hand){
+		hand.setTotalBetAmount(0);
+		hand.setLastBetAmount(0);
+		List<Player> playersInHand = new ArrayList<Player>();
+		for(PlayerHand ph : hand.getPlayers()){
+			ph.setRoundBetAmount(0);
+			playersInHand.add(ph.getPlayer());
 		}
-		return null;
-	}
-	
-	private Player getNextPlayerInGameOrderPH(List<PlayerHand> playerHands, Player startPlayer){
-		List<Player> players = new ArrayList<Player>();
-		for(PlayerHand ph: playerHands){
-			players.add(ph.getPlayer());
+		Player current = this.getPlayerInSB(hand);
+		//If the SB has been eliminated...
+		if(!playersInHand.contains(current)){
+			playersInHand.add(current);
+			current = PlayerUtil.getNextPlayerInGameOrder(playersInHand, current);
 		}
-		return getNextPlayerInGameOrder(players, startPlayer);
+		hand.setCurrentToAct(current);
 	}
 
 }

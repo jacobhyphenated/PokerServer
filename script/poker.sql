@@ -164,6 +164,7 @@ CREATE TABLE `player_hand` (
   `card1` varchar(25) DEFAULT NULL,
   `card2` varchar(25) DEFAULT NULL,
   `bet_amount` int(11) DEFAULT NULL,
+  `round_bet_amount` int(11) DEFAULT NULL,
   PRIMARY KEY (`player_hand_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=196611 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -177,4 +178,4 @@ CREATE TABLE `player_hand` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2013-03-04 16:02:57
+-- Dump completed on 2013-03-05 15:47:31

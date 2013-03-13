@@ -356,10 +356,12 @@ public class HandServiceTest extends AbstractSpringTest {
 		Collections.sort(players);
 		assertEquals(handService.getPlayerInBB(hand), players.get(2).getPlayer());
 		assertEquals(bigBlind, players.get(2).getBetAmount());
+		assertEquals(bigBlind, players.get(2).getRoundBetAmount());
 		assertEquals(2000 - bigBlind, players.get(2).getPlayer().getChips());
 		
 		assertEquals(handService.getPlayerInSB(hand), players.get(1).getPlayer());
 		assertEquals(smallBlind, players.get(1).getBetAmount());
+		assertEquals(smallBlind, players.get(1).getRoundBetAmount());
 		assertEquals(2000 - smallBlind, players.get(1).getPlayer().getChips());
 		
 		flushAndClear();

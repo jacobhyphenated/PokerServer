@@ -26,6 +26,7 @@ public class PlayerHand implements Comparable<PlayerHand>{
 	private Card card1;
 	private Card card2;
 	private int betAmount;
+	private int roundBetAmount;
 	
 	@Id
 	@GeneratedValue(strategy=GenerationType.TABLE)
@@ -74,11 +75,29 @@ public class PlayerHand implements Comparable<PlayerHand>{
 	}
 	
 	@Column(name="bet_amount")
+	/**
+	 * Represents the amount of chips the player has contributed to the pot
+	 * for this entire hand
+	 * @return
+	 */
 	public int getBetAmount() {
 		return betAmount;
 	}
 	public void setBetAmount(int betAmount) {
 		this.betAmount = betAmount;
+	}
+	
+	@Column(name="round_bet_amount")
+	/**
+	 * Represents the amount of chips the player has contributed to the pot for only this
+	 * current betting round
+	 * @return
+	 */
+	public int getRoundBetAmount() {
+		return roundBetAmount;
+	}
+	public void setRoundBetAmount(int roundBetAmount) {
+		this.roundBetAmount = roundBetAmount;
 	}
 	
 	/**

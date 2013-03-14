@@ -16,6 +16,7 @@ import com.hyphenated.card.Card;
 import com.hyphenated.card.Deck;
 import com.hyphenated.card.dao.GameDao;
 import com.hyphenated.card.dao.HandDao;
+import com.hyphenated.card.dao.PlayerDao;
 import com.hyphenated.card.domain.BlindLevel;
 import com.hyphenated.card.domain.BoardEntity;
 import com.hyphenated.card.domain.Game;
@@ -32,6 +33,9 @@ public class PokerHandServiceImpl implements PokerHandService {
 	
 	@Autowired
 	private GameDao gameDao;
+	
+	@Autowired
+	private PlayerDao playerDao;
 	
 	@Override
 	@Transactional
@@ -103,9 +107,23 @@ public class PokerHandServiceImpl implements PokerHandService {
 		Game game = hand.getGame();
 
 		hand.setCurrentToAct(null);
-		//TODO Pot Distribution.  Winner of hand. Split Pots
 		//if only one PH left, everyone else folded
-		
+		if(hand.getPlayers().size() == 1){
+			Player winner = hand.getPlayers().iterator().next().getPlayer();
+			winner.setChips(winner.getChips() + hand.getPot());
+			playerDao.merge(winner);
+		}else{
+			List<Player> winners = PlayerUtil.getWinnersOfHand(hand, hand.getPlayers());
+			int potSplit = hand.getPot() / winners.size();
+			//Odd chips go to first player in game order
+			int remaining = hand.getPot() % winners.size();
+			winners.get(0).setChips(winners.get(0).getChips() + remaining);
+			for(Player player : winners){
+				player.setChips(player.getChips() + potSplit);
+				playerDao.merge(player);
+			}
+			//TODO Side Pots
+		}		
 
 		List<Player> players = new ArrayList<Player>();
 		//For all players in the hand, remove any who are out of chips (eliminated)

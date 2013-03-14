@@ -93,7 +93,7 @@ public class CardEvaluatorTest extends TestCase {
 	public void testSplit(){
 		Hand h1 = new Hand(Card.TEN_OF_CLUBS, Card.EIGHT_OF_CLUBS);
 		Hand h2 = new Hand(Card.TEN_OF_DIAMONDS, Card.NINE_OF_HEARTS);
-		Board b = new Board(Card.TWO_OF_CLUBS, Card.TWO_OF_CLUBS, Card.TEN_OF_SPADES, 
+		Board b = new Board(Card.TWO_OF_CLUBS, Card.TWO_OF_DIAMONDS, Card.TEN_OF_SPADES, 
 				Card.KING_OF_HEARTS, Card.ACE_OF_HEARTS);
 		int comp = compare(h1,h2,b);
 		assertTrue(comp == 0);

@@ -14,9 +14,11 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.hyphenated.card.AbstractSpringTest;
+import com.hyphenated.card.Card;
 import com.hyphenated.card.dao.GameDao;
 import com.hyphenated.card.dao.PlayerDao;
 import com.hyphenated.card.domain.BlindLevel;
+import com.hyphenated.card.domain.BoardEntity;
 import com.hyphenated.card.domain.CommonTournamentFormats;
 import com.hyphenated.card.domain.Game;
 import com.hyphenated.card.domain.GameStructure;
@@ -199,6 +201,7 @@ public class HandServiceTest extends AbstractSpringTest {
 		Collections.sort(players);
 		assertEquals(bbPlayer, players.get(2).getPlayer());
 		
+		hand.setBoard(getDummyBoard());
 		handService.endHand(hand);
 		assertEquals(game.getPlayerInBTN(), players.get(1).getPlayer());
 		
@@ -206,18 +209,21 @@ public class HandServiceTest extends AbstractSpringTest {
 		assertEquals(players.get(3).getPlayer(), handService.getPlayerInBB(hand));
 		assertEquals(players.get(2).getPlayer(), handService.getPlayerInSB(hand));
 		
+		hand.setBoard(getDummyBoard());
 		handService.endHand(hand);
 		hand = handService.startNewHand(game);
 		assertEquals(game.getPlayerInBTN(), players.get(2).getPlayer());
 		assertEquals(players.get(0).getPlayer(), handService.getPlayerInBB(hand));
 		assertEquals(players.get(3).getPlayer(), handService.getPlayerInSB(hand));
 		
+		hand.setBoard(getDummyBoard());
 		handService.endHand(hand);
 		hand = handService.startNewHand(game);
 		assertEquals(game.getPlayerInBTN(), players.get(3).getPlayer());
 		assertEquals(players.get(1).getPlayer(), handService.getPlayerInBB(hand));
 		assertEquals(players.get(0).getPlayer(), handService.getPlayerInSB(hand));
 		
+		hand.setBoard(getDummyBoard());
 		handService.endHand(hand);
 		hand = handService.startNewHand(game);
 		assertEquals(game.getPlayerInBTN(), players.get(0).getPlayer());
@@ -236,10 +242,13 @@ public class HandServiceTest extends AbstractSpringTest {
 		assertEquals(handService.getPlayerInBB(hand), players.get(2).getPlayer());
 		
 		players.get(2).getPlayer().setChips(0);
+		players.get(2).setCard1(Card.FOUR_OF_DIAMONDS);
+		players.get(2).setCard2(Card.SIX_OF_SPADES);
 
 		flushAndClear();
 		
 		game = gameDao.findById(game.getId());
+		game.getCurrentHand().setBoard(getDummyBoard());
 		handService.endHand(game.getCurrentHand());
 		hand = handService.startNewHand(game);
 		assertEquals("Less One player", players.size() - 1, hand.getPlayers().size());
@@ -259,10 +268,13 @@ public class HandServiceTest extends AbstractSpringTest {
 		assertEquals(handService.getPlayerInBB(hand), players.get(2).getPlayer());
 		
 		players.get(1).getPlayer().setChips(0);
+		players.get(1).setCard1(Card.FOUR_OF_DIAMONDS);
+		players.get(1).setCard2(Card.SIX_OF_SPADES);
 
 		flushAndClear();
 		
 		game = gameDao.findById(game.getId());
+		game.getCurrentHand().setBoard(getDummyBoard());
 		handService.endHand(game.getCurrentHand());
 		hand = handService.startNewHand(game);
 		assertEquals("Less One player", players.size() - 1, hand.getPlayers().size());
@@ -282,10 +294,13 @@ public class HandServiceTest extends AbstractSpringTest {
 		assertEquals(handService.getPlayerInBB(hand), players.get(2).getPlayer());
 		
 		players.get(3).getPlayer().setChips(0);
+		players.get(3).setCard1(Card.FOUR_OF_DIAMONDS);
+		players.get(3).setCard2(Card.SIX_OF_SPADES);
 
 		flushAndClear();
 		
 		game = gameDao.findById(game.getId());
+		game.getCurrentHand().setBoard(getDummyBoard());
 		handService.endHand(game.getCurrentHand());
 		hand = handService.startNewHand(game);
 		assertEquals("Less One player", players.size() - 1, hand.getPlayers().size());
@@ -305,11 +320,16 @@ public class HandServiceTest extends AbstractSpringTest {
 		assertEquals(handService.getPlayerInBB(hand), players.get(2).getPlayer());
 		
 		players.get(3).getPlayer().setChips(0);
+		players.get(3).setCard1(Card.FOUR_OF_DIAMONDS);
+		players.get(3).setCard2(Card.SIX_OF_SPADES);
 		players.get(0).getPlayer().setChips(0);
+		players.get(0).setCard1(Card.THREE_OF_SPADES);
+		players.get(0).setCard2(Card.SIX_OF_DIAMONDS);
 
 		flushAndClear();
 		
 		game = gameDao.findById(game.getId());
+		game.getCurrentHand().setBoard(getDummyBoard());
 		handService.endHand(game.getCurrentHand());
 		hand = handService.startNewHand(game);
 		assertEquals("Less Two players", players.size() - 2, hand.getPlayers().size());
@@ -329,11 +349,16 @@ public class HandServiceTest extends AbstractSpringTest {
 		assertEquals(handService.getPlayerInBB(hand), players.get(2).getPlayer());
 		
 		players.get(3).getPlayer().setChips(0);
+		players.get(3).setCard1(Card.FOUR_OF_DIAMONDS);
+		players.get(3).setCard2(Card.SIX_OF_SPADES);
 		players.get(1).getPlayer().setChips(0);
+		players.get(1).setCard1(Card.THREE_OF_DIAMONDS);
+		players.get(1).setCard2(Card.SIX_OF_HEARTS);
 
 		flushAndClear();
 		
 		game = gameDao.findById(game.getId());
+		game.getCurrentHand().setBoard(getDummyBoard());
 		handService.endHand(game.getCurrentHand());
 		hand = handService.startNewHand(game);
 		assertEquals("Less Two players", players.size() - 2, hand.getPlayers().size());
@@ -364,10 +389,15 @@ public class HandServiceTest extends AbstractSpringTest {
 		assertEquals(smallBlind, players.get(1).getRoundBetAmount());
 		assertEquals(2000 - smallBlind, players.get(1).getPlayer().getChips());
 		
+		//Player one gets the nuts
+		players.get(1).setCard1(Card.ACE_OF_HEARTS);
+		players.get(1).setCard2(Card.ACE_OF_DIAMONDS);
+		
 		flushAndClear();
 		
 		//End game and start a new one.  See that chip stacks and pot size are correct for new hand
 		game = gameDao.findById(game.getId());
+		game.getCurrentHand().setBoard(getDummyBoard());
 		handService.endHand(game.getCurrentHand());
 		hand = handService.startNewHand(game);
 		players = new ArrayList<PlayerHand>();
@@ -383,7 +413,7 @@ public class HandServiceTest extends AbstractSpringTest {
 		assertEquals(2000 - bigBlind - smallBlind, players.get(2).getPlayer().getChips());
 		
 		assertEquals(0, players.get(1).getBetAmount());
-		assertEquals(2000 - smallBlind, players.get(1).getPlayer().getChips());
+		assertEquals(2020, players.get(1).getPlayer().getChips());
 		
 		//Flop should clear betting round amount values
 		assertEquals(bigBlind, hand.getTotalBetAmount());
@@ -439,5 +469,15 @@ public class HandServiceTest extends AbstractSpringTest {
 		flushAndClear();
 		
 		return gameDao.findById(game.getId());
+	}
+	
+	private BoardEntity getDummyBoard(){
+		BoardEntity board = new BoardEntity();
+		board.setFlop1(Card.ACE_OF_CLUBS);
+		board.setFlop2(Card.EIGHT_OF_CLUBS);
+		board.setFlop3(Card.FIVE_OF_HEARTS);
+		board.setTurn(Card.ACE_OF_SPADES);
+		board.setRiver(Card.TWO_OF_DIAMONDS);
+		return board;
 	}
 }

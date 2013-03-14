@@ -183,6 +183,10 @@ public class PlayerActionServiceImpl implements PlayerActionService {
 		}
 		
 		if(hand.getCurrentToAct() == null){
+			//Only one player, everyone else folded, player is the winner
+			if(hand.getPlayers().size() == 1){
+				return PlayerStatus.WON_HAND;
+			}
 			//TODO is winner?
 		}
 		

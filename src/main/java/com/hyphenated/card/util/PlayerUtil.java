@@ -116,61 +116,7 @@ public class PlayerUtil {
 		}
 		
 		Map<Player, Integer> winnersMap = new HashMap<Player, Integer>();
-		Set<PlayerHand> playersInvolved = hand.getPlayers();
-		PlayerHand allInPlayer = null;
-		int allInBetRunningTotal = 0;
-		do{
-			//Determine all in player if applicable
-			allInPlayer = null;
-			PlayerHand potentialAllInPlayer = null;
-			int minimumBetAmountPerPlayer = 0;
-			for(PlayerHand ph : playersInvolved){
-				if(minimumBetAmountPerPlayer == 0){
-					minimumBetAmountPerPlayer = ph.getBetAmount();
-					potentialAllInPlayer = ph;
-				}
-				else if(minimumBetAmountPerPlayer > ph.getBetAmount()){
-					minimumBetAmountPerPlayer = ph.getBetAmount();
-					allInPlayer = ph;
-					potentialAllInPlayer = allInPlayer;
-				}
-				else if(minimumBetAmountPerPlayer < ph.getBetAmount()){
-					allInPlayer = potentialAllInPlayer;
-				}
-			}
-			//minimum bet per player is just for this pot (of many possible side pots).
-			//discount any chips or bets that may have been awarded in previous pots
-			minimumBetAmountPerPlayer = minimumBetAmountPerPlayer - allInBetRunningTotal;
-			allInBetRunningTotal += minimumBetAmountPerPlayer;
-			
-			//If no player is all in, resolve the hand.
-			if(allInPlayer == null){
-				applyWinningAndChips(winnersMap, hand, minimumBetAmountPerPlayer, playersInvolved);
-				break;
-			}
-			
-			//If there are two players with one player committing more chips to the pot than the other
-			if(playersInvolved.size() == 2){
-				//refund player money for amount not called by all in
-				playersInvolved.remove(allInPlayer);
-				PlayerHand overbet = playersInvolved.iterator().next();
-				int amountOverbet = overbet.getBetAmount() - allInPlayer.getBetAmount();
-				Integer bigIValue = winnersMap.get(overbet.getPlayer());
-				int i = (bigIValue == null)?0:bigIValue;
-				winnersMap.put(overbet.getPlayer(), amountOverbet + i);
-				playersInvolved.add(overbet);
-				playersInvolved.add(allInPlayer);
-				
-				//Determine winner
-				applyWinningAndChips(winnersMap, hand, allInBetRunningTotal, playersInvolved);
-				break;
-			}
-			
-			//Handle this side pot. Remove the all in player, then re-evaluate for the remaining players.
-			applyWinningAndChips(winnersMap, hand, minimumBetAmountPerPlayer, playersInvolved);
-			playersInvolved.remove(allInPlayer);
-		
-		}while(allInPlayer != null);
+		resolveSidePot(winnersMap, hand, 0, hand.getPlayers());
 		
 		return winnersMap;
 	}
@@ -187,5 +133,67 @@ public class PlayerUtil {
 			winnersMap.put(player, potSplit + remaining + i);
 			remaining = 0;
 		}
+	}
+	
+	/*
+	 * Recursive helper method.  Goes through each potential pot in order, starting from the
+	 * main pot and up through each possible side pot.
+	 * 
+	 * winnersMap is passed by value and updated by each recursive pass through.
+	 * allInBetRunningTotal keeps track of the bet amount (per player) that of each pot additively
+	 * playersInvolved is used to determine exit conditions; tracks players involved in each pot/side pot 
+	 */
+	private static void resolveSidePot(Map<Player, Integer> winnersMap, HandEntity hand,
+			int allInBetRunningTotal, Set<PlayerHand> playersInvolved){
+		//Determine all in player if applicable
+		PlayerHand allInPlayer = null;
+		PlayerHand potentialAllInPlayer = null;
+		int minimumBetAmountPerPlayer = 0;
+		for(PlayerHand ph : playersInvolved){
+			if(minimumBetAmountPerPlayer == 0){
+				minimumBetAmountPerPlayer = ph.getBetAmount();
+				potentialAllInPlayer = ph;
+			}
+			else if(minimumBetAmountPerPlayer > ph.getBetAmount()){
+				minimumBetAmountPerPlayer = ph.getBetAmount();
+				allInPlayer = ph;
+				potentialAllInPlayer = allInPlayer;
+			}
+			else if(minimumBetAmountPerPlayer < ph.getBetAmount()){
+				allInPlayer = potentialAllInPlayer;
+			}
+		}
+		//minimum bet per player is just for this pot (of many possible side pots).
+		//discount any chips or bets that may have been awarded in previous pots
+		minimumBetAmountPerPlayer = minimumBetAmountPerPlayer - allInBetRunningTotal;
+		allInBetRunningTotal += minimumBetAmountPerPlayer;
+		
+		//If no player is all in, resolve the hand.
+		if(allInPlayer == null){
+			applyWinningAndChips(winnersMap, hand, minimumBetAmountPerPlayer, playersInvolved);
+			return;
+		}
+		
+		//If there are two players with one player committing more chips to the pot than the other
+		if(playersInvolved.size() == 2){
+			//refund player money for amount not called by all in
+			playersInvolved.remove(allInPlayer);
+			PlayerHand overbet = playersInvolved.iterator().next();
+			int amountOverbet = overbet.getBetAmount() - allInPlayer.getBetAmount();
+			Integer bigIValue = winnersMap.get(overbet.getPlayer());
+			int i = (bigIValue == null)?0:bigIValue;
+			winnersMap.put(overbet.getPlayer(), amountOverbet + i);
+			playersInvolved.add(overbet);
+			playersInvolved.add(allInPlayer);
+			
+			//Determine winner
+			applyWinningAndChips(winnersMap, hand, allInBetRunningTotal, playersInvolved);
+			return;
+		}
+		
+		//Handle this side pot. Remove the all in player, then re-evaluate for the remaining players.
+		applyWinningAndChips(winnersMap, hand, minimumBetAmountPerPlayer, playersInvolved);
+		playersInvolved.remove(allInPlayer);
+		resolveSidePot(winnersMap, hand, allInBetRunningTotal, playersInvolved);
 	}
 }

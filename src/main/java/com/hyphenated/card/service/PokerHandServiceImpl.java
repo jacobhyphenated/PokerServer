@@ -6,6 +6,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -107,23 +108,8 @@ public class PokerHandServiceImpl implements PokerHandService {
 		Game game = hand.getGame();
 
 		hand.setCurrentToAct(null);
-		//if only one PH left, everyone else folded
-		if(hand.getPlayers().size() == 1){
-			Player winner = hand.getPlayers().iterator().next().getPlayer();
-			winner.setChips(winner.getChips() + hand.getPot());
-			playerDao.merge(winner);
-		}else{
-			List<Player> winners = PlayerUtil.getWinnersOfHand(hand, hand.getPlayers());
-			int potSplit = hand.getPot() / winners.size();
-			//Odd chips go to first player in game order
-			int remaining = hand.getPot() % winners.size();
-			winners.get(0).setChips(winners.get(0).getChips() + remaining);
-			for(Player player : winners){
-				player.setChips(player.getChips() + potSplit);
-				playerDao.merge(player);
-			}
-			//TODO Side Pots
-		}		
+		
+		determineWinner(hand);
 
 		List<Player> players = new ArrayList<Player>();
 		//For all players in the hand, remove any who are out of chips (eliminated)
@@ -293,6 +279,29 @@ public class PokerHandServiceImpl implements PokerHandService {
 			current = PlayerUtil.getNextPlayerInGameOrder(playersInHand, current);
 		}
 		hand.setCurrentToAct(current);
+	}
+	
+	private void determineWinner(HandEntity hand){
+		//if only one PH left, everyone else folded
+		if(hand.getPlayers().size() == 1){
+			Player winner = hand.getPlayers().iterator().next().getPlayer();
+			winner.setChips(winner.getChips() + hand.getPot());
+			playerDao.merge(winner);
+		}
+		else{
+			//Iterate through map of players to there amount won.  Persist.
+			//TODO - Refund all in overbet player if applicable before determining winner
+			//     - Keep status from saying winner when it might be a loss
+			Map<Player, Integer> winners = PlayerUtil.getAmountWonInHandForAllPlayers(hand);
+			if(winners == null){
+				return;
+			}
+			for(Map.Entry<Player, Integer> entry : winners.entrySet()){
+				Player player = entry.getKey();
+				player.setChips(player.getChips() + entry.getValue());
+				playerDao.merge(player);
+			}
+		}
 	}
 
 }

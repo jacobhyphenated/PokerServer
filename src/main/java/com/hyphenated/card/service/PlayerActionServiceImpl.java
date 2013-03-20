@@ -2,6 +2,7 @@ package com.hyphenated.card.service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -187,7 +188,16 @@ public class PlayerActionServiceImpl implements PlayerActionService {
 			if(hand.getPlayers().size() == 1){
 				return PlayerStatus.WON_HAND;
 			}
-			//TODO is winner?
+			//Get the list of players who won at least some amount of chips at showdown
+			Map<Player, Integer> winners = PlayerUtil.getAmountWonInHandForAllPlayers(hand);
+			if(winners != null && winners.containsKey(player)){
+				//Player is contained in this collection, so the player was a winner in the hand
+				return PlayerStatus.WON_HAND;
+			}
+			else{
+				//Hand is over but player lost at showdown.
+				return PlayerStatus.LOST_HAND;
+			}
 		}
 		
 		if(player.getChips() <= 0){

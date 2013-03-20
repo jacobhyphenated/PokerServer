@@ -1,14 +1,16 @@
 package com.hyphenated.card.service;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.junit.Ignore;
 import org.junit.Test;
-import static org.junit.Assert.*;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.hyphenated.card.AbstractSpringTest;
@@ -240,12 +242,6 @@ public class PlayerActionServiceTest extends AbstractSpringTest {
 		assertEquals(PlayerStatus.WAITING, playerActionService.getPlayerStatus(players.get(0)));
 		assertEquals(PlayerStatus.WAITING, playerActionService.getPlayerStatus(players.get(3)));
 		assertEquals(PlayerStatus.ALL_IN, playerActionService.getPlayerStatus(players.get(4)));
-	}
-	
-	@Test
-	@Ignore
-	public void testWinnerWithSplitPot(){
-		//TODO
 	}
 	
 	private HandEntity getBasicHand(Game game){

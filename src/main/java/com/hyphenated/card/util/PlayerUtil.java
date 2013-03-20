@@ -2,7 +2,9 @@ package com.hyphenated.card.util;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import com.hyphenated.card.domain.HandEntity;
@@ -94,5 +96,96 @@ public class PlayerUtil {
 		}
 		
 		return winners;
+	}
+	
+	/**
+	 * For a showdown, there are multiple possible outcomes.  There is one winner; there are multiple winners;
+	 * there are multiple winners with different amounts won because of side pots.
+	 * <br /><br />
+	 * This method will take a {@link HandEntity} and determine what players win what amount.  This will
+	 * take into account split pots and side pots.
+	 * @param hand Hand that has gotten to the river and is at showdown
+	 * @return A {@link Map} of {@link Player} objects to the Integer value of chips that they are awarded as a result
+	 * of the hand.  The map will contain only winning players (of some kind) during this hand.  Null is returned
+	 * if the {@link HandEntity} is in the incorrect state (not at the river) or the proper showdown conditions have
+	 * not been met.
+	 */
+	public static Map<Player, Integer> getAmountWonInHandForAllPlayers(HandEntity hand){
+		if(hand.getBoard().getRiver() == null){
+			return null;
+		}
+		
+		Map<Player, Integer> winnersMap = new HashMap<Player, Integer>();
+		Set<PlayerHand> playersInvolved = hand.getPlayers();
+		PlayerHand allInPlayer = null;
+		int allInBetRunningTotal = 0;
+		do{
+			//Determine all in player if applicable
+			allInPlayer = null;
+			PlayerHand potentialAllInPlayer = null;
+			int minimumBetAmountPerPlayer = 0;
+			for(PlayerHand ph : playersInvolved){
+				if(minimumBetAmountPerPlayer == 0){
+					minimumBetAmountPerPlayer = ph.getBetAmount();
+					potentialAllInPlayer = ph;
+				}
+				else if(minimumBetAmountPerPlayer > ph.getBetAmount()){
+					minimumBetAmountPerPlayer = ph.getBetAmount();
+					allInPlayer = ph;
+					potentialAllInPlayer = allInPlayer;
+				}
+				else if(minimumBetAmountPerPlayer < ph.getBetAmount()){
+					allInPlayer = potentialAllInPlayer;
+				}
+			}
+			//minimum bet per player is just for this pot (of many possible side pots).
+			//discount any chips or bets that may have been awarded in previous pots
+			minimumBetAmountPerPlayer = minimumBetAmountPerPlayer - allInBetRunningTotal;
+			allInBetRunningTotal += minimumBetAmountPerPlayer;
+			
+			//If no player is all in, resolve the hand.
+			if(allInPlayer == null){
+				applyWinningAndChips(winnersMap, hand, minimumBetAmountPerPlayer, playersInvolved);
+				break;
+			}
+			
+			//If there are two players with one player committing more chips to the pot than the other
+			if(playersInvolved.size() == 2){
+				//refund player money for amount not called by all in
+				playersInvolved.remove(allInPlayer);
+				PlayerHand overbet = playersInvolved.iterator().next();
+				int amountOverbet = overbet.getBetAmount() - allInPlayer.getBetAmount();
+				Integer bigIValue = winnersMap.get(overbet.getPlayer());
+				int i = (bigIValue == null)?0:bigIValue;
+				winnersMap.put(overbet.getPlayer(), amountOverbet + i);
+				playersInvolved.add(overbet);
+				playersInvolved.add(allInPlayer);
+				
+				//Determine winner
+				applyWinningAndChips(winnersMap, hand, allInBetRunningTotal, playersInvolved);
+				break;
+			}
+			
+			//Handle this side pot. Remove the all in player, then re-evaluate for the remaining players.
+			applyWinningAndChips(winnersMap, hand, minimumBetAmountPerPlayer, playersInvolved);
+			playersInvolved.remove(allInPlayer);
+		
+		}while(allInPlayer != null);
+		
+		return winnersMap;
+	}
+	
+	private static void applyWinningAndChips(Map<Player, Integer> winnersMap, HandEntity hand,
+			int minPlayerBetAmount, Set<PlayerHand> playersInvolved){
+		List<Player> winners = PlayerUtil.getWinnersOfHand(hand, playersInvolved);
+		int potSplit = (minPlayerBetAmount * playersInvolved.size() ) / winners.size();
+		//Odd chips go to first player in game order
+		int remaining = hand.getPot() % winners.size();
+		for(Player player : winners){
+			Integer bigIValue = winnersMap.get(player);
+			int i = (bigIValue == null)?0:bigIValue;
+			winnersMap.put(player, potSplit + remaining + i);
+			remaining = 0;
+		}
 	}
 }

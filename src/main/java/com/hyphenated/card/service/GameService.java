@@ -1,8 +1,5 @@
 package com.hyphenated.card.service;
 
-import java.util.List;
-import java.util.Set;
-
 import com.hyphenated.card.domain.Game;
 import com.hyphenated.card.domain.Player;
 
@@ -56,31 +53,7 @@ public interface GameService {
 	 */
 	public Player savePlayer(Player player);
 	
-	/**
-	 * Based on the game id, get a list of players, sorted by order to act
-	 * @param gameId unique id of the game
-	 * @return List of players
-	 */
-	public List<Player> getSortedListOfPlayers(long gameId);
-	
-	/**
-	 * Based on the game domain object, get a list of players, sorted by order to act
-	 * @param game {@link Game} object with persistent context
-	 * @return List of players
-	 */
-	public List<Player> getSortedListOfPlayers(Game game);
-	
-	/**
-	 * Sort the list of players based on order to act
-	 * @param players List of {@link Player} objects to be sorted
-	 * @return sorted list of players
-	 */
-	public List<Player> getSortedListOfPlayers(List<Player> players);
-	
-	/**
-	 * Sort the list of players based on order to act
-	 * @param players set of {@link Player} objects to be sorted
-	 * @return sorted list of players
-	 */
-	public List<Player> getSortedListOfPlayers(Set<Player> players);
+	//TODO Player add Chips method - for cash games and rebuy tournaments
+	//Do this in service layer to enforce tournament logic.
+	//Cash games could theoretically be done in the controller and call save
 }

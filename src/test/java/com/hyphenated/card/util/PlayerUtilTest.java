@@ -248,6 +248,7 @@ public class PlayerUtilTest extends TestCase {
 		board.setTurn(Card.TEN_OF_HEARTS);
 		board.setRiver(Card.SIX_OF_SPADES);
 		hand.setBoard(board);
+		hand.setPot(600);
 		
 		Map<Player, Integer> winners = PlayerUtil.getAmountWonInHandForAllPlayers(hand);
 		assertEquals(1, winners.size());
@@ -304,6 +305,7 @@ public class PlayerUtilTest extends TestCase {
 		board.setTurn(Card.TEN_OF_HEARTS);
 		board.setRiver(Card.KING_OF_SPADES);
 		hand.setBoard(board);
+		hand.setPot(1200);
 		
 		Map<Player, Integer> winners = PlayerUtil.getAmountWonInHandForAllPlayers(hand);
 		assertEquals(2, winners.size());
@@ -349,6 +351,7 @@ public class PlayerUtilTest extends TestCase {
 		board.setTurn(Card.TEN_OF_HEARTS);
 		board.setRiver(Card.SIX_OF_SPADES);
 		hand.setBoard(board);
+		hand.setPot(1300);
 		
 		Map<Player, Integer> winners = PlayerUtil.getAmountWonInHandForAllPlayers(hand);
 		assertEquals(2, winners.size());
@@ -407,6 +410,7 @@ public class PlayerUtilTest extends TestCase {
 		board.setTurn(Card.TEN_OF_HEARTS);
 		board.setRiver(Card.KING_OF_SPADES);
 		hand.setBoard(board);
+		hand.setPot(1600);
 		
 		Map<Player, Integer> winners = PlayerUtil.getAmountWonInHandForAllPlayers(hand);
 		assertEquals(1, winners.size());
@@ -463,6 +467,7 @@ public class PlayerUtilTest extends TestCase {
 		board.setTurn(Card.TEN_OF_HEARTS);
 		board.setRiver(Card.KING_OF_SPADES);
 		hand.setBoard(board);
+		hand.setPot(1600);
 		
 		Map<Player, Integer> winners = PlayerUtil.getAmountWonInHandForAllPlayers(hand);
 		assertEquals(2, winners.size());
@@ -532,6 +537,7 @@ public class PlayerUtilTest extends TestCase {
 		board.setTurn(Card.TEN_OF_HEARTS);
 		board.setRiver(Card.KING_OF_SPADES);
 		hand.setBoard(board);
+		hand.setPot(3000);
 		
 		Map<Player, Integer> winners = PlayerUtil.getAmountWonInHandForAllPlayers(hand);
 		assertEquals(3, winners.size());
@@ -602,6 +608,7 @@ public class PlayerUtilTest extends TestCase {
 		board.setTurn(Card.TEN_OF_HEARTS);
 		board.setRiver(Card.KING_OF_SPADES);
 		hand.setBoard(board);
+		hand.setPot(3001);
 		
 		Map<Player, Integer> winners = PlayerUtil.getAmountWonInHandForAllPlayers(hand);
 		assertEquals(2, winners.size());

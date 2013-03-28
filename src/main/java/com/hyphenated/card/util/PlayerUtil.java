@@ -3,6 +3,7 @@ package com.hyphenated.card.util;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -116,7 +117,13 @@ public class PlayerUtil {
 		}
 		
 		Map<Player, Integer> winnersMap = new HashMap<Player, Integer>();
-		resolveSidePot(winnersMap, hand, 0, hand.getPlayers());
+		
+		//Make deep copy of players.  We will manipulate this set in the following methods
+		Set<PlayerHand> currentPlayers = new HashSet<PlayerHand>();
+		currentPlayers.addAll(hand.getPlayers());
+		
+		resolveSidePot(winnersMap, hand, 0, currentPlayers);
+		resolveDeadMoney(winnersMap, hand);
 		
 		return winnersMap;
 	}
@@ -126,7 +133,7 @@ public class PlayerUtil {
 		List<Player> winners = PlayerUtil.getWinnersOfHand(hand, playersInvolved);
 		int potSplit = (minPlayerBetAmount * playersInvolved.size() ) / winners.size();
 		//Odd chips go to first player in game order
-		int remaining = hand.getPot() % winners.size();
+		int remaining = (minPlayerBetAmount * playersInvolved.size() ) % winners.size();
 		for(Player player : winners){
 			Integer bigIValue = winnersMap.get(player);
 			int i = (bigIValue == null)?0:bigIValue;
@@ -187,7 +194,7 @@ public class PlayerUtil {
 			playersInvolved.add(allInPlayer);
 			
 			//Determine winner
-			applyWinningAndChips(winnersMap, hand, allInBetRunningTotal, playersInvolved);
+			applyWinningAndChips(winnersMap, hand, minimumBetAmountPerPlayer, playersInvolved);
 			return;
 		}
 		
@@ -195,5 +202,19 @@ public class PlayerUtil {
 		applyWinningAndChips(winnersMap, hand, minimumBetAmountPerPlayer, playersInvolved);
 		playersInvolved.remove(allInPlayer);
 		resolveSidePot(winnersMap, hand, allInBetRunningTotal, playersInvolved);
+	}
+	
+	private static void resolveDeadMoney(Map<Player, Integer> winnersMap, HandEntity hand){
+		int payout = 0;
+		for(Player player : winnersMap.keySet()){
+			payout += winnersMap.get(player);
+		}
+		int deadMoney = hand.getPot() - payout;
+		for(Player player: winnersMap.keySet()){
+			winnersMap.put(player, winnersMap.get(player) + deadMoney / winnersMap.size());
+		}
+		int remainder = deadMoney % winnersMap.size();
+		Player oddChipWinner = winnersMap.keySet().iterator().next();
+		winnersMap.put(oddChipWinner, winnersMap.get(oddChipWinner) + remainder);
 	}
 }

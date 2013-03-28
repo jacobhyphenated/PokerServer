@@ -240,7 +240,7 @@ public class PlayerActionServiceTest extends AbstractSpringTest {
 		assertEquals(1650, hand.getPot());
 		
 		assertEquals(PlayerStatus.WAITING, playerActionService.getPlayerStatus(players.get(0)));
-		assertEquals(PlayerStatus.WAITING, playerActionService.getPlayerStatus(players.get(3)));
+		assertEquals(PlayerStatus.ACTION_TO_CHECK, playerActionService.getPlayerStatus(players.get(3)));
 		assertEquals(PlayerStatus.ALL_IN, playerActionService.getPlayerStatus(players.get(4)));
 	}
 	

@@ -102,10 +102,13 @@ public class PlayerActionServiceImpl implements PlayerActionService {
 		
 		int toCall = hand.getTotalBetAmount() - playerHand.getRoundBetAmount();
 		int total = betAmount + toCall;
-		total = Math.min(total, player.getChips());
+		if(total > player.getChips()){
+			total = player.getChips();
+			betAmount = total - toCall;
+		}
 		
 		playerHand.setRoundBetAmount(playerHand.getRoundBetAmount() + total);
-		playerHand.setBetAmount(playerHand.getRoundBetAmount() + total);
+		playerHand.setBetAmount(playerHand.getBetAmount() + total);
 		player.setChips(player.getChips() - total);
 		hand.setPot(hand.getPot() + total);
 		hand.setLastBetAmount(betAmount);
@@ -140,7 +143,7 @@ public class PlayerActionServiceImpl implements PlayerActionService {
 		}
 		
 		playerHand.setRoundBetAmount(playerHand.getRoundBetAmount() + toCall);
-		playerHand.setBetAmount(playerHand.getRoundBetAmount() + toCall);
+		playerHand.setBetAmount(playerHand.getBetAmount() + toCall);
 		player.setChips(player.getChips() - toCall);
 		hand.setPot(hand.getPot() + toCall);
 		
@@ -215,8 +218,8 @@ public class PlayerActionServiceImpl implements PlayerActionService {
 		}
 		else if(playerHand.getRoundBetAmount() > 0){
 			//We have placed a bet but now our action is check?  This means the round of betting is over
-			//TODO still problem when every player checks
-			return PlayerStatus.WAITING;
+			//TODO still problem when every player checks or BB.  Need additional info to solve this
+			return PlayerStatus.ACTION_TO_CHECK;
 		}
 		else{		
 			return PlayerStatus.ACTION_TO_CHECK;

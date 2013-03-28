@@ -267,18 +267,30 @@ public class PokerHandServiceImpl implements PokerHandService {
 	private void resetRoundValues(HandEntity hand){
 		hand.setTotalBetAmount(0);
 		hand.setLastBetAmount(0);
+		
 		List<Player> playersInHand = new ArrayList<Player>();
 		for(PlayerHand ph : hand.getPlayers()){
 			ph.setRoundBetAmount(0);
 			playersInHand.add(ph.getPlayer());
 		}
-		Player current = this.getPlayerInSB(hand);
-		//If the SB has been eliminated...
-		if(!playersInHand.contains(current)){
-			playersInHand.add(current);
-			current = PlayerUtil.getNextPlayerInGameOrder(playersInHand, current);
+		//Next player is to the left of the button.  Given that the button may have been eliminated
+		//In a round of betting, we need to put the button back to determine relative position.
+		Player btn = hand.getGame().getPlayerInBTN();
+		if(!playersInHand.contains(btn)){
+			playersInHand.add(btn);
 		}
-		hand.setCurrentToAct(current);
+		
+		Player next = PlayerUtil.getNextPlayerInGameOrder(playersInHand, btn);
+		Player firstNext = next;
+		//Skip all in players
+		while(next.getChips() <= 0 ){
+			next = PlayerUtil.getNextPlayerInGameOrder(playersInHand, next);
+			if(next.equals(firstNext)){
+				//Exit condition if all players are all in.
+				break;
+			}
+		}
+		hand.setCurrentToAct(next);
 	}
 	
 	private void determineWinner(HandEntity hand){

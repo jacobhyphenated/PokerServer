@@ -3,7 +3,6 @@ package com.hyphenated.card.service;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -102,31 +101,5 @@ public class GameServiceImpl implements GameService {
 	public Player savePlayer(Player player){
 		return playerDao.save(player);
 	}
-
-	@Override
-	@Transactional(readOnly=true)
-	public List<Player> getSortedListOfPlayers(long gameId) {
-		Game game = gameDao.findById(gameId);
-		return getSortedListOfPlayers(game);
-	}
-
-	@Override
-	public List<Player> getSortedListOfPlayers(Game game) {
-		return this.getSortedListOfPlayers(game.getPlayers());
-	}
-
-	@Override
-	public List<Player> getSortedListOfPlayers(List<Player> players) {
-		Collections.sort(players);
-		return players;
-	}
-
-	@Override
-	public List<Player> getSortedListOfPlayers(Set<Player> players) {
-		List<Player> ps = new ArrayList<Player>();
-		ps.addAll(players);
-		return this.getSortedListOfPlayers(ps);
-	}
-	
 	
 }

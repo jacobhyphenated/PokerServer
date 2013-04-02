@@ -3,6 +3,11 @@ package com.hyphenated.card.domain;
 import java.util.Arrays;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonFormat.Shape;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+@JsonFormat(shape=Shape.OBJECT)
 public enum CommonTournamentFormats {
 	
 	TWO_HR_SEVENPPL("7 to 8 People, 2 hour length", 15, 1500,
@@ -66,6 +71,7 @@ public enum CommonTournamentFormats {
 		return description;
 	}
 	
+	@JsonProperty("blindLength")
 	public int getTimeInMinutes(){
 		return timeInMins;
 	}
@@ -76,5 +82,14 @@ public enum CommonTournamentFormats {
 	
 	public int getStartingChips(){
 		return this.startingChips;
+	}
+	
+	/**
+	 * Override the super Enum method for JSON Serialization purposes.
+	 * @return Exactly the same as if you called the Enum getName().  Returns
+	 * the string value of the Enum identifier.
+	 */
+	public String getName(){
+		return super.name();
 	}
 }

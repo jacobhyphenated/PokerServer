@@ -1,6 +1,8 @@
 package com.hyphenated.card.controller;
 
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,9 +29,9 @@ public class GameController {
 	private PokerHandService handService;
 	
 	@RequestMapping("/structures")
-	public ModelAndView getGameStructures(){
-		//TODO
-		return null;
+	public @ResponseBody List<CommonTournamentFormats> getGameStructures(){
+		List<CommonTournamentFormats> structures = Arrays.asList(CommonTournamentFormats.values());
+		return structures;
 	}
 	
 	/**
@@ -42,7 +44,8 @@ public class GameController {
 	 * with one value, gameId.
 	 * @param gameName Name to identify this game
 	 * @param gameStructure Type of the game that will be played
-	 * @return {"gameId":xxxx}
+	 * @return {"gameId":xxxx}.  The Java Method returns the Map<String,Long> which is converted
+	 * by Spring to the JSON object.
 	 */
 	@RequestMapping("/create")
 	public @ResponseBody Map<String,Long> createGame(@RequestParam String gameName, 

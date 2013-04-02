@@ -1,9 +1,13 @@
 package com.hyphenated.card.controller;
 
+import java.util.Collections;
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.hyphenated.card.domain.CommonTournamentFormats;
@@ -28,20 +32,32 @@ public class GameController {
 		return null;
 	}
 	
+	/**
+	 * Create a new game based on the parameters from the URL Request
+	 * <br /><br />
+	 * The standard URL Request to the path /create with two parameters, like:
+	 * pokerserverurl.com/create?gameName=MyPokerGame&gameStructure=TWO_HR_SEVENPPL
+	 * <br /><br />
+	 * Use the Spring to leverage the Enum type conversions. Return JSON response
+	 * with one value, gameId.
+	 * @param gameName Name to identify this game
+	 * @param gameStructure Type of the game that will be played
+	 * @return {"gameId":xxxx}
+	 */
 	@RequestMapping("/create")
-	public ModelAndView createGame(@RequestParam String gameName, @RequestParam String gameStucture){
-		CommonTournamentFormats structure = CommonTournamentFormats.valueOf(gameStucture);
+	public @ResponseBody Map<String,Long> createGame(@RequestParam String gameName, 
+			@RequestParam CommonTournamentFormats gameStructure){
 		Game game = new Game();
 		game.setName(gameName);
 		game.setGameType(GameType.TOURNAMENT); //Until Cash games are supported
 		GameStructure gs = new GameStructure();
-		gs.setBlindLength(structure.getTimeInMinutes());
-		gs.setBlindLevels(structure.getBlindLevels());
-		gs.setStartingChips(structure.getStartingChips());
+		gs.setBlindLength(gameStructure.getTimeInMinutes());
+		gs.setBlindLevels(gameStructure.getBlindLevels());
+		gs.setStartingChips(gameStructure.getStartingChips());
 		game.setGameStructure(gs);
 		game = gameService.saveGame(game);
-		//TODO
-		return null;
+		
+		return Collections.singletonMap("gameId", game.getId());
 	}
 	
 	@RequestMapping("/gamestatus")

@@ -12,6 +12,13 @@ import com.hyphenated.card.domain.PlayerStatus;
 public interface PlayerActionService {
 
 	/**
+	 * Get the {@link Player} domain object based on the unique id for that player
+	 * @param playerId unique id for the player
+	 * @return Player object
+	 */
+	public Player getPlayerById(long playerId);
+	
+	/**
 	 * The player folds out of the hand
 	 * @param player {@link Player} to fold
 	 * @param hand {@link HandEntity} the player is folding from

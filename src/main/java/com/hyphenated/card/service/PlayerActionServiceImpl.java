@@ -28,6 +28,12 @@ public class PlayerActionServiceImpl implements PlayerActionService {
 	
 	@Override
 	@Transactional
+	public Player getPlayerById(long playerId){
+		return playerDao.findById(playerId);
+	}
+	
+	@Override
+	@Transactional
 	public boolean fold(Player player, HandEntity hand) {
 		hand = handDao.merge(hand);
 		

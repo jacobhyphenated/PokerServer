@@ -99,6 +99,17 @@ public class CardEvaluatorTest extends TestCase {
 		assertTrue(comp == 0);
 	}
 	
+	@Test
+	//test 3 pair vs. 2 pair
+	public void testThreePair(){
+		Hand h1 = new Hand(Card.TEN_OF_DIAMONDS, Card.TEN_OF_CLUBS);
+		Hand h2 = new Hand(Card.ACE_OF_DIAMONDS, Card.QUEEN_OF_SPADES);
+		Board b = new Board(Card.JACK_OF_CLUBS, Card.THREE_OF_HEARTS, Card.EIGHT_OF_DIAMONDS,
+				Card.JACK_OF_SPADES, Card.EIGHT_OF_DIAMONDS);
+		int comp = compare(h1,h2,b);
+		assertTrue("Comp is " + comp,comp > 0);
+	}
+	
 	//Compareto equivalent to h1.compareTo(h2) using FSMHandRankEvaluator
 	private int compare(Hand h1, Hand h2, Board b){
 		HandRankEvaluator evaluator =  FSMHandRankEvaluatorFactory.create();

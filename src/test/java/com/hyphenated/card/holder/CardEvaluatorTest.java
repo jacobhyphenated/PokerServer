@@ -1,13 +1,13 @@
 package com.hyphenated.card.holder;
 
+import junit.framework.TestCase;
+
 import org.junit.Test;
 
 import com.hyphenated.card.Card;
-import com.hyphenated.card.eval.FSMHandRankEvaluatorFactory;
 import com.hyphenated.card.eval.HandRank;
 import com.hyphenated.card.eval.HandRankEvaluator;
-
-import junit.framework.TestCase;
+import com.hyphenated.card.eval.TwoPlusTwoHandEvaluator;
 
 public class CardEvaluatorTest extends TestCase {
 
@@ -110,9 +110,9 @@ public class CardEvaluatorTest extends TestCase {
 		assertTrue("Comp is " + comp,comp > 0);
 	}
 	
-	//Compareto equivalent to h1.compareTo(h2) using FSMHandRankEvaluator
+	//Compareto equivalent to h1.compareTo(h2) using Two Plus Two Algorithm
 	private int compare(Hand h1, Hand h2, Board b){
-		HandRankEvaluator evaluator =  FSMHandRankEvaluatorFactory.create();
+		HandRankEvaluator evaluator =  TwoPlusTwoHandEvaluator.getInstance();
 		HandRank rank1 = evaluator.evaluate(b, h1);
 		HandRank rank2 = evaluator.evaluate(b, h2);
 		return rank1.compareTo(rank2);

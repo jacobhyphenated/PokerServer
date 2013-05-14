@@ -11,9 +11,9 @@ import java.util.Set;
 import com.hyphenated.card.domain.HandEntity;
 import com.hyphenated.card.domain.Player;
 import com.hyphenated.card.domain.PlayerHand;
-import com.hyphenated.card.eval.FSMHandRankEvaluatorFactory;
 import com.hyphenated.card.eval.HandRank;
 import com.hyphenated.card.eval.HandRankEvaluator;
+import com.hyphenated.card.eval.TwoPlusTwoHandEvaluator;
 import com.hyphenated.card.holder.Board;
 
 /**
@@ -22,7 +22,7 @@ import com.hyphenated.card.holder.Board;
  */
 public class PlayerUtil {
 	
-	private static HandRankEvaluator evaluator =  FSMHandRankEvaluatorFactory.create();
+	private static HandRankEvaluator evaluator =  TwoPlusTwoHandEvaluator.getInstance();
 
 	/**
 	 * Get the next player to act

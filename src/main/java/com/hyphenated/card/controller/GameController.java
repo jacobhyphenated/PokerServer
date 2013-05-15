@@ -28,6 +28,13 @@ public class GameController {
 	@Autowired
 	private PokerHandService handService;
 	
+	/**
+	 * Get a list of currently available game structures
+	 * <br /><br />
+	 * The standard URL Request to the path /structures with no parameters.
+	 * @return The response is a JSON array of {@link CommonTournamentFormats} objects in JSON Object form. 
+	 * Each object will contain a "name" that is the unique identifier for that format type.
+	 */
 	@RequestMapping("/structures")
 	public @ResponseBody List<CommonTournamentFormats> getGameStructures(){
 		List<CommonTournamentFormats> structures = Arrays.asList(CommonTournamentFormats.values());

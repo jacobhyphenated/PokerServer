@@ -5,10 +5,20 @@ import junit.framework.TestCase;
 import org.junit.Test;
 
 import com.hyphenated.card.Card;
+import com.hyphenated.card.HandType;
 import com.hyphenated.card.eval.HandRank;
 import com.hyphenated.card.eval.HandRankEvaluator;
 import com.hyphenated.card.eval.TwoPlusTwoHandEvaluator;
 
+/**
+ * JUnit tests for the Seven Card Poker Hand Evaluation.
+ * The Evaluation algorithm ({@link TwoPlusTwoHandEvaluator}) needs to always determine
+ * the winner between two (or more) hands.  It should also correctly determine
+ * the type of the hand (pair, flush, etc.)
+ * 
+ * @author jacobhyphenated
+ * Copyright (c) 2013
+ */
 public class CardEvaluatorTest extends TestCase {
 
 	@Test
@@ -108,6 +118,86 @@ public class CardEvaluatorTest extends TestCase {
 				Card.JACK_OF_SPADES, Card.EIGHT_OF_DIAMONDS);
 		int comp = compare(h1,h2,b);
 		assertTrue("Comp is " + comp,comp > 0);
+	}
+	
+	@Test
+	public void testOnePairType(){
+		Hand h1 = new Hand(Card.TEN_OF_DIAMONDS, Card.NINE_OF_CLUBS);
+		Board b = new Board(Card.JACK_OF_CLUBS, Card.THREE_OF_HEARTS, Card.NINE_OF_DIAMONDS,
+				Card.TWO_OF_SPADES, Card.EIGHT_OF_DIAMONDS);
+		HandRankEvaluator evaluator =  TwoPlusTwoHandEvaluator.getInstance();
+		HandRank rank = evaluator.evaluate(b, h1);
+		assertEquals(HandType.PAIR, rank.getHandType());
+	}
+	
+	@Test 
+	public void testTwoPairType(){
+		Hand h1 = new Hand(Card.TEN_OF_DIAMONDS, Card.NINE_OF_CLUBS);
+		Board b = new Board(Card.JACK_OF_CLUBS, Card.THREE_OF_HEARTS, Card.NINE_OF_DIAMONDS,
+				Card.JACK_OF_SPADES, Card.EIGHT_OF_DIAMONDS);
+		HandRankEvaluator evaluator =  TwoPlusTwoHandEvaluator.getInstance();
+		HandRank rank = evaluator.evaluate(b, h1);
+		assertEquals(HandType.TWO_PAIR, rank.getHandType());
+	}
+	
+	@Test
+	public void testThreeOfAKindType(){
+		Hand h1 = new Hand(Card.JACK_OF_DIAMONDS, Card.FIVE_OF_CLUBS);
+		Board b = new Board(Card.JACK_OF_CLUBS, Card.THREE_OF_HEARTS, Card.NINE_OF_DIAMONDS,
+				Card.JACK_OF_SPADES, Card.EIGHT_OF_DIAMONDS);
+		HandRankEvaluator evaluator =  TwoPlusTwoHandEvaluator.getInstance();
+		HandRank rank = evaluator.evaluate(b, h1);
+		assertEquals(HandType.THREE_OF_A_KIND, rank.getHandType());
+	}
+	
+	@Test
+	public void testFullHouseType(){
+		Hand h1 = new Hand(Card.JACK_OF_DIAMONDS, Card.NINE_OF_CLUBS);
+		Board b = new Board(Card.JACK_OF_CLUBS, Card.THREE_OF_HEARTS, Card.NINE_OF_DIAMONDS,
+				Card.JACK_OF_SPADES, Card.EIGHT_OF_DIAMONDS);
+		HandRankEvaluator evaluator =  TwoPlusTwoHandEvaluator.getInstance();
+		HandRank rank = evaluator.evaluate(b, h1);
+		assertEquals(HandType.FULL_HOUSE, rank.getHandType());
+	}
+	
+	@Test
+	public void testStraightType(){
+		Hand h1 = new Hand(Card.JACK_OF_DIAMONDS, Card.NINE_OF_CLUBS);
+		Board b = new Board(Card.TEN_OF_CLUBS, Card.THREE_OF_HEARTS, Card.NINE_OF_DIAMONDS,
+				Card.QUEEN_OF_SPADES, Card.EIGHT_OF_DIAMONDS);
+		HandRankEvaluator evaluator =  TwoPlusTwoHandEvaluator.getInstance();
+		HandRank rank = evaluator.evaluate(b, h1);
+		assertEquals(HandType.STRAIGHT, rank.getHandType());
+	}
+	
+	@Test
+	public void testFlushType(){
+		Hand h1 = new Hand(Card.JACK_OF_DIAMONDS, Card.NINE_OF_DIAMONDS);
+		Board b = new Board(Card.JACK_OF_CLUBS, Card.THREE_OF_HEARTS, Card.TWO_OF_DIAMONDS,
+				Card.FIVE_OF_DIAMONDS, Card.EIGHT_OF_DIAMONDS);
+		HandRankEvaluator evaluator =  TwoPlusTwoHandEvaluator.getInstance();
+		HandRank rank = evaluator.evaluate(b, h1);
+		assertEquals(HandType.FLUSH, rank.getHandType());
+	}
+	
+	@Test
+	public void testFourOfAKindType(){
+		Hand h1 = new Hand(Card.JACK_OF_DIAMONDS, Card.JACK_OF_CLUBS);
+		Board b = new Board(Card.JACK_OF_HEARTS, Card.THREE_OF_HEARTS, Card.NINE_OF_DIAMONDS,
+				Card.JACK_OF_SPADES, Card.EIGHT_OF_DIAMONDS);
+		HandRankEvaluator evaluator =  TwoPlusTwoHandEvaluator.getInstance();
+		HandRank rank = evaluator.evaluate(b, h1);
+		assertEquals(HandType.FOUR_OF_A_KIND, rank.getHandType());
+	}
+	
+	@Test
+	public void testStraightFlushType(){
+		Hand h1 = new Hand(Card.JACK_OF_DIAMONDS, Card.NINE_OF_CLUBS);
+		Board b = new Board(Card.TEN_OF_DIAMONDS, Card.THREE_OF_HEARTS, Card.NINE_OF_DIAMONDS,
+				Card.QUEEN_OF_DIAMONDS, Card.EIGHT_OF_DIAMONDS);
+		HandRankEvaluator evaluator =  TwoPlusTwoHandEvaluator.getInstance();
+		HandRank rank = evaluator.evaluate(b, h1);
+		assertEquals(HandType.STRAIGHT_FLUSH, rank.getHandType());
 	}
 	
 	//Compareto equivalent to h1.compareTo(h2) using Two Plus Two Algorithm

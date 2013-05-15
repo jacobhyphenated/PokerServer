@@ -49,6 +49,9 @@ public class HandRank implements Comparable<HandRank>, Serializable {
 	 * @return
 	 */
 	public HandType getHandType(){
+		/*The rank value is categorized based on the Two Plus Two (2+2) hand evaluation algorithm.
+		0 == bad hand, 1==one pair, so on.  This value is stored in the twelfth bit of the rankValue score.
+		Bit-shift to get the type value bit, match it to the enum with the ordinal ordering for the 2+2 evaluation type*/
 		return HandType.values()[rankValue >> 12];
 	}
 

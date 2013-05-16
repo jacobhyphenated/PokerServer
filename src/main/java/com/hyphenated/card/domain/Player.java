@@ -10,6 +10,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @Entity
 @Table(name="player")
 public class Player implements Comparable<Player>{
@@ -21,6 +23,7 @@ public class Player implements Comparable<Player>{
 	private int gamePosition;
 	private int finishPosition;
 	
+	@JsonIgnore
 	@Column(name="player_id")
 	@Id
 	@GeneratedValue(strategy=GenerationType.TABLE)
@@ -31,6 +34,7 @@ public class Player implements Comparable<Player>{
 		this.id = id;
 	}
 	
+	@JsonIgnore
 	@ManyToOne
 	@JoinColumn(name="game_id")
 	public Game getGame() {
@@ -56,6 +60,7 @@ public class Player implements Comparable<Player>{
 		this.chips = chips;
 	}
 	
+	@JsonIgnore
 	@Column(name="game_position")
 	public int getGamePosition() {
 		return gamePosition;

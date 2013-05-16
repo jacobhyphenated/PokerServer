@@ -12,12 +12,14 @@ import com.hyphenated.card.Card;
 import com.hyphenated.card.domain.BlindLevel;
 import com.hyphenated.card.domain.CommonTournamentFormats;
 import com.hyphenated.card.domain.Game;
+import com.hyphenated.card.domain.GameStatus;
 import com.hyphenated.card.domain.GameStructure;
 import com.hyphenated.card.domain.GameType;
 import com.hyphenated.card.domain.HandEntity;
 import com.hyphenated.card.domain.Player;
 import com.hyphenated.card.domain.PlayerHand;
 import com.hyphenated.card.domain.PlayerStatus;
+import com.hyphenated.card.util.GameUtil;
 
 public class IntegrationTest extends AbstractSpringTest {
 	
@@ -62,6 +64,7 @@ public class IntegrationTest extends AbstractSpringTest {
 		assertEquals(PlayerStatus.NOT_STARTED, playerActionService.getPlayerStatus(p1));
 		assertEquals(PlayerStatus.NOT_STARTED, playerActionService.getPlayerStatus(p2));
 		assertEquals(PlayerStatus.NOT_STARTED, playerActionService.getPlayerStatus(p3));
+		assertEquals(GameStatus.NOT_STARTED, GameUtil.getGameStatus(game));
 		
 		game = gameService.getGameById(game.getId(), true);
 		
@@ -71,6 +74,7 @@ public class IntegrationTest extends AbstractSpringTest {
 		assertEquals(PlayerStatus.SEATING, playerActionService.getPlayerStatus(p1));
 		assertEquals(PlayerStatus.SEATING, playerActionService.getPlayerStatus(p2));
 		assertEquals(PlayerStatus.SEATING, playerActionService.getPlayerStatus(p3));
+		assertEquals(GameStatus.SEATING, GameUtil.getGameStatus(game));
 		
 		HandEntity hand = handService.startNewHand(game);
 		assertEquals(game.getGameStructure().getCurrentBlindLevel(), BlindLevel.BLIND_10_20);
@@ -82,6 +86,7 @@ public class IntegrationTest extends AbstractSpringTest {
 		assertEquals(PlayerStatus.WAITING, playerActionService.getPlayerStatus(sb));
 		assertEquals(PlayerStatus.WAITING, playerActionService.getPlayerStatus(bb));
 		assertEquals(PlayerStatus.ACTION_TO_CALL, playerActionService.getPlayerStatus(btn));
+		assertEquals(GameStatus.PREFLOP, GameUtil.getGameStatus(game));
 		
 		assertEquals(1000, btn.getChips());
 		assertEquals(990, sb.getChips());
@@ -205,6 +210,7 @@ public class IntegrationTest extends AbstractSpringTest {
 			assertEquals(65, ph.getBetAmount());
 			assertEquals(65, ph.getRoundBetAmount());
 		}
+		assertEquals(GameStatus.PREFLOP, GameUtil.getGameStatus(game));
 		
 		hand = handService.flop(hand);
 		assertTrue(playerActionService.check(sb, hand));
@@ -214,6 +220,7 @@ public class IntegrationTest extends AbstractSpringTest {
 			assertEquals(65, ph.getBetAmount());
 			assertEquals(0, ph.getRoundBetAmount());
 		}
+		assertEquals(GameStatus.FLOP, GameUtil.getGameStatus(game));
 		
 		hand = handService.turn(hand);
 		assertTrue(playerActionService.check(sb, hand));
@@ -226,6 +233,7 @@ public class IntegrationTest extends AbstractSpringTest {
 			assertEquals(165, ph.getBetAmount());
 			assertEquals(100, ph.getRoundBetAmount());
 		}
+		assertEquals(GameStatus.TURN, GameUtil.getGameStatus(game));
 		
 		hand = handService.river(hand);
 		assertEquals(PlayerStatus.ACTION_TO_CHECK, playerActionService.getPlayerStatus(co));
@@ -239,6 +247,7 @@ public class IntegrationTest extends AbstractSpringTest {
 			assertEquals(300, ph.getRoundBetAmount());
 		}
 		assertEquals(1015, hand.getPot());
+		assertEquals(GameStatus.RIVER, GameUtil.getGameStatus(game));
 		
 		for(PlayerHand ph : hand.getPlayers()){
 			if(ph.getPlayer().equals(co)){
@@ -260,6 +269,7 @@ public class IntegrationTest extends AbstractSpringTest {
 		
 		assertEquals(PlayerStatus.LOST_HAND, playerActionService.getPlayerStatus(btn));
 		assertEquals(PlayerStatus.WON_HAND, playerActionService.getPlayerStatus(co));
+		assertEquals(GameStatus.END_HAND, GameUtil.getGameStatus(game));
 		
 		assertEquals(980, bb.getChips());
 		assertEquals(935, sb.getChips());

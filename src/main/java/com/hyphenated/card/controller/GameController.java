@@ -1,7 +1,9 @@
 package com.hyphenated.card.controller;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -14,10 +16,13 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.hyphenated.card.domain.CommonTournamentFormats;
 import com.hyphenated.card.domain.Game;
+import com.hyphenated.card.domain.GameStatus;
 import com.hyphenated.card.domain.GameStructure;
 import com.hyphenated.card.domain.GameType;
+import com.hyphenated.card.domain.Player;
 import com.hyphenated.card.service.GameService;
 import com.hyphenated.card.service.PokerHandService;
+import com.hyphenated.card.util.GameUtil;
 
 @Controller
 public class GameController {
@@ -70,10 +75,23 @@ public class GameController {
 		return Collections.singletonMap("gameId", game.getId());
 	}
 	
+	/**
+	 * Get the status of the game.  List the status code as well as a list of all players in the game.
+	 * <br /><br />
+	 * The response will be a JSON Object containing two values, the status and a list of player JSON objects.
+	 * @param gameId unique identifier for the game
+	 * @return JSON Object of the format: {gameStatus:xxx,players:[{name:xxx,chips:xxx,finishPosition:xxx},...]}
+	 */
 	@RequestMapping("/gamestatus")
-	public ModelAndView getGameStatus(@RequestParam long gameId){
-		//TODO
-		return null;
+	public @ResponseBody Map<String, ? extends Object> getGameStatus(@RequestParam long gameId){
+		Game game = gameService.getGameById(gameId, true);
+		GameStatus gs = GameUtil.getGameStatus(game);
+		Collection<Player> players = game.getPlayers();
+		
+		Map<String, Object> results = new HashMap<String, Object>();
+		results.put("gameStatus", gs);
+		results.put("players", players);
+		return results;
 	}
 	
 	@RequestMapping("/start/game")

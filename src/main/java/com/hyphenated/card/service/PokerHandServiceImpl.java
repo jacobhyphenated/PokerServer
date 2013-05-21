@@ -41,6 +41,7 @@ public class PokerHandServiceImpl implements PokerHandService {
 	@Override
 	@Transactional
 	public HandEntity startNewHand(Game game) {
+		game = gameDao.merge(game);
 		HandEntity hand = new HandEntity();
 		updateBlindLevel(game);
 		hand.setBlindLevel(game.getGameStructure().getCurrentBlindLevel()); 

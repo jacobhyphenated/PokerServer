@@ -86,8 +86,8 @@ public enum CommonTournamentFormats {
 	
 	/**
 	 * Override the super Enum method for JSON Serialization purposes.
-	 * @return Exactly the same as if you called the Enum getName().  Returns
-	 * the string value of the Enum identifier.
+	 * @return Exactly the same as if you called the Enum name() method.  
+	 * Returns the string value of the Enum identifier.
 	 */
 	public String getName(){
 		return super.name();

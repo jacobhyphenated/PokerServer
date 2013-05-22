@@ -19,6 +19,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import com.hyphenated.card.Card;
 
@@ -65,7 +66,7 @@ public class HandEntity {
 		this.board = board;
 	}
 	
-	@OneToMany(fetch=FetchType.EAGER, mappedBy="handEntity",cascade={CascadeType.ALL})
+	@OneToMany(fetch=FetchType.EAGER, mappedBy="handEntity",cascade={CascadeType.ALL},orphanRemoval=true)
 	public Set<PlayerHand> getPlayers() {
 		return players;
 	}
@@ -118,17 +119,32 @@ public class HandEntity {
 		this.totalBetAmount = betAmount;
 	}
 	
-	@Column(name="bet_amount")
 	
 	/**
 	 * In No Limit poker, the minimum bet size is twice the previous bet.  Use this field to determine
 	 * what that amount would be.
 	 * @return The last bet/raise amount
 	 */
+	@Column(name="bet_amount")
 	public int getLastBetAmount() {
 		return lastBetAmount;
 	}
 	public void setLastBetAmount(int lastBetAmount) {
 		this.lastBetAmount = lastBetAmount;
+	}
+	
+	@Transient
+	@Override
+	public boolean equals(Object o){
+		if (o == null || !(o instanceof HandEntity)){
+			return false;
+		}
+		return ((HandEntity) o).getId() == this.getId();
+	}
+	
+	@Transient
+	@Override
+	public int hashCode(){
+		return (int) this.getId();
 	}
 }

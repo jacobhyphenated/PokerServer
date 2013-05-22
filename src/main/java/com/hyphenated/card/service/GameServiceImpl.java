@@ -83,9 +83,14 @@ public class GameServiceImpl implements GameService {
 	@Transactional
 	public Player addNewPlayerToGame(Game game, Player player){
 		if(game.isStarted() && game.getGameType() == GameType.TOURNAMENT){
-			return null;
+			throw new IllegalStateException("Tournament in progress, no new players may join");
 		}
 		player.setGame(game);
+		//Set up player according to game logic.
+		if(game.getGameType() == GameType.TOURNAMENT){
+			player.setChips(game.getGameStructure().getStartingChips());
+		}
+		
 		player = playerDao.save(player);
 		if(player == null){
 			return null;

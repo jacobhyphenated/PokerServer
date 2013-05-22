@@ -114,6 +114,7 @@ public class PokerHandServiceImpl implements PokerHandService {
 
 		List<Player> players = new ArrayList<Player>();
 		//For all players in the hand, remove any who are out of chips (eliminated)
+		//TODO mark the player object as eliminated, set finished position
 		int count = 0;
 		for(Player p : game.getPlayers()){
 			if(p.getChips() != 0){
@@ -164,6 +165,7 @@ public class PokerHandServiceImpl implements PokerHandService {
 		}
 		//Re-attach to persistent context for this transaction (Lazy Loading stuff)
 		hand = handDao.merge(hand);
+		//TODO make sure current player action is ACTION_TO_CHECK
 		
 		Deck d = new Deck(hand.getCards());
 		d.shuffleDeck();
@@ -184,6 +186,8 @@ public class PokerHandServiceImpl implements PokerHandService {
 		}
 		//Re-attach to persistent context for this transaction (Lazy Loading stuff)
 		hand = handDao.merge(hand);
+		//TODO make sure current player action is ACTION_TO_CHECK
+		
 		Deck d = new Deck(hand.getCards());
 		d.shuffleDeck();
 		BoardEntity board = hand.getBoard();
@@ -202,6 +206,8 @@ public class PokerHandServiceImpl implements PokerHandService {
 		}
 		//Re-attach to persistent context for this transaction (Lazy Loading stuff)
 		hand = handDao.merge(hand);
+		//TODO make sure current player action is ACTION_TO_CHECK
+		
 		Deck d = new Deck(hand.getCards());
 		d.shuffleDeck();
 		BoardEntity board = hand.getBoard();

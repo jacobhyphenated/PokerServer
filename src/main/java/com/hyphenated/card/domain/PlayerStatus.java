@@ -1,10 +1,14 @@
 package com.hyphenated.card.domain;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonFormat.Shape;
+
 /**
  * Enum type to track the player's current status in the game/hand
  * 
  * @author jacobhyphenated
  */
+@JsonFormat(shape=Shape.STRING)
 public enum PlayerStatus {
 	/** The game has not been started */
 	NOT_STARTED,

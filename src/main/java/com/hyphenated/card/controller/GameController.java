@@ -89,11 +89,11 @@ public class GameController {
 	 * Get the status of the game.  List the status code as well as a list of all players in the game.
 	 * <br /><br />
 	 * The response will be a JSON Object containing the status, a list of player JSON objects, the
-	 * big blind, the small blind, the pot size for the hand (if a hand is in progress), and the number
-	 * of milliseconds left for the current blind level.
+	 * big blind, the small blind, the pot size for the hand and the board cards (if a hand is in progress), 
+	 * and the number of milliseconds left for the current blind level.
 	 * @param gameId unique identifier for the game
 	 * @return JSON Object of the format: {gameStatus:xxx,smallBlind:xx,bigBlind:xx,blindTime:xxx,pot:xxx,
-	 * players:[{name:xxx,chips:xxx,finishPosition:xxx},...]}
+	 * players:[{name:xxx,chips:xxx,finishPosition:xxx},...],cards:[Xx,Xx...]}
 	 */
 	@RequestMapping("/gamestatus")
 	public @ResponseBody Map<String, ? extends Object> getGameStatus(@RequestParam long gameId){
@@ -104,23 +104,19 @@ public class GameController {
 		Map<String, Object> results = new HashMap<String, Object>();
 		results.put("gameStatus", gs);
 		results.put("players", players);
-		//Before the game is started, there is no current blind level set.  Return 0/0 for blinds
-		if(game.getGameStructure().getCurrentBlindLevel() == null){
-			results.put("smallBlind", 0);
-			results.put("bigBlind", 0);
-		}
-		else{
+		//Before the game is started, there is no current blind level set.
+		if(game.getGameStructure().getCurrentBlindLevel() != null){
 			results.put("smallBlind", game.getGameStructure().getCurrentBlindLevel().getSmallBlind());
 			results.put("bigBlind", game.getGameStructure().getCurrentBlindLevel().getBigBlind());
 		}
-		long timeLeft = 0;
 		if(game.getGameStructure().getCurrentBlindEndTime() != null){
-			timeLeft = game.getGameStructure().getCurrentBlindEndTime().getTime() - new Date().getTime();
+			long timeLeft = game.getGameStructure().getCurrentBlindEndTime().getTime() - new Date().getTime();
 			timeLeft = Math.max(0, timeLeft);
+			results.put("blindTime", timeLeft);
 		}
-		results.put("blindTime", timeLeft);
 		if(game.getCurrentHand() != null){
 			results.put("pot", game.getCurrentHand().getPot());
+			results.put("cards", game.getCurrentHand().getBoard().getBoardCards());
 		}
 		return results;
 	}
@@ -221,6 +217,15 @@ public class GameController {
 	public @ResponseBody Map<String,Boolean> endHand(@RequestParam long handId){
 		HandEntity hand = handService.getHandById(handId);
 		handService.endHand(hand);
+		return Collections.singletonMap("success", true);
+	}
+	
+	/**
+	 * Sometimes it is nice to know that everything is working
+	 * @return {"success":true}
+	 */
+	@RequestMapping("/ping")
+	public @ResponseBody Map<String,Boolean> pingServer(){
 		return Collections.singletonMap("success", true);
 	}
 }

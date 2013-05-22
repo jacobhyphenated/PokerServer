@@ -62,11 +62,12 @@ public class PlayerActionServiceImpl implements PlayerActionService {
 		}
 		hand.setCurrentToAct(next);
 		
-		handDao.merge(hand);
+		handDao.save(hand);
 		return true;
 	}
 
 	@Override
+	@Transactional
 	public boolean check(Player player, HandEntity hand) {
 		hand = handDao.merge(hand);
 		
@@ -87,6 +88,7 @@ public class PlayerActionServiceImpl implements PlayerActionService {
 	}
 
 	@Override
+	@Transactional
 	public boolean bet(Player player, HandEntity hand, int betAmount) {
 		hand = handDao.merge(hand);
 		if(!player.equals(hand.getCurrentToAct())){
@@ -128,6 +130,7 @@ public class PlayerActionServiceImpl implements PlayerActionService {
 	}
 
 	@Override
+	@Transactional
 	public boolean call(Player player, HandEntity hand) {
 		hand = handDao.merge(hand);
 		//Cannot call out of turn

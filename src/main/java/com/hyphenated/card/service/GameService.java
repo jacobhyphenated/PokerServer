@@ -53,6 +53,10 @@ public interface GameService {
 	 */
 	public Player savePlayer(Player player);
 	
+	//TODO List active games
+	//Games that are not started, games that are cash games and still in progress
+	//Need a way to weed out old/expired/inactive games
+	
 	//TODO Player add Chips method - for cash games and rebuy tournaments
 	//Do this in service layer to enforce tournament logic.
 	//Cash games could theoretically be done in the controller and call save

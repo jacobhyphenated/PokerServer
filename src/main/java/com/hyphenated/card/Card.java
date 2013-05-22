@@ -1,11 +1,31 @@
 package com.hyphenated.card;
 
-import static com.hyphenated.card.Rank.*;
-import static com.hyphenated.card.Suit.*;
+import static com.hyphenated.card.Rank.ACE;
+import static com.hyphenated.card.Rank.EIGHT;
+import static com.hyphenated.card.Rank.FIVE;
+import static com.hyphenated.card.Rank.FOUR;
+import static com.hyphenated.card.Rank.JACK;
+import static com.hyphenated.card.Rank.KING;
+import static com.hyphenated.card.Rank.NINE;
+import static com.hyphenated.card.Rank.QUEEN;
+import static com.hyphenated.card.Rank.SEVEN;
+import static com.hyphenated.card.Rank.SIX;
+import static com.hyphenated.card.Rank.TEN;
+import static com.hyphenated.card.Rank.THREE;
+import static com.hyphenated.card.Rank.TWO;
+import static com.hyphenated.card.Suit.CLUBS;
+import static com.hyphenated.card.Suit.DIAMONDS;
+import static com.hyphenated.card.Suit.HEARTS;
+import static com.hyphenated.card.Suit.SPADES;
+
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 
 /**
  * Enumeration of all cards used in Texas Hold'em.
  */
+//Serialize a member of this enum to JSON using the enum's toString method
+@JsonSerialize(using=ToStringSerializer.class)
 public enum Card {
 
 	TWO_OF_CLUBS(TWO, CLUBS, 1),

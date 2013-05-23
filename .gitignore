@@ -6,6 +6,4 @@
 *.ear
 target/
 bin/
-.settings/
-.project
-.classpath
+.metadata/

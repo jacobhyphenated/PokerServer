@@ -1,3 +1,26 @@
+/*
+The MIT License (MIT)
+
+Copyright (c) 2013 Jacob Kanipe-Illig
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+THE SOFTWARE.
+*/
 package com.hyphenated.card.eval;
 
 import java.io.BufferedInputStream;
@@ -16,12 +39,16 @@ public class ConfigurationLoader {
 	private static final int HAND_RANK_SIZE = 32487834;
 	private static Logger log = Logger.getLogger(ConfigurationLoader.class);
 
-	/*
-	 * Load hand rank lookup table for Poker hands
+	/**
+	 * Load hand rank lookup table for poker hands.
+	 * This will load the file and do the byte conversions so we get a nice integer array back.
+	 * @param name file name of the precomputed hand rank file
+	 * @return integer array of hand rank lookup values in accordance with the 2+2 hand evaluation algorithm.
+	 * @throws RuntimeException If loading this file fails, prepare to crash because hand evals will not work
 	 */
 	public int[] loadHandRankResource(String name)
 			throws RuntimeException {
-		int HR[] = new int[HAND_RANK_SIZE];
+		int handRankArray[] = new int[HAND_RANK_SIZE];
 		try {
 			int tableSize = HAND_RANK_SIZE * 4;
 	        byte[] b = new byte[tableSize];
@@ -36,9 +63,9 @@ public class ConfigurationLoader {
 				Closeables.closeQuietly(br);
 			}
 			for (int i = 0; i < HAND_RANK_SIZE; i++) {
-	            HR[i] = littleEndianByteArrayToInt(b, i * 4);
+	            handRankArray[i] = littleEndianByteArrayToInt(b, i * 4);
 	        }
-			return HR;
+			return handRankArray;
 		} catch (IOException e) {
 			throw new RuntimeException("cannot read resource " + name, e);
 		}

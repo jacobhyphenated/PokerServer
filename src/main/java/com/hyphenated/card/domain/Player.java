@@ -83,7 +83,6 @@ public class Player implements Comparable<Player>{
 		this.chips = chips;
 	}
 	
-	@JsonIgnore
 	@Column(name="game_position")
 	public int getGamePosition() {
 		return gamePosition;

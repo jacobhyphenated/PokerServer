@@ -91,7 +91,7 @@ public class GameController {
 	 * @return {"gameId":xxxx}.  The Java Method returns the Map<String,Long> which is converted
 	 * by Spring to the JSON object.
 	 */
-	@RequestMapping("/create")
+	@RequestMapping(value="/create")
 	public @ResponseBody Map<String,Long> createGame(@RequestParam String gameName, 
 			@RequestParam CommonTournamentFormats gameStructure){
 		Game game = new Game();
@@ -115,9 +115,9 @@ public class GameController {
 	 * and the number of milliseconds left for the current blind level.
 	 * @param gameId unique identifier for the game
 	 * @return JSON Object of the format: {gameStatus:xxx,smallBlind:xx,bigBlind:xx,blindTime:xxx,pot:xxx,
-	 * players:[{name:xxx,chips:xxx,finishPosition:xxx},...],cards:[Xx,Xx...]}
+	 * players:[{name:xxx,chips:xxx,finishPosition:xxx,gamePosition:xxx},...],cards:[Xx,Xx...]}
 	 */
-	@RequestMapping("/gamestatus")
+	@RequestMapping(value="/gamestatus")
 	public @ResponseBody Map<String, ? extends Object> getGameStatus(@RequestParam long gameId){
 		Game game = gameService.getGameById(gameId, true);
 		GameStatus gs = GameUtil.getGameStatus(game);

@@ -35,12 +35,15 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.hyphenated.card.domain.Game;
+import com.hyphenated.card.domain.GameStatus;
 import com.hyphenated.card.domain.HandEntity;
 import com.hyphenated.card.domain.Player;
 import com.hyphenated.card.domain.PlayerHand;
 import com.hyphenated.card.domain.PlayerStatus;
 import com.hyphenated.card.service.GameService;
 import com.hyphenated.card.service.PlayerActionService;
+import com.hyphenated.card.service.PokerHandService;
+import com.hyphenated.card.util.GameUtil;
 
 /**
  * Controller class that will handle the front-end API interactions regarding
@@ -57,6 +60,9 @@ public class PlayerController {
 	
 	@Autowired
 	private GameService gameService;
+	
+	@Autowired
+	private PokerHandService handService;
 	
 	@RequestMapping("/games")
 	public ModelAndView getGames(){
@@ -95,7 +101,20 @@ public class PlayerController {
 		Game game = gameService.getGameById(gameId, false);
 		Player player = playerActionService.getPlayerById(playerId);
 		Map<String,Object> results = new HashMap<String, Object>();
-		results.put("status", playerActionService.getPlayerStatus(player));
+		
+		//Get the player status.
+		//In the special case of preflop, player is not current to act, see if the player is SB or BB
+		PlayerStatus playerStatus = playerActionService.getPlayerStatus(player);
+		if(playerStatus == PlayerStatus.WAITING && GameUtil.getGameStatus(game) == GameStatus.PREFLOP){
+			if(player.equals(handService.getPlayerInSB(game.getCurrentHand()))){
+				playerStatus = PlayerStatus.POST_SB;
+			}
+			else if(player.equals(handService.getPlayerInBB(game.getCurrentHand()))){
+				playerStatus = PlayerStatus.POST_BB;
+			}
+		}
+		results.put("status", playerStatus );
+		
 		results.put("chips", player.getChips());
 		if(game.getCurrentHand() != null){
 			HandEntity hand = game.getCurrentHand();
@@ -183,8 +202,8 @@ public class PlayerController {
 	 * To put in another way, this betAmount value is the amount is the amount bet <em>in addition to</em>
 	 * the amount it would take to call.
 	 * <br />For example: Player 1 bets 100.  Player 2 raises to 300.  Player 2 calls this method with the
-	 * betAmount parameter of 200.  Player 1 re-raises to 900 total (100 + 300 + 500 more).  The betAmount
-	 * parameter is passed as 500.
+	 * betAmount parameter of 200.  Player 1 re-raises to 900 total (100 + 200 to call + 600 more).  The betAmount
+	 * parameter is passed as 600.
 	 * @return Map representing a JSON String with two values: success and chips.  If a bet is not a legal
 	 * action, or if it is not this player's turn, success will be false. The chips value represents the
 	 * amount of chips the player has after completing this action.

@@ -149,7 +149,7 @@ Get the status of an existing game. Contains information about the current game 
 * *players* - Array of player objects
  * *name* - name of the player
  * *chips* - number of chips the player has remaining
- * *finishPosition* - if the player is out of the game, this is the position they finished in. This will be zero for players still in the game.  This field will always be zero in the current implemenation (version 0.1)
+ * *finishPosition* - if the player is out of the game, this is the position they finished in. This will be zero for players still in the game. 
  * *gamePosition* - the seating position.  This determines the order of action for every hand, and should determine the seating.  This is randomized at the start of a tournament.
 
 ###Start Game (/startgame)
@@ -353,7 +353,7 @@ If there is an error on the server side, you will get back JSON that describes t
 * *error* - A quick message about the error
 * *errorDetails* - A more detailed message about what caused the error.
 
-One example of a situation where you might expect the error json respons would be if you tried to call the Turn method before the flop was dealt. This would give you an error message telling you that the opporation is not allowed given the current state of the hand.
+One example of a situation where you might expect the error json response would be if you tried to call the Turn method before the flop was dealt. This would give you an error message telling you that the opporation is not allowed given the current state of the hand.
 
 
 Security

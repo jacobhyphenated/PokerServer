@@ -422,6 +422,9 @@ public class IntegrationTest extends AbstractSpringTest {
 		assertEquals(PlayerStatus.WAITING, playerActionService.getPlayerStatus(co));
 		assertEquals(PlayerStatus.WAITING, playerActionService.getPlayerStatus(btn));
 		
+		assertEquals(4, sb.getFinishPosition());
+		assertEquals(3, game.getPlayersRemaining());
+		
 		assertEquals(2000, btn.getChips());
 		assertEquals(980, bb.getChips());
 		assertEquals(990, co.getChips());
@@ -481,6 +484,12 @@ public class IntegrationTest extends AbstractSpringTest {
 		assertEquals(PlayerStatus.WAITING, playerActionService.getPlayerStatus(bb));
 		assertEquals(PlayerStatus.WAITING, playerActionService.getPlayerStatus(btn));
 		
+		assertEquals(4, co.getFinishPosition());
+		assertEquals(0, sb.getFinishPosition());
+		assertEquals(0, btn.getFinishPosition());
+		assertEquals(0, bb.getFinishPosition());
+		assertEquals(3, game.getPlayersRemaining());
+		
 		assertEquals(2020, sb.getChips());
 		assertEquals(970, bb.getChips());
 		assertEquals(980, btn.getChips());
@@ -539,6 +548,15 @@ public class IntegrationTest extends AbstractSpringTest {
 		assertEquals(PlayerStatus.ACTION_TO_CALL, playerActionService.getPlayerStatus(sb));
 		assertEquals(PlayerStatus.WAITING, playerActionService.getPlayerStatus(bb));
 		assertEquals(PlayerStatus.ELIMINATED, playerActionService.getPlayerStatus(btn));
+		
+		if(co.getFinishPosition() != 4){
+			assertEquals(3, co.getFinishPosition());
+			assertEquals(4, btn.getFinishPosition());
+		}else{
+			assertEquals(4, co.getFinishPosition());
+			assertEquals(3, btn.getFinishPosition());
+		}
+		assertEquals(2, game.getPlayersRemaining());
 		
 		assertEquals(3010, sb.getChips());
 		assertEquals(960, bb.getChips());
@@ -642,6 +660,79 @@ public class IntegrationTest extends AbstractSpringTest {
 		assertEquals(PlayerStatus.LOST_HAND, playerActionService.getPlayerStatus(bb));
 		assertEquals(PlayerStatus.WON_HAND, playerActionService.getPlayerStatus(sb));
 		assertEquals(PlayerStatus.WON_HAND, playerActionService.getPlayerStatus(co));
+		
+		assertEquals(4, bb.getFinishPosition());
+	}
+	
+	@Test
+	public void testMultipleEliminationsWithDifferentStacks(){
+		Game game = gameSetup();
+		HandEntity hand = handService.startNewHand(game);
+		Player bb = handService.getPlayerInBB(hand);
+		Player sb = handService.getPlayerInSB(hand);
+		Player co = hand.getCurrentToAct();
+		playerActionService.call(co, hand);
+		Player btn = hand.getCurrentToAct();
+		playerActionService.call(btn, hand);
+		playerActionService.call(sb, hand);
+		playerActionService.check(bb, hand);
+		
+		//Set chip amounts for Side pots
+		sb.setChips(480);
+		bb.setChips(980);
+		co.setChips(1780);
+		btn.setChips(1880);
+		assertEquals(80, hand.getPot());
+		
+		handService.flop(hand);
+		playerActionService.bet(sb, hand, 480);
+		playerActionService.bet(bb, hand, 500);
+		playerActionService.fold(co, hand);
+		playerActionService.call(btn, hand);
+		
+		handService.turn(hand);
+		assertEquals(PlayerStatus.ALL_IN, playerActionService.getPlayerStatus(sb));
+		assertEquals(PlayerStatus.ALL_IN, playerActionService.getPlayerStatus(bb));
+		assertEquals(PlayerStatus.SIT_OUT, playerActionService.getPlayerStatus(co));
+		assertEquals(PlayerStatus.ACTION_TO_CHECK, playerActionService.getPlayerStatus(btn));
+		//80 + 480 * 3 + 500 * 2
+		assertEquals(2520,hand.getPot());
+
+		handService.river(hand);
+		
+		//Give BTN winning set
+		for(PlayerHand ph : hand.getPlayers()){
+			if(ph.getPlayer().equals(sb)){
+				ph.setCard1(Card.ACE_OF_CLUBS);
+				ph.setCard2(Card.ACE_OF_DIAMONDS);
+			}
+			else if(ph.getPlayer().equals(bb)){
+				ph.setCard1(Card.JACK_OF_CLUBS);
+				ph.setCard2(Card.JACK_OF_DIAMONDS);
+			}
+			else{
+				ph.setCard1(Card.FIVE_OF_CLUBS);
+				ph.setCard2(Card.FIVE_OF_HEARTS);
+			}
+		}
+		
+		hand.getBoard().setFlop1(Card.TWO_OF_SPADES);
+		hand.getBoard().setFlop2(Card.THREE_OF_SPADES);
+		hand.getBoard().setFlop3(Card.FIVE_OF_DIAMONDS);
+		hand.getBoard().setTurn(Card.QUEEN_OF_CLUBS);
+		hand.getBoard().setRiver(Card.NINE_OF_HEARTS);
+		
+		handService.endHand(hand);
+		
+		assertEquals(PlayerStatus.WON_HAND, playerActionService.getPlayerStatus(btn));
+		assertEquals(PlayerStatus.LOST_HAND, playerActionService.getPlayerStatus(bb));
+		assertEquals(PlayerStatus.SIT_OUT, playerActionService.getPlayerStatus(co));
+		assertEquals(PlayerStatus.LOST_HAND, playerActionService.getPlayerStatus(sb));
+		
+		//sb had less chips to start, so finishes in 4th place while bb gets 3rd.
+		assertEquals(4, sb.getFinishPosition());
+		assertEquals(3, bb.getFinishPosition());
+		assertEquals(2, game.getPlayersRemaining());
 	}
 	
 	private Game gameSetup(){

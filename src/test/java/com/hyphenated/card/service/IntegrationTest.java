@@ -656,7 +656,8 @@ public class IntegrationTest extends AbstractSpringTest {
 		assertEquals(100, btn.getChips());
 		assertEquals(3100, co.getChips());
 		
-		assertEquals(PlayerStatus.WON_HAND, playerActionService.getPlayerStatus(btn)); //This may need to change later
+		//BTN loses showdown, but gets 100 chips back from the overbet
+		assertEquals(PlayerStatus.LOST_HAND, playerActionService.getPlayerStatus(btn));
 		assertEquals(PlayerStatus.LOST_HAND, playerActionService.getPlayerStatus(bb));
 		assertEquals(PlayerStatus.WON_HAND, playerActionService.getPlayerStatus(sb));
 		assertEquals(PlayerStatus.WON_HAND, playerActionService.getPlayerStatus(co));

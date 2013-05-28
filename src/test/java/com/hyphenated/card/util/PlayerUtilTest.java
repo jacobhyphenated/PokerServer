@@ -358,7 +358,7 @@ public class PlayerUtilTest extends TestCase {
 		ph2.setId(22);
 		ph2.setCard1(Card.KING_OF_CLUBS);
 		ph2.setCard2(Card.KING_OF_HEARTS);
-		ph2.setBetAmount(1000);
+		ph2.setBetAmount(300);
 		
 		Set<PlayerHand> phs = new HashSet<PlayerHand>();
 		phs.add(ph1);
@@ -374,12 +374,11 @@ public class PlayerUtilTest extends TestCase {
 		board.setTurn(Card.TEN_OF_HEARTS);
 		board.setRiver(Card.SIX_OF_SPADES);
 		hand.setBoard(board);
-		hand.setPot(1300);
+		hand.setPot(600);
 		
 		Map<Player, Integer> winners = PlayerUtil.getAmountWonInHandForAllPlayers(hand);
-		assertEquals(2, winners.size());
+		assertEquals(1, winners.size());
 		assertEquals(new Integer(600), winners.get(p1));
-		assertEquals(new Integer(700), winners.get(p2));
 	}
 	
 	@Test

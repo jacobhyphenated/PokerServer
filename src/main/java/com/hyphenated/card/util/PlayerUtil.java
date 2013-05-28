@@ -198,25 +198,8 @@ public class PlayerUtil {
 		minimumBetAmountPerPlayer = minimumBetAmountPerPlayer - allInBetRunningTotal;
 		allInBetRunningTotal += minimumBetAmountPerPlayer;
 		
-		//If no player is all in, resolve the hand.
-		if(allInPlayer == null){
-			applyWinningAndChips(winnersMap, hand, minimumBetAmountPerPlayer, playersInvolved);
-			return;
-		}
-		
-		//If there are two players with one player committing more chips to the pot than the other
-		if(playersInvolved.size() == 2){
-			//refund player money for amount not called by all in
-			playersInvolved.remove(allInPlayer);
-			PlayerHand overbet = playersInvolved.iterator().next();
-			int amountOverbet = overbet.getBetAmount() - allInPlayer.getBetAmount();
-			Integer bigIValue = winnersMap.get(overbet.getPlayer());
-			int i = (bigIValue == null)?0:bigIValue;
-			winnersMap.put(overbet.getPlayer(), amountOverbet + i);
-			playersInvolved.add(overbet);
-			playersInvolved.add(allInPlayer);
-			
-			//Determine winner
+		//exit condition.  No player is all in, or we are down to only 2 remaining players to evaluate
+		if(allInPlayer == null || playersInvolved.size() == 2){
 			applyWinningAndChips(winnersMap, hand, minimumBetAmountPerPlayer, playersInvolved);
 			return;
 		}

@@ -354,9 +354,10 @@ public class PokerHandServiceImpl implements PokerHandService {
 			playerDao.merge(winner);
 		}
 		else{
+			//Refund all in overbet player if applicable before determining winner
+			refundOverbet(hand);
+			
 			//Iterate through map of players to there amount won.  Persist.
-			//TODO - Refund all in overbet player if applicable before determining winner
-			//     - Keep status from saying winner when it might be a loss
 			Map<Player, Integer> winners = PlayerUtil.getAmountWonInHandForAllPlayers(hand);
 			if(winners == null){
 				return;
@@ -366,6 +367,22 @@ public class PokerHandServiceImpl implements PokerHandService {
 				player.setChips(player.getChips() + entry.getValue());
 				playerDao.merge(player);
 			}
+		}
+	}
+	
+	private void refundOverbet(HandEntity hand){
+		List<PlayerHand> phs = new ArrayList<PlayerHand>();
+		phs.addAll(hand.getPlayers());
+		//Sort from most money contributed, to the least
+		Collections.sort(phs, new PlayerHandBetAmountComparator());
+		Collections.reverse(phs);
+		//If there are at least 2 players, and the top player contributed more to the pot than the next player
+		if(phs.size() >= 2 && (phs.get(0).getBetAmount() > phs.get(1).getBetAmount())){
+			//Refund that extra amount contributed. Remove from pot, add back to player
+			int diff = phs.get(0).getBetAmount() - phs.get(1).getBetAmount();
+			phs.get(0).setBetAmount(phs.get(1).getBetAmount());
+			phs.get(0).getPlayer().setChips(phs.get(0).getPlayer().getChips() + diff);
+			hand.setPot(hand.getPot() - diff);
 		}
 	}
 	

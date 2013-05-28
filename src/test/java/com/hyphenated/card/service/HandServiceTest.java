@@ -121,6 +121,7 @@ public class HandServiceTest extends AbstractSpringTest {
 		HandEntity hand = handService.startNewHand(game);
 		assertNull(hand.getBoard().getFlop1());
 		
+		removeBetValues(hand);
 		hand = handService.flop(hand);
 		assertTrue(hand.getBoard().getFlop1() != null);
 		assertTrue(hand.getBoard().getFlop2() != null);
@@ -131,6 +132,7 @@ public class HandServiceTest extends AbstractSpringTest {
 	public void testTurn(){
 		Game game = setupGame();
 		HandEntity hand = handService.startNewHand(game);
+		removeBetValues(hand);
 		hand = handService.flop(hand);
 		assertNull(hand.getBoard().getTurn());
 		assertNotNull(hand.getBoard().getFlop1());
@@ -144,6 +146,7 @@ public class HandServiceTest extends AbstractSpringTest {
 	public void testRiver(){
 		Game game = setupGame();
 		HandEntity hand = handService.startNewHand(game);
+		removeBetValues(hand);
 		hand = handService.flop(hand);
 		hand = handService.turn(hand);
 		hand = handService.river(hand);
@@ -157,6 +160,7 @@ public class HandServiceTest extends AbstractSpringTest {
 	public void testDuplicateFlop(){
 		Game game = setupGame();
 		HandEntity hand = handService.startNewHand(game);
+		removeBetValues(hand);
 		hand = handService.flop(hand);
 		hand = handService.flop(hand);
 	}
@@ -165,6 +169,7 @@ public class HandServiceTest extends AbstractSpringTest {
 	public void testFaildedTurn(){
 		Game game = setupGame();
 		HandEntity hand = handService.startNewHand(game);
+		removeBetValues(hand);
 		hand = handService.turn(hand);
 	}
 	
@@ -172,6 +177,7 @@ public class HandServiceTest extends AbstractSpringTest {
 	public void testDuplicateTurn(){
 		Game game = setupGame();
 		HandEntity hand = handService.startNewHand(game);
+		removeBetValues(hand);
 		hand = handService.flop(hand);
 		hand = handService.turn(hand);
 		hand = handService.turn(hand);
@@ -181,6 +187,7 @@ public class HandServiceTest extends AbstractSpringTest {
 	public void testFailedRiver(){
 		Game game = setupGame();
 		HandEntity hand = handService.startNewHand(game);
+		removeBetValues(hand);
 		hand = handService.flop(hand);
 		hand = handService.river(hand);
 	}
@@ -189,6 +196,7 @@ public class HandServiceTest extends AbstractSpringTest {
 	public void testDuplicateRiver(){
 		Game game = setupGame();
 		HandEntity hand = handService.startNewHand(game);
+		removeBetValues(hand);
 		hand = handService.flop(hand);
 		hand = handService.turn(hand);
 		hand = handService.river(hand);
@@ -217,6 +225,7 @@ public class HandServiceTest extends AbstractSpringTest {
 	public void testEndHand(){
 		Game game = setupGame();
 		HandEntity hand = handService.startNewHand(game);
+		removeBetValues(hand);
 		Player bbPlayer = handService.getPlayerInBB(hand);
 		
 		List<PlayerHand> players = new ArrayList<PlayerHand>();
@@ -229,12 +238,14 @@ public class HandServiceTest extends AbstractSpringTest {
 		assertEquals(game.getPlayerInBTN(), players.get(1).getPlayer());
 		
 		hand = handService.startNewHand(game);
+		removeBetValues(hand);
 		assertEquals(players.get(3).getPlayer(), handService.getPlayerInBB(hand));
 		assertEquals(players.get(2).getPlayer(), handService.getPlayerInSB(hand));
 		
 		hand.setBoard(getDummyBoard());
 		handService.endHand(hand);
 		hand = handService.startNewHand(game);
+		removeBetValues(hand);
 		assertEquals(game.getPlayerInBTN(), players.get(2).getPlayer());
 		assertEquals(players.get(0).getPlayer(), handService.getPlayerInBB(hand));
 		assertEquals(players.get(3).getPlayer(), handService.getPlayerInSB(hand));
@@ -242,6 +253,7 @@ public class HandServiceTest extends AbstractSpringTest {
 		hand.setBoard(getDummyBoard());
 		handService.endHand(hand);
 		hand = handService.startNewHand(game);
+		removeBetValues(hand);
 		assertEquals(game.getPlayerInBTN(), players.get(3).getPlayer());
 		assertEquals(players.get(1).getPlayer(), handService.getPlayerInBB(hand));
 		assertEquals(players.get(0).getPlayer(), handService.getPlayerInSB(hand));
@@ -249,6 +261,7 @@ public class HandServiceTest extends AbstractSpringTest {
 		hand.setBoard(getDummyBoard());
 		handService.endHand(hand);
 		hand = handService.startNewHand(game);
+		removeBetValues(hand);
 		assertEquals(game.getPlayerInBTN(), players.get(0).getPlayer());
 		assertEquals(players.get(2).getPlayer(), handService.getPlayerInBB(hand));
 		assertEquals(players.get(1).getPlayer(), handService.getPlayerInSB(hand));
@@ -312,5 +325,12 @@ public class HandServiceTest extends AbstractSpringTest {
 		board.setTurn(Card.ACE_OF_SPADES);
 		board.setRiver(Card.TWO_OF_DIAMONDS);
 		return board;
+	}
+	
+	private void removeBetValues(HandEntity hand){
+		for (PlayerHand ph : hand.getPlayers()){
+			ph.setRoundBetAmount(0);
+		}
+		hand.setTotalBetAmount(0);
 	}
 }

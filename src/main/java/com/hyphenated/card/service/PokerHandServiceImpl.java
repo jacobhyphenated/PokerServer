@@ -129,6 +129,10 @@ public class PokerHandServiceImpl implements PokerHandService {
 	@Transactional
 	public void endHand(HandEntity hand){
 		hand = handDao.merge(hand);
+		if(!isActionResolved(hand)){
+			throw new IllegalStateException("There are unresolved betting actions");
+		}
+		
 		Game game = hand.getGame();
 
 		hand.setCurrentToAct(null);
@@ -188,7 +192,9 @@ public class PokerHandServiceImpl implements PokerHandService {
 		}
 		//Re-attach to persistent context for this transaction (Lazy Loading stuff)
 		hand = handDao.merge(hand);
-		//TODO make sure current player action is ACTION_TO_CHECK
+		if(!isActionResolved(hand)){
+			throw new IllegalStateException("There are unresolved preflop actions");
+		}
 		
 		Deck d = new Deck(hand.getCards());
 		d.shuffleDeck();
@@ -209,7 +215,9 @@ public class PokerHandServiceImpl implements PokerHandService {
 		}
 		//Re-attach to persistent context for this transaction (Lazy Loading stuff)
 		hand = handDao.merge(hand);
-		//TODO make sure current player action is ACTION_TO_CHECK
+		if(!isActionResolved(hand)){
+			throw new IllegalStateException("There are unresolved flop actions");
+		}
 		
 		Deck d = new Deck(hand.getCards());
 		d.shuffleDeck();
@@ -229,7 +237,9 @@ public class PokerHandServiceImpl implements PokerHandService {
 		}
 		//Re-attach to persistent context for this transaction (Lazy Loading stuff)
 		hand = handDao.merge(hand);
-		//TODO make sure current player action is ACTION_TO_CHECK
+		if(!isActionResolved(hand)){
+			throw new IllegalStateException("There are unresolved turn actions");
+		}
 		
 		Deck d = new Deck(hand.getCards());
 		d.shuffleDeck();
@@ -344,6 +354,18 @@ public class PokerHandServiceImpl implements PokerHandService {
 				playerDao.merge(player);
 			}
 		}
+	}
+	
+	//Helper method to see if there are any outstanding actions left in a betting round
+	private boolean isActionResolved(HandEntity hand){
+		int roundBetAmount = hand.getTotalBetAmount();
+		for(PlayerHand ph : hand.getPlayers()){
+			//All players should have paid the roundBetAmount or should be all in
+			if(ph.getRoundBetAmount() != roundBetAmount && ph.getPlayer().getChips() > 0){
+				return false;
+			}
+		}
+		return true;
 	}
 
 }

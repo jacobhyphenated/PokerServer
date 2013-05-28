@@ -50,7 +50,7 @@ The algorithm used for Texas Holdem hand evaluation uses a precomputed table of 
 
 Setup and Installation
 ----------------------
-Spinning up this server will largely depend on what your setup is. I have included a war file in the project, so if you have your server ready to go, just drop it in. You will also have to have the database running.  The mysql dump is in the scripts folder, the war was build with a username of root and no password, with the default settings.  You will have to rebuild the project or edit the configuration inside the war file to change this.
+Spinning up this server will largely depend on what your setup is. I had originally intended to include a war file in the repository, but it was too big and made pull/push times impractical. To get a working war file, you will have to set up and build the project.
 
 Setting up the development will depend on your IDE and various plugins. I used eclipse, so my instructions will be mostly centered around that.
 

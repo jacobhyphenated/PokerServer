@@ -71,12 +71,15 @@ public class GameServiceImpl implements GameService {
 	@Transactional
 	public Game startGame(Game game){
 		//Set started flag
-		game.setStarted(true);
 		game = gameDao.merge(game);
 		if(game.getPlayers().size() < 2){
 			throw new IllegalStateException("Not Enough Players");
 		}
+		if(game.isStarted()){
+			throw new IllegalStateException("Game already started");
+		}
 		
+		game.setStarted(true);
 		//Start at the first blind level for the game
 		GameStructure gs = game.getGameStructure();
 		List<BlindLevel> blinds = gs.getBlindLevels();
@@ -91,7 +94,7 @@ public class GameServiceImpl implements GameService {
 		for(int i = 0; i < players.size(); i++){
 			Player p = players.get(i);
 			p.setGamePosition(i+1);
-			playerDao.merge(p);
+			playerDao.save(p);
 		}
 		
 		//Set Button and Big Blind.  Button is position 1 (index 0)

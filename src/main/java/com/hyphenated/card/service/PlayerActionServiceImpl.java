@@ -119,7 +119,8 @@ public class PlayerActionServiceImpl implements PlayerActionService {
 		}
 		
 		//Bet must meet the minimum of twice the previous bet.  Call bet amount and raise exactly that amount or more
-		if(betAmount < hand.getLastBetAmount()){
+		//Alternatively, if there is no previous bet, the first bet must be at least the big blind
+		if(betAmount < hand.getLastBetAmount() || betAmount < hand.getBlindLevel().getBigBlind()){
 			return false;
 		}
 		

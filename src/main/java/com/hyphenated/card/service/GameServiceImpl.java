@@ -70,15 +70,18 @@ public class GameServiceImpl implements GameService {
 	@Override
 	@Transactional
 	public Game startGame(Game game){
-		//Set started flag
 		game = gameDao.merge(game);
 		if(game.getPlayers().size() < 2){
 			throw new IllegalStateException("Not Enough Players");
+		}
+		if(game.getPlayers().size() > 10){
+			throw new IllegalStateException("Too Many Players");
 		}
 		if(game.isStarted()){
 			throw new IllegalStateException("Game already started");
 		}
 		
+		//Set started flag
 		game.setStarted(true);
 		//Start at the first blind level for the game
 		GameStructure gs = game.getGameStructure();
@@ -110,6 +113,10 @@ public class GameServiceImpl implements GameService {
 	public Player addNewPlayerToGame(Game game, Player player){
 		if(game.isStarted() && game.getGameType() == GameType.TOURNAMENT){
 			throw new IllegalStateException("Tournament in progress, no new players may join");
+		}
+		game = gameDao.merge(game);
+		if(game.getPlayers().size() >= 10){
+			throw new IllegalStateException("Cannot have more than 10 players in one game");
 		}
 		player.setGame(game);
 		//Set up player according to game logic.

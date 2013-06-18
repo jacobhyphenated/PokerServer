@@ -105,6 +105,10 @@ public class GameServiceTest extends AbstractSpringTest {
 	@Test(expected=IllegalStateException.class)
 	public void testCantStartGamePlayers(){
 		Game game = gameService.saveGame(createTestGame());
+		
+		flushAndClear();
+		game = gameService.getGameById(game.getId(), true);
+		
 		gameService.addNewPlayerToGame(game, new Player());
 		
 		flushAndClear();
@@ -164,6 +168,9 @@ public class GameServiceTest extends AbstractSpringTest {
 	}
 	
 	private void addPlayersToGame(Game game){
+		flushAndClear();
+		game = gameService.getGameById(game.getId(), true);
+		
 		Player p1 = new Player();
 		p1.setChips(game.getGameStructure().getStartingChips());
 		p1.setName("TestPlayer1");

@@ -68,6 +68,10 @@ public class IntegrationTest extends AbstractSpringTest {
 		
 		game = gameService.saveGame(game);
 		
+		flushAndClear();
+		
+		game = gameService.getGameById(game.getId(), true);
+		
 		Player p1 = new Player();
 		p1.setChips(game.getGameStructure().getStartingChips());
 		p1.setName("Player 1");
@@ -747,6 +751,9 @@ public class IntegrationTest extends AbstractSpringTest {
 		game.setGameStructure(gs);
 		
 		game = gameService.saveGame(game);
+		
+		flushAndClear();
+		game = gameService.getGameById(game.getId(), true);
 		
 		Player p1 = new Player();
 		p1.setChips(game.getGameStructure().getStartingChips());

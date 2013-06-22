@@ -87,7 +87,13 @@ The API consists of two components. The game component, and the player compomant
 
 Requests to the server are made using http request parameters. The response is properly formatted JSON.
 
-Version: 0.1
+###Current Version: 0.2
+
+New in Version 0.2: JSONP.  Simply add a parameter named callback to the query, with the value of the javascript function.
+
+```http://your-url.com/ping?callback=test``` Results in ```test({"success":true"});```
+
+Version 0.2 is completely backwards compatible with Version 0.1. All that was added was JSONP support.
 
 Game Controller
 ---------------------
@@ -355,6 +361,7 @@ If there is an error on the server side, you will get back JSON that describes t
 
 One example of a situation where you might expect the error json response would be if you tried to call the Turn method before the flop was dealt. This would give you an error message telling you that the opporation is not allowed given the current state of the hand.
 
+For JSONP requests, the only supported error field is the *error* field, with a generic message. However, for JSONP, the http status code of 400 will be returned for all errors.
 
 Security
 ==========

@@ -72,7 +72,7 @@ public class GameServiceTest extends AbstractSpringTest {
 		Set<Player> players = game.getPlayers();
 		assertEquals(2,players.size());
 		for(Player p : players){
-			assertTrue(p.getId() > 0);
+			assertTrue(p.getId() != null);
 			assertEquals(game.getGameStructure().getStartingChips(), p.getChips());
 		}
 		
@@ -175,12 +175,12 @@ public class GameServiceTest extends AbstractSpringTest {
 		p1.setChips(game.getGameStructure().getStartingChips());
 		p1.setName("TestPlayer1");
 		p1 = gameService.addNewPlayerToGame(game, p1);
-		assertTrue(p1.getId() > 0);
+		assertTrue(p1.getId() != null);
 		
 		Player p2 = new Player();
 		p2.setChips(game.getGameStructure().getStartingChips());
 		p2.setName("TestPlayer2");
 		p2 = gameService.addNewPlayerToGame(game, p2);
-		assertTrue(p2.getId() > 0);
+		assertTrue(p2.getId() != null);
 	}
 }

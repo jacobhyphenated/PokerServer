@@ -87,9 +87,13 @@ The API consists of two components. The game component, and the player compomant
 
 Requests to the server are made using http request parameters. The response is properly formatted JSON.
 
-###Current Version: 0.2
+###Current Version: 0.3
 
-New in Version 0.2: JSONP.  Simply add a parameter named callback to the query, with the value of the javascript function.
+**New in Version 0.3**: UUID identifiers for player ID.  The playerId API parameter is now a longer more unique string, making the id next to impossible to guess. 
+
+Version 0.3 is backward compatible through 0.1. The catch is that the playerId is now a guaranteed String type, so any implementation that used an integer for playerId may no longer work.  The type was never specified as an integer in the previous API specifications, but an integer would have worked in previous versions; only String will work moving forward. 
+
+**New in Version 0.2**: JSONP.  Simply add a parameter named callback to the query, with the value of the javascript function.
 
 ```http://your-url.com/ping?callback=test``` Results in ```test({"success":true"});```
 

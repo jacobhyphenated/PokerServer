@@ -30,7 +30,7 @@ CREATE TABLE `board` (
   `turn` varchar(25) DEFAULT NULL,
   `river` varchar(25) DEFAULT NULL,
   PRIMARY KEY (`board_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=851969 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=1376257 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -48,9 +48,9 @@ CREATE TABLE `game` (
   `is_started` tinyint(1) NOT NULL,
   `current_hand_id` int(11) DEFAULT NULL,
   `game_structure_id` int(11) DEFAULT NULL,
-  `btn_player_id` int(11) DEFAULT NULL,
+  `btn_player_id` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`game_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=262145 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=655361 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -82,7 +82,7 @@ CREATE TABLE `game_structure` (
   `pause_start_time` datetime DEFAULT NULL,
   `starting_chips` int(11) DEFAULT NULL,
   PRIMARY KEY (`game_structure_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=32769 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=425985 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -96,13 +96,13 @@ CREATE TABLE `hand` (
   `hand_id` int(11) NOT NULL AUTO_INCREMENT,
   `board_id` int(11) DEFAULT NULL,
   `game_id` int(11) NOT NULL,
-  `player_to_act_id` int(11) DEFAULT NULL,
+  `player_to_act_id` varchar(255) DEFAULT NULL,
   `blind_level` varchar(25) NOT NULL,
   `pot` int(11) DEFAULT NULL,
   `bet_amount` int(11) DEFAULT NULL,
   `total_bet_amount` int(11) DEFAULT NULL,
   PRIMARY KEY (`hand_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=557057 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=1081345 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -140,14 +140,14 @@ DROP TABLE IF EXISTS `player`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `player` (
-  `player_id` int(11) NOT NULL AUTO_INCREMENT,
+  `player_id` varchar(255) NOT NULL DEFAULT '',
   `game_id` int(11) NOT NULL,
   `name` varchar(50) DEFAULT NULL,
   `chips` int(11) DEFAULT NULL,
   `game_position` int(11) NOT NULL,
   `finished_place` int(11) DEFAULT NULL,
   PRIMARY KEY (`player_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=262147 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -159,14 +159,14 @@ DROP TABLE IF EXISTS `player_hand`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `player_hand` (
   `player_hand_id` int(11) NOT NULL AUTO_INCREMENT,
-  `player_id` int(11) NOT NULL,
+  `player_id` varchar(255) NOT NULL,
   `hand_id` int(11) NOT NULL,
   `card1` varchar(25) DEFAULT NULL,
   `card2` varchar(25) DEFAULT NULL,
   `bet_amount` int(11) DEFAULT NULL,
   `round_bet_amount` int(11) DEFAULT NULL,
   PRIMARY KEY (`player_hand_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=196611 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=720898 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
@@ -178,4 +178,4 @@ CREATE TABLE `player_hand` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2013-03-05 15:47:31
+-- Dump completed on 2013-06-26  7:42:48

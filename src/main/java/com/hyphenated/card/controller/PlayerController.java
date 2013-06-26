@@ -78,7 +78,7 @@ public class PlayerController {
 	 * be used for that player's actions in future requests.  Example: {"playerId":xxx}
 	 */
 	@RequestMapping("/join")
-	public @ResponseBody Map<String,Long> joinGame(@RequestParam long gameId, @RequestParam String playerName){
+	public @ResponseBody Map<String,String> joinGame(@RequestParam long gameId, @RequestParam String playerName){
 		Game game = gameService.getGameById(gameId, false);
 		Player player = new Player();
 		player.setName(playerName);
@@ -97,7 +97,7 @@ public class PlayerController {
 	 * "amountBetRound":xx,"amountToCall":100}
 	 */
 	@RequestMapping("/status")
-	public @ResponseBody Map<String,? extends Object> getPlayerStatus(@RequestParam long gameId, @RequestParam long playerId){
+	public @ResponseBody Map<String,? extends Object> getPlayerStatus(@RequestParam long gameId, @RequestParam String playerId){
 		Game game = gameService.getGameById(gameId, false);
 		Player player = playerActionService.getPlayerById(playerId);
 		Map<String,Object> results = new HashMap<String, Object>();
@@ -149,7 +149,7 @@ public class PlayerController {
 	 * Example: {"success":true}
 	 */
 	@RequestMapping("/fold")
-	public @ResponseBody Map<String,Boolean> fold(@RequestParam long gameId, @RequestParam long playerId){
+	public @ResponseBody Map<String,Boolean> fold(@RequestParam long gameId, @RequestParam String playerId){
 		Game game = gameService.getGameById(gameId, false);
 		Player player = playerActionService.getPlayerById(playerId);
 		boolean folded = playerActionService.fold(player, game.getCurrentHand());
@@ -166,7 +166,7 @@ public class PlayerController {
 	 * Example: {"success":true,"chips":xxx}
 	 */
 	@RequestMapping("/call")
-	public @ResponseBody Map<String,? extends Object> call(@RequestParam long gameId, @RequestParam long playerId){
+	public @ResponseBody Map<String,? extends Object> call(@RequestParam long gameId, @RequestParam String playerId){
 		Game game = gameService.getGameById(gameId, false);
 		Player player = playerActionService.getPlayerById(playerId);
 		boolean called = playerActionService.call(player, game.getCurrentHand());
@@ -185,7 +185,7 @@ public class PlayerController {
 	 * Example: {"success":false}
 	 */
 	@RequestMapping("/check")
-	public @ResponseBody Map<String,Boolean> check(@RequestParam long gameId, @RequestParam long playerId){
+	public @ResponseBody Map<String,Boolean> check(@RequestParam long gameId, @RequestParam String playerId){
 		Game game = gameService.getGameById(gameId, false);
 		Player player = playerActionService.getPlayerById(playerId);
 		boolean checked = playerActionService.check(player, game.getCurrentHand());
@@ -210,7 +210,7 @@ public class PlayerController {
 	 * Example: {"success":true,"chips":xxx}
 	 */
 	@RequestMapping("/bet")
-	public @ResponseBody Map<String,? extends Object> bet(@RequestParam long gameId, @RequestParam long playerId, @RequestParam int betAmount){
+	public @ResponseBody Map<String,? extends Object> bet(@RequestParam long gameId, @RequestParam String playerId, @RequestParam int betAmount){
 		Game game = gameService.getGameById(gameId, false);
 		Player player = playerActionService.getPlayerById(playerId);
 		boolean bet = playerActionService.bet(player, game.getCurrentHand(),betAmount);

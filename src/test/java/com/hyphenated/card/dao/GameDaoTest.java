@@ -78,9 +78,9 @@ public class GameDaoTest extends AbstractSpringTest {
 		p.setName("test 1");
 		p.setGame(game);
 		p.setChips(5000);
-		assertTrue(p.getId() == 0);
+		assertTrue(p.getId() == null);
 		playerDao.save(p);
-		assertTrue(p.getId() > 0);
+		assertTrue(p.getId() != null);
 		
 		flushAndClear();
 		Game game2 = gameDao.findAll().get(0);

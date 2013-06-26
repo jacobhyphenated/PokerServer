@@ -23,6 +23,7 @@ THE SOFTWARE.
 */
 package com.hyphenated.card.dao;
 
+import java.io.Serializable;
 import java.lang.reflect.ParameterizedType;
 import java.util.List;
 
@@ -48,7 +49,7 @@ public class BaseDaoImpl<T> implements BaseDao<T> {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public T findById(long id){
+	public T findById(Serializable id){
 		return (T) getSession().get(persistentClass, id);
 	}
 

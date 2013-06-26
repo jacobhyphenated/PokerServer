@@ -51,7 +51,7 @@ public class PlayerActionServiceImpl implements PlayerActionService {
 	
 	@Override
 	@Transactional
-	public Player getPlayerById(long playerId){
+	public Player getPlayerById(String playerId){
 		return playerDao.findById(playerId);
 	}
 	

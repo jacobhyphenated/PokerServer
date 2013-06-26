@@ -26,12 +26,13 @@ package com.hyphenated.card.domain;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+
+import org.hibernate.annotations.GenericGenerator;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -39,7 +40,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 @Table(name="player")
 public class Player implements Comparable<Player>{
 
-	private long id;
+	private String id;
 	private Game game;
 	private String name;
 	private int chips;
@@ -49,11 +50,12 @@ public class Player implements Comparable<Player>{
 	@JsonIgnore
 	@Column(name="player_id")
 	@Id
-	@GeneratedValue(strategy=GenerationType.TABLE)
-	public long getId() {
+	@GeneratedValue(generator = "system-uuid")
+    @GenericGenerator(name = "system-uuid", strategy = "uuid")
+	public String getId() {
 		return id;
 	}
-	public void setId(long id) {
+	public void setId(String id) {
 		this.id = id;
 	}
 	
@@ -105,18 +107,18 @@ public class Player implements Comparable<Player>{
 			return false;
 		}
 		Player p = (Player) o;
-		if(this.getId() <= 0){
+		if(this.getId() == null){
 			return this.getName().equals(p.getName());
 		}
-		return this.getId() == p.getId();
+		return this.getId().equals(p.getId());
 	}
 	
 	@Override
 	public int hashCode(){
-		if(id <= 0){
+		if(id == null){
 			return name.hashCode();
 		}
-		return (int) id;
+		return id.hashCode();
 	}
 	
 	@Override

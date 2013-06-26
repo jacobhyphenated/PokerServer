@@ -39,7 +39,7 @@ public interface PlayerActionService {
 	 * @param playerId unique id for the player
 	 * @return Player object
 	 */
-	public Player getPlayerById(long playerId);
+	public Player getPlayerById(String playerId);
 	
 	/**
 	 * The player folds out of the hand

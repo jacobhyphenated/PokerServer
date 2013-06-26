@@ -23,6 +23,7 @@ THE SOFTWARE.
 */
 package com.hyphenated.card.dao;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
@@ -46,7 +47,7 @@ public interface BaseDao<T> {
 	 *            the primary key
 	 * @return the entity
 	 */
-	public T findById(long id);
+	public T findById(Serializable id);
 
 	/**
 	 * Load all entities.

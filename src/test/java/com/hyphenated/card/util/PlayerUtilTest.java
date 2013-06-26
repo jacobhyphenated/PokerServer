@@ -44,10 +44,10 @@ public class PlayerUtilTest extends TestCase {
 	@Test
 	public void testCompareTwoHands(){
 		Player p1 = new Player();
-		p1.setId(1);
+		p1.setId("1");
 		
 		Player p2 = new Player();
-		p2.setId(2);
+		p2.setId("2");
 		
 		PlayerHand ph1 = new PlayerHand();
 		ph1.setPlayer(p1);
@@ -84,13 +84,13 @@ public class PlayerUtilTest extends TestCase {
 	@Test
 	public void testCompareThreeHandsOneWinner(){
 		Player p1 = new Player();
-		p1.setId(1);
+		p1.setId("1");
 		
 		Player p2 = new Player();
-		p2.setId(2);
+		p2.setId("2");
 		
 		Player p3 = new Player();
-		p3.setId(3);
+		p3.setId("3");
 		
 		PlayerHand ph1 = new PlayerHand();
 		ph1.setPlayer(p1);
@@ -134,13 +134,13 @@ public class PlayerUtilTest extends TestCase {
 	@Test
 	public void testCompareThreeHandsOneWinnerFromMiddle(){
 		Player p1 = new Player();
-		p1.setId(1);
+		p1.setId("1");
 		
 		Player p2 = new Player();
-		p2.setId(2);
+		p2.setId("2");
 		
 		Player p3 = new Player();
-		p3.setId(3);
+		p3.setId("3");
 		
 		PlayerHand ph1 = new PlayerHand();
 		ph1.setPlayer(p1);
@@ -184,13 +184,13 @@ public class PlayerUtilTest extends TestCase {
 	@Test
 	public void testCompareThreeHandsTwoWinners(){
 		Player p1 = new Player();
-		p1.setId(1);
+		p1.setId("1");
 		
 		Player p2 = new Player();
-		p2.setId(2);
+		p2.setId("2");
 		
 		Player p3 = new Player();
-		p3.setId(3);
+		p3.setId("3");
 		
 		PlayerHand ph1 = new PlayerHand();
 		ph1.setPlayer(p1);
@@ -236,11 +236,11 @@ public class PlayerUtilTest extends TestCase {
 	@Test
 	public void testSingleWinnerAtShowdown(){
 		Player p1 = new Player();
-		p1.setId(1);
+		p1.setId("1");
 		p1.setChips(1000);
 		
 		Player p2 = new Player();
-		p2.setId(2);
+		p2.setId("2");
 		p2.setChips(1000);
 		
 		PlayerHand ph1 = new PlayerHand();
@@ -281,15 +281,15 @@ public class PlayerUtilTest extends TestCase {
 	@Test
 	public void testSplitPotAtShowdown(){
 		Player p1 = new Player();
-		p1.setId(1);
+		p1.setId("1");
 		p1.setChips(1000);
 		
 		Player p2 = new Player();
-		p2.setId(2);
+		p2.setId("2");
 		p2.setChips(1000);
 		
 		Player p3 = new Player();
-		p3.setId(3);
+		p3.setId("3");
 		p3.setChips(1000);
 		
 		PlayerHand ph1 = new PlayerHand();
@@ -339,11 +339,11 @@ public class PlayerUtilTest extends TestCase {
 	@Test
 	public void testAllInCallForTwoPlayers(){
 		Player p1 = new Player();
-		p1.setId(1);
+		p1.setId("1");
 		p1.setChips(0);
 		
 		Player p2 = new Player();
-		p2.setId(2);
+		p2.setId("2");
 		p2.setChips(1000);
 		
 		PlayerHand ph1 = new PlayerHand();
@@ -385,15 +385,15 @@ public class PlayerUtilTest extends TestCase {
 	@Ignore
 	public void testSidePotOneWinner(){
 		Player p1 = new Player();
-		p1.setId(1);
+		p1.setId("1");
 		p1.setChips(0);
 		
 		Player p2 = new Player();
-		p2.setId(2);
+		p2.setId("2");
 		p2.setChips(1000);
 		
 		Player p3 = new Player();
-		p3.setId(3);
+		p3.setId("3");
 		p3.setChips(1000);
 		
 		PlayerHand ph1 = new PlayerHand();
@@ -442,15 +442,15 @@ public class PlayerUtilTest extends TestCase {
 	@Test
 	public void testSidePotTwoWinners(){
 		Player p1 = new Player();
-		p1.setId(1);
+		p1.setId("1");
 		p1.setChips(0);
 		
 		Player p2 = new Player();
-		p2.setId(2);
+		p2.setId("2");
 		p2.setChips(1000);
 		
 		Player p3 = new Player();
-		p3.setId(3);
+		p3.setId("3");
 		p3.setChips(1000);
 		
 		PlayerHand ph1 = new PlayerHand();
@@ -500,19 +500,19 @@ public class PlayerUtilTest extends TestCase {
 	@Test
 	public void testSidePotThreeWinners(){
 		Player p1 = new Player();
-		p1.setId(1);
+		p1.setId("1");
 		p1.setChips(0);
 		
 		Player p2 = new Player();
-		p2.setId(2);
+		p2.setId("2");
 		p2.setChips(0);
 		
 		Player p3 = new Player();
-		p3.setId(3);
+		p3.setId("3");
 		p3.setChips(1000);
 		
 		Player p4 = new Player();
-		p4.setId(4);
+		p4.setId("4");
 		p4.setChips(1000);
 		
 		PlayerHand ph1 = new PlayerHand();
@@ -571,19 +571,19 @@ public class PlayerUtilTest extends TestCase {
 	@Test
 	public void testSidePotFourWithTwoWinners(){
 		Player p1 = new Player();
-		p1.setId(1);
+		p1.setId("1");
 		p1.setChips(0);
 		
 		Player p2 = new Player();
-		p2.setId(2);
+		p2.setId("2");
 		p2.setChips(0);
 		
 		Player p3 = new Player();
-		p3.setId(3);
+		p3.setId("3");
 		p3.setChips(1000);
 		
 		Player p4 = new Player();
-		p4.setId(4);
+		p4.setId("4");
 		p4.setChips(1000);
 		
 		PlayerHand ph1 = new PlayerHand();

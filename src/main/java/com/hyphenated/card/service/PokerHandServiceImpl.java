@@ -90,7 +90,7 @@ public class PokerHandServiceImpl implements PokerHandService {
 		//Sort and get the next player to act (immediately after the big blind)
 		List<PlayerHand> players = new ArrayList<PlayerHand>();
 		players.addAll(participatingPlayers);
-		Player nextToAct = PlayerUtil.getNextPlayerInGameOrderPH(players, this.getPlayerInBB(hand));
+		Player nextToAct = PlayerUtil.getNextPlayerToAct(hand, this.getPlayerInBB(hand));
 		hand.setCurrentToAct(nextToAct);
 		
 		//Register the Forced Small and Big Blind bets as part of the hand
@@ -264,6 +264,20 @@ public class PokerHandServiceImpl implements PokerHandService {
 	}
 	
 	@Override
+	@Transactional
+	public void sitOutCurrentPlayer(HandEntity hand){
+		hand = handDao.merge(hand);
+		Player currentPlayer = hand.getCurrentToAct();
+		currentPlayer.setSittingOut(true);
+		playerDao.save(currentPlayer);
+		
+		//Move action to the next player
+		Player next = PlayerUtil.getNextPlayerToAct(hand, currentPlayer);
+		hand.setCurrentToAct(next);
+		handDao.save(hand);
+	}
+	
+	@Override
 	public Player getPlayerInSB(HandEntity hand){
 		Player button = hand.getGame().getPlayerInBTN();
 		//Heads up the Button is the Small Blind
@@ -335,8 +349,8 @@ public class PokerHandServiceImpl implements PokerHandService {
 		
 		Player next = PlayerUtil.getNextPlayerInGameOrder(playersInHand, btn);
 		Player firstNext = next;
-		//Skip all in players
-		while(next.getChips() <= 0 ){
+		//Skip all in players and players that are sitting out
+		while(next.getChips() <= 0 || next.isSittingOut()){
 			next = PlayerUtil.getNextPlayerInGameOrder(playersInHand, next);
 			if(next.equals(firstNext)){
 				//Exit condition if all players are all in.

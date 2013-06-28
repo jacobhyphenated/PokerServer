@@ -267,6 +267,59 @@ public class PlayerActionServiceTest extends AbstractSpringTest {
 		assertEquals(PlayerStatus.ALL_IN, playerActionService.getPlayerStatus(players.get(4)));
 	}
 	
+	@Test
+	public void testSittingOutFold(){
+		HandEntity hand = getBasicHand(this.setupBasicGame(true));
+		List<Player> players = new ArrayList<Player>();
+		players.addAll(hand.getGame().getPlayers());
+		assertEquals(hand.getGame().getPlayers().size(), hand.getPlayers().size());
+		Collections.sort(players);
+		players.get(4).setSittingOut(true);
+		assertEquals(30, hand.getPot());
+		assertEquals(20, hand.getLastBetAmount());
+		assertEquals(20, hand.getTotalBetAmount());
+		
+		//3 is the next player to act
+		assertEquals(players.get(3), hand.getCurrentToAct());
+		assertEquals(5, hand.getPlayers().size());
+		
+		assertTrue(playerActionService.call(players.get(3), hand));
+		assertEquals(PlayerStatus.ACTION_TO_CALL, playerActionService.getPlayerStatus(players.get(0)));
+		flushAndClear();
+		hand = handDao.findById(hand.getId());
+		assertEquals(4, hand.getPlayers().size());
+	}
+	
+	@Test
+	public void testSittingOutCall(){
+		HandEntity hand = getBasicHand(this.setupBasicGame(true));
+		List<Player> players = new ArrayList<Player>();
+		players.addAll(hand.getGame().getPlayers());
+		Collections.sort(players);
+		assertTrue(playerActionService.call(players.get(3), hand));
+		assertTrue(playerActionService.call(players.get(4), hand));
+		assertTrue(playerActionService.call(players.get(0), hand));
+		assertTrue(playerActionService.call(players.get(1), hand));
+		assertTrue(playerActionService.call(players.get(2), hand));
+		
+		assertEquals(130, hand.getPot());
+		players.get(2).setSittingOut(true);
+		players.get(3).setSittingOut(true);
+		
+		//caught up on preflop action.  Now deal the flop
+		hand.setTotalBetAmount(0);
+		hand.setLastBetAmount(0);
+		for(PlayerHand ph : hand.getPlayers()){
+			ph.setRoundBetAmount(0);
+		}
+		hand.setCurrentToAct(players.get(1));
+		
+		assertTrue(playerActionService.check(players.get(1), hand));
+		
+		assertEquals(players.get(4), hand.getCurrentToAct());
+		
+	}
+	
 	private HandEntity getBasicHand(Game game){
 		HandEntity hand = new HandEntity();
 		hand.setGame(game);

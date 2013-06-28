@@ -91,6 +91,12 @@ public interface PokerHandService {
 	public HandEntity river(HandEntity hand) throws IllegalStateException;
 	
 	/**
+	 * Has the current player to act for the hand sit out, then moves the action to the next player.
+	 * @param hand Current Hand
+	 */
+	public void sitOutCurrentPlayer(HandEntity hand);
+	
+	/**
 	 * Gets the player who is the Small Blind for this hand.
 	 * @param hand {@link HandEntity} 
 	 * @return {@link Player} who is the Small Blind

@@ -222,6 +222,36 @@ public class HandServiceTest extends AbstractSpringTest {
 	}
 	
 	@Test
+	public void testSitOutCurrentPlayer(){
+		Game game = setupGame();
+		HandEntity hand = handService.startNewHand(game);
+		List<PlayerHand> players = new ArrayList<PlayerHand>();
+		players.addAll(hand.getPlayers());
+		Collections.sort(players);
+		assertEquals("Check Next Player to Act is after BB", players.get(3).getPlayer(), hand.getCurrentToAct());
+		
+		handService.sitOutCurrentPlayer(hand);
+		assertTrue(players.get(3).getPlayer().isSittingOut());
+		assertEquals(players.get(0).getPlayer(), hand.getCurrentToAct());
+	}
+	
+	@Test
+	public void testSitOutCurrentPlayerWithOtherSitters(){
+		Game game = setupGame();
+		HandEntity hand = handService.startNewHand(game);
+		List<PlayerHand> players = new ArrayList<PlayerHand>();
+		players.addAll(hand.getPlayers());
+		Collections.sort(players);
+		assertEquals("Check Next Player to Act is after BB", players.get(3).getPlayer(), hand.getCurrentToAct());
+		
+		players.get(0).getPlayer().setSittingOut(true);
+		handService.sitOutCurrentPlayer(hand);
+		assertTrue(players.get(3).getPlayer().isSittingOut());
+		//Player 0 is already out, when player 3 is sat out, action moves to 1
+		assertEquals(players.get(1).getPlayer(), hand.getCurrentToAct());
+	}
+	
+	@Test
 	public void testEndHand(){
 		Game game = setupGame();
 		HandEntity hand = handService.startNewHand(game);

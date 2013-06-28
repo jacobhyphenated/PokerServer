@@ -23,10 +23,7 @@ THE SOFTWARE.
 */
 package com.hyphenated.card.service;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -65,22 +62,8 @@ public class PlayerActionServiceImpl implements PlayerActionService {
 			return false;
 		}
 		
-		PlayerHand playerHand = null;
-		for(PlayerHand ph : hand.getPlayers()){
-			if(ph.getPlayer().equals(player)){
-				playerHand = ph;
-				break;
-			}
-		}
-		//Player is not in the hand.  Sanity check case.
-		if(playerHand == null){
-			return false;			
-		}
-		
-		Player next = getNextPlayer(hand, player);
-		
-		Set<PlayerHand> players = hand.getPlayers();
-		if(!players.remove(playerHand)){
+		Player next = PlayerUtil.getNextPlayerToAct(hand, player);
+		if(!PlayerUtil.removePlayerFromHand(player, hand)){
 			return false;
 		}
 		hand.setCurrentToAct(next);
@@ -104,7 +87,7 @@ public class PlayerActionServiceImpl implements PlayerActionService {
 			return false;
 		}
 		
-		Player next = getNextPlayer(hand, player);
+		Player next = PlayerUtil.getNextPlayerToAct(hand, player);
 		hand.setCurrentToAct(next);
 		handDao.merge(hand);
 		return true;
@@ -146,7 +129,7 @@ public class PlayerActionServiceImpl implements PlayerActionService {
 		hand.setLastBetAmount(betAmount);
 		hand.setTotalBetAmount(hand.getTotalBetAmount() + betAmount);
 		
-		Player next = getNextPlayer(hand, player);
+		Player next = PlayerUtil.getNextPlayerToAct(hand, player);
 		hand.setCurrentToAct(next);
 		handDao.merge(hand);
 		playerDao.merge(player);
@@ -180,7 +163,7 @@ public class PlayerActionServiceImpl implements PlayerActionService {
 		player.setChips(player.getChips() - toCall);
 		hand.setPot(hand.getPot() + toCall);
 		
-		Player next = getNextPlayer(hand, player);
+		Player next = PlayerUtil.getNextPlayerToAct(hand, player);
 		hand.setCurrentToAct(next);
 		handDao.merge(hand);
 		playerDao.merge(player);
@@ -259,21 +242,4 @@ public class PlayerActionServiceImpl implements PlayerActionService {
 		}
 
 	}
-
-	
-	private Player getNextPlayer(HandEntity hand, Player startPlayer){
-		List<PlayerHand> players = new ArrayList<PlayerHand>();
-		players.addAll(hand.getPlayers());
-		Player next =  PlayerUtil.getNextPlayerInGameOrderPH(players, startPlayer);
-		//Skip all in players
-		while(next.getChips() <= 0){
-			next = PlayerUtil.getNextPlayerInGameOrderPH(players, next);
-			//Escape condition
-			if(next.equals(startPlayer)){
-				break;
-			}
-		}
-		return next;
-	}
-	
 }

@@ -115,7 +115,7 @@ public class GameController {
 	 * and the number of milliseconds left for the current blind level.
 	 * @param gameId unique identifier for the game
 	 * @return JSON Object of the format: {gameStatus:xxx,smallBlind:xx,bigBlind:xx,blindTime:xxx,pot:xxx,
-	 * players:[{name:xxx,chips:xxx,finishPosition:xxx,gamePosition:xxx},...],cards:[Xx,Xx...]}
+	 * players:[{name:xxx,chips:xxx,finishPosition:xxx,gamePosition:xxx,sittingOut:false},...],cards:[Xx,Xx...]}
 	 */
 	@RequestMapping(value="/gamestatus")
 	public @ResponseBody Map<String, ? extends Object> getGameStatus(@RequestParam long gameId){
@@ -239,6 +239,19 @@ public class GameController {
 	public @ResponseBody Map<String,Boolean> endHand(@RequestParam long handId){
 		HandEntity hand = handService.getHandById(handId);
 		handService.endHand(hand);
+		return Collections.singletonMap("success", true);
+	}
+	
+	/**
+	 * Puts the current player to act in a sit-out state. Action will move to the next player.
+	 * This action requires the handId parameter, so it should only be exposed to the Game Controller.
+	 * @param handId Current hand where the current player to act will be sat out. 
+	 * @return {"success":true} if the player was sat out.  Error otherwise.
+	 */
+	@RequestMapping("/sitoutcurrent")
+	public @ResponseBody Map<String, Boolean> sitOutCurrentPlayer(@RequestParam long handId){
+		HandEntity hand = handService.getHandById(handId);
+		handService.sitOutCurrentPlayer(hand);
 		return Collections.singletonMap("success", true);
 	}
 	

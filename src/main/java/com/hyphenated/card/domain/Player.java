@@ -46,6 +46,7 @@ public class Player implements Comparable<Player>{
 	private int chips;
 	private int gamePosition;
 	private int finishPosition;
+	private boolean sittingOut;
 	
 	@JsonIgnore
 	@Column(name="player_id")
@@ -99,6 +100,14 @@ public class Player implements Comparable<Player>{
 	}
 	public void setFinishPosition(int finishPosition) {
 		this.finishPosition = finishPosition;
+	}
+	
+	@Column(name="sitting_out")
+	public boolean isSittingOut() {
+		return sittingOut;
+	}
+	public void setSittingOut(boolean sittingOut) {
+		this.sittingOut = sittingOut;
 	}
 	
 	@Override

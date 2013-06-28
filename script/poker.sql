@@ -50,7 +50,7 @@ CREATE TABLE `game` (
   `game_structure_id` int(11) DEFAULT NULL,
   `btn_player_id` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`game_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=655361 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=688129 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -82,7 +82,7 @@ CREATE TABLE `game_structure` (
   `pause_start_time` datetime DEFAULT NULL,
   `starting_chips` int(11) DEFAULT NULL,
   PRIMARY KEY (`game_structure_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=425985 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=458753 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -146,6 +146,7 @@ CREATE TABLE `player` (
   `chips` int(11) DEFAULT NULL,
   `game_position` int(11) NOT NULL,
   `finished_place` int(11) DEFAULT NULL,
+  `sitting_out` tinyint(1) NOT NULL DEFAULT '0',
   PRIMARY KEY (`player_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -178,4 +179,4 @@ CREATE TABLE `player_hand` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2013-06-26  7:42:48
+-- Dump completed on 2013-06-28  8:13:07

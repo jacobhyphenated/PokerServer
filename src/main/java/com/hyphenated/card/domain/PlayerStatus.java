@@ -55,6 +55,8 @@ public enum PlayerStatus {
 	ACTION_TO_CHECK,
 	/** The Player is still in the game but not in the hand. */
 	SIT_OUT,
+	/** The Player has been sat out of the game. The player still has a seat at the table, but is not in the seat. */
+	SIT_OUT_GAME,
 	/** The Player is no longer in the game.  */
 	ELIMINATED;
 }

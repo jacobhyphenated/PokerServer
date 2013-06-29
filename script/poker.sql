@@ -30,7 +30,7 @@ CREATE TABLE `board` (
   `turn` varchar(25) DEFAULT NULL,
   `river` varchar(25) DEFAULT NULL,
   PRIMARY KEY (`board_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1376257 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=1540099 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -50,7 +50,7 @@ CREATE TABLE `game` (
   `game_structure_id` int(11) DEFAULT NULL,
   `btn_player_id` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`game_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=688129 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=720897 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -82,7 +82,7 @@ CREATE TABLE `game_structure` (
   `pause_start_time` datetime DEFAULT NULL,
   `starting_chips` int(11) DEFAULT NULL,
   PRIMARY KEY (`game_structure_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=458753 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=491521 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -102,7 +102,7 @@ CREATE TABLE `hand` (
   `bet_amount` int(11) DEFAULT NULL,
   `total_bet_amount` int(11) DEFAULT NULL,
   PRIMARY KEY (`hand_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1081345 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=1245187 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -167,7 +167,7 @@ CREATE TABLE `player_hand` (
   `bet_amount` int(11) DEFAULT NULL,
   `round_bet_amount` int(11) DEFAULT NULL,
   PRIMARY KEY (`player_hand_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=720898 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=884743 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
@@ -179,4 +179,4 @@ CREATE TABLE `player_hand` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2013-06-28  8:13:07
+-- Dump completed on 2013-07-01  9:19:57

@@ -87,7 +87,11 @@ The API consists of two components. The game component, and the player compomant
 
 Requests to the server are made using http request parameters. The response is properly formatted JSON.
 
-###Current Version: 0.3
+###Current Version: 0.4
+
+**New in Version 0.4**: Sitting out of the game, and sitting back in.  There are new API calls that allow the game controller to "sit out" an idle player.  This player will be skipped in the game action order. In a tournament, the player will still post blinds, but will fold to any bet or raise.  A second API call is added to the player controller, allowing that player to sit back in.
+
+Version 0.4 is backwards compatible with 0.1 as only new API calls were added, and no other API calls changed. The exception is Player Status. There is now a new status called ```SIT_OUT_GAME``` that represents a player who has been sat out.  If a client targeting an earlier version of the API cannot handle the new status, then it will not be able to use a Server running 0.4.
 
 **New in Version 0.3**: UUID identifiers for player ID.  The playerId API parameter is now a longer more unique string, making the id next to impossible to guess. 
 
@@ -238,6 +242,17 @@ This ends the current hand, making further operations on the hand impossible. Ch
 
 * *success* - true/false
 
+###Sit Out Current Player (/sitoutcurrent) [*new in 0.4*]
+
+Sits the current player to act out of the game. This player's action will be skipped until the player is sat back into the game. The player's blinds will still be posted in a tournament, and the player will fold to any bet or raise.
+
+####_request_
+
+* *handId* - unique ID for the hand with the player that needs to be sat out.
+
+####_response_
+
+* *success* - true/false
 
 ###Ping (/ping)
 
@@ -288,6 +303,7 @@ Join a game. If the game is a tournament, you can only join before the game is s
  * ACTION_TO_CALL - The player is the current player to act and must call a bet to continue
  * ACTION_TO_CHECK - The player is the current player to act and has the option to check the action
  * SIT_OUT - The player is out of the current hand
+ * SIT_OUT_GAME - The player has left the table and is sitting out of the game. The player could come back and resume later.
  * ELIMINATED - the player has been eliminated from the game
 * *chips* - number of chips the player has remaining. This does not include chips already bet in the current hand.
 * *card1* - first hole card (optional)
@@ -352,6 +368,18 @@ The player places a bet or makes a raise
 ####_response_
 * *success* - true if the bet was placed, false if the action is not allowed
 * *chips* - the amount of chips the player has remaining after this action
+
+###Sit In (/sitin)
+
+The player sits back into the game. If the player has been sat out for inactivity or because they were away from the table, this call will allow them to re-join the game.
+
+####_request_
+
+* *playerId* - unique ID for the player
+
+####_response_
+
+* *success* - true/false
 
 
 Error Handling

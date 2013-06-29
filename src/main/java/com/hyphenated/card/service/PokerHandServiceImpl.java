@@ -265,9 +265,12 @@ public class PokerHandServiceImpl implements PokerHandService {
 	
 	@Override
 	@Transactional
-	public void sitOutCurrentPlayer(HandEntity hand){
+	public boolean sitOutCurrentPlayer(HandEntity hand){
 		hand = handDao.merge(hand);
 		Player currentPlayer = hand.getCurrentToAct();
+		if(currentPlayer == null){
+			return false;
+		}
 		currentPlayer.setSittingOut(true);
 		playerDao.save(currentPlayer);
 		
@@ -275,6 +278,7 @@ public class PokerHandServiceImpl implements PokerHandService {
 		Player next = PlayerUtil.getNextPlayerToAct(hand, currentPlayer);
 		hand.setCurrentToAct(next);
 		handDao.save(hand);
+		return true;
 	}
 	
 	@Override
@@ -349,6 +353,7 @@ public class PokerHandServiceImpl implements PokerHandService {
 		
 		Player next = PlayerUtil.getNextPlayerInGameOrder(playersInHand, btn);
 		Player firstNext = next;
+		
 		//Skip all in players and players that are sitting out
 		while(next.getChips() <= 0 || next.isSittingOut()){
 			next = PlayerUtil.getNextPlayerInGameOrder(playersInHand, next);

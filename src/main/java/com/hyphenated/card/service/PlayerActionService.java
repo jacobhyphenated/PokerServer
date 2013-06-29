@@ -88,4 +88,10 @@ public interface PlayerActionService {
 	 * @return the {@link PlayerStatus}
 	 */
 	public PlayerStatus getPlayerStatus(Player player);
+	
+	/**
+	 * If a player is sitting out of the game, sit the player back in.
+	 * @param player {@link Player} who is back in the game
+	 */
+	public void sitIn(Player player);
 }

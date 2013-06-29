@@ -169,6 +169,13 @@ public class PlayerActionServiceImpl implements PlayerActionService {
 		playerDao.merge(player);
 		return true;
 	}
+	
+	@Override
+	@Transactional
+	public void sitIn(Player player){
+		player.setSittingOut(false);
+		playerDao.save(player);
+	}
 
 	@Override
 	@Transactional
@@ -176,6 +183,10 @@ public class PlayerActionServiceImpl implements PlayerActionService {
 		player = playerDao.merge(player);
 		if(player == null){
 			return PlayerStatus.ELIMINATED;
+		}
+		
+		if(player.isSittingOut()){
+			return PlayerStatus.SIT_OUT_GAME;
 		}
 		
 		Game game = player.getGame();

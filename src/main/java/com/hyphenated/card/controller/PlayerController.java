@@ -219,5 +219,17 @@ public class PlayerController {
 		resultMap.put("chips", player.getChips());
 		return resultMap;
 	}
+	
+	/**
+	 * Sit back in the game after having sat out
+	 * @param playerId Player being sat back in
+	 * @return {"success":true} when the player is sat back in the game
+	 */
+	@RequestMapping("/sitin")
+	public @ResponseBody Map<String, Boolean> sitIn(@RequestParam String playerId){
+		Player player = playerActionService.getPlayerById(playerId);
+		playerActionService.sitIn(player);
+		return Collections.singletonMap("success", true);
+	}
 
 }

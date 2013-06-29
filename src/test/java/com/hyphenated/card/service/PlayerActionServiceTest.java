@@ -288,6 +288,7 @@ public class PlayerActionServiceTest extends AbstractSpringTest {
 		flushAndClear();
 		hand = handDao.findById(hand.getId());
 		assertEquals(4, hand.getPlayers().size());
+		assertEquals(PlayerStatus.SIT_OUT_GAME, playerActionService.getPlayerStatus(players.get(4)));
 	}
 	
 	@Test
@@ -318,6 +319,8 @@ public class PlayerActionServiceTest extends AbstractSpringTest {
 		
 		assertEquals(players.get(4), hand.getCurrentToAct());
 		
+		assertEquals(PlayerStatus.SIT_OUT_GAME, playerActionService.getPlayerStatus(players.get(2)));
+		assertEquals(PlayerStatus.SIT_OUT_GAME, playerActionService.getPlayerStatus(players.get(3)));
 	}
 	
 	private HandEntity getBasicHand(Game game){

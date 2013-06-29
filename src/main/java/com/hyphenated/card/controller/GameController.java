@@ -251,8 +251,8 @@ public class GameController {
 	@RequestMapping("/sitoutcurrent")
 	public @ResponseBody Map<String, Boolean> sitOutCurrentPlayer(@RequestParam long handId){
 		HandEntity hand = handService.getHandById(handId);
-		handService.sitOutCurrentPlayer(hand);
-		return Collections.singletonMap("success", true);
+		boolean result = handService.sitOutCurrentPlayer(hand);
+		return Collections.singletonMap("success", result);
 	}
 	
 	/**

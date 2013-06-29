@@ -93,8 +93,9 @@ public interface PokerHandService {
 	/**
 	 * Has the current player to act for the hand sit out, then moves the action to the next player.
 	 * @param hand Current Hand
+	 * @return true if the player was sat out, false otherwise
 	 */
-	public void sitOutCurrentPlayer(HandEntity hand);
+	public boolean sitOutCurrentPlayer(HandEntity hand);
 	
 	/**
 	 * Gets the player who is the Small Blind for this hand.

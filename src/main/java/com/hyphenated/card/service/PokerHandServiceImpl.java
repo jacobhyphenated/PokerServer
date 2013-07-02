@@ -273,9 +273,21 @@ public class PokerHandServiceImpl implements PokerHandService {
 		}
 		currentPlayer.setSittingOut(true);
 		playerDao.save(currentPlayer);
+		PlayerHand playerHand = null;
+		for(PlayerHand ph : hand.getPlayers()){
+			if(ph.getPlayer().equals(currentPlayer)){
+				playerHand = ph;
+				break;
+			}
+		}
 		
 		//Move action to the next player
 		Player next = PlayerUtil.getNextPlayerToAct(hand, currentPlayer);
+		//If the player being sat out needs to call, that player is folded
+		if(playerHand != null && hand.getTotalBetAmount() > playerHand.getRoundBetAmount()){
+			PlayerUtil.removePlayerFromHand(currentPlayer, hand);
+		}
+		
 		hand.setCurrentToAct(next);
 		handDao.save(hand);
 		return true;

@@ -242,7 +242,7 @@ This ends the current hand, making further operations on the hand impossible. Ch
 
 * *success* - true/false
 
-###Sit Out Current Player (/sitoutcurrent) [*new in 0.4*]
+###Sit Out Current Player (/sitoutcurrent) [new in 0.4]
 
 Sits the current player to act out of the game. This player's action will be skipped until the player is sat back into the game. The player's blinds will still be posted in a tournament, and the player will fold to any bet or raise.
 
@@ -303,7 +303,7 @@ Join a game. If the game is a tournament, you can only join before the game is s
  * ACTION_TO_CALL - The player is the current player to act and must call a bet to continue
  * ACTION_TO_CHECK - The player is the current player to act and has the option to check the action
  * SIT_OUT - The player is out of the current hand
- * SIT_OUT_GAME - The player has left the table and is sitting out of the game. The player could come back and resume later.
+ * SIT_OUT_GAME - The player has left the table and is sitting out of the game. The player could come back and resume later. [new in 0.4]
  * ELIMINATED - the player has been eliminated from the game
 * *chips* - number of chips the player has remaining. This does not include chips already bet in the current hand.
 * *card1* - first hole card (optional)
@@ -369,7 +369,7 @@ The player places a bet or makes a raise
 * *success* - true if the bet was placed, false if the action is not allowed
 * *chips* - the amount of chips the player has remaining after this action
 
-###Sit In (/sitin)
+###Sit In (/sitin) [new in 0.4]
 
 The player sits back into the game. If the player has been sat out for inactivity or because they were away from the table, this call will allow them to re-join the game.
 

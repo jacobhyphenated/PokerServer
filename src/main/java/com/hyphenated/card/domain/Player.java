@@ -23,6 +23,8 @@ THE SOFTWARE.
 */
 package com.hyphenated.card.domain;
 
+import java.io.Serializable;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -38,8 +40,9 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 @Table(name="player")
-public class Player implements Comparable<Player>{
+public class Player implements Comparable<Player>, Serializable{
 
+	private static final long serialVersionUID = -1384636077333014255L;
 	private String id;
 	private Game game;
 	private String name;

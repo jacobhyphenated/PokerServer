@@ -23,6 +23,7 @@ THE SOFTWARE.
 */
 package com.hyphenated.card.domain;
 
+import java.io.Serializable;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -41,8 +42,9 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name="game")
-public class Game {
+public class Game implements Serializable {
 
+	private static final long serialVersionUID = -495064662454346171L;
 	private long id;
 	private int playersRemaining;
 	private Player playerInBTN;

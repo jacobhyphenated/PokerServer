@@ -23,6 +23,8 @@ THE SOFTWARE.
 */
 package com.hyphenated.card.domain;
 
+import java.io.Serializable;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -41,8 +43,9 @@ import com.hyphenated.card.holder.Hand;
 
 @Entity
 @Table(name="player_hand")
-public class PlayerHand implements Comparable<PlayerHand>{
+public class PlayerHand implements Comparable<PlayerHand>, Serializable{
 
+	private static final long serialVersionUID = -5499451283824674842L;
 	private long id;
 	private Player player;
 	private HandEntity handEntity;

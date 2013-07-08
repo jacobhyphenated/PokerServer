@@ -23,6 +23,7 @@ THE SOFTWARE.
 */
 package com.hyphenated.card.domain;
 
+import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
@@ -42,8 +43,9 @@ import javax.persistence.TemporalType;
 
 @Entity
 @Table(name="game_structure")
-public class GameStructure {
+public class GameStructure implements Serializable {
 	
+	private static final long serialVersionUID = 3663515999002547153L;
 	private long id;
 	private BlindLevel currentBlindLevel;
 	private int blindLength;

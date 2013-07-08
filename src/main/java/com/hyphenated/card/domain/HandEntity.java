@@ -23,6 +23,7 @@ THE SOFTWARE.
 */
 package com.hyphenated.card.domain;
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.Set;
 
@@ -48,8 +49,9 @@ import com.hyphenated.card.Card;
 
 @Entity
 @Table(name="hand")
-public class HandEntity {
+public class HandEntity implements Serializable {
 	
+	private static final long serialVersionUID = 4557343585146763024L;
 	private long id;
 	private Game game;
 	private BoardEntity board;

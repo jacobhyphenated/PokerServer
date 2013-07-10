@@ -384,29 +384,25 @@ The player sits back into the game. If the player has been sat out for inactivit
 
 Error Handling
 -------------
-If there is an error in your request, bad formatting, or anything of that nature, a 400 is expected.
+If the URL is not a valid API endpoint, expect a 404.
 
 If there is an error on the server side, you will get back JSON that describes the error. The 2 fields will be:
 
 * *error* - A quick message about the error
 * *errorDetails* - A more detailed message about what caused the error.
 
-One example of a situation where you might expect the error json response would be if you tried to call the Turn method before the flop was dealt. This would give you an error message telling you that the opporation is not allowed given the current state of the hand.
+The status code will be a version of 400 error code that most correctly describes the error that took place (such as 400 or 403)
 
-For JSONP requests, the only supported error field is the *error* field, with a generic message. However, for JSONP, the http status code of 400 will be returned for all errors.
+One example of a situation where you might expect the error json response would be if you tried to call the Turn method before the flop was dealt. This would give you an error message telling you that the opporation is not allowed given the current state of the hand. The HTTP Response code would be 403.
+
 
 Security
 ==========
 This app does not currently have any industry grade security and is not intended for use with any significant amount of real money at stake.
 
-As is, it would be fairly trivial to gain extra information about the hand, including other player's cards.
-
 There are some obvious steps that need to be taken to make the app more secure, such as putting the poker server behind an apache server with SSL, securing the database, etc.
 
 I point this out because I do not want anyone to think that they can just pull down this project and start putting real money at stake.
-
-An additional security feature that will likely be coming in the future will be to fix the playerId.  The playerId returned by the API is currently just the database primary key.  It really needs to be a much longer, unique, unpredicatble, and possibly random hash.  This should help secure player information such as hole cards from a brute force guessing of the primary key.
-
 
 License
 ===========

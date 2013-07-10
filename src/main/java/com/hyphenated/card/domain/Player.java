@@ -55,7 +55,7 @@ public class Player implements Comparable<Player>, Serializable{
 	@Column(name="player_id")
 	@Id
 	@GeneratedValue(generator = "system-uuid")
-    @GenericGenerator(name = "system-uuid", strategy = "uuid")
+    @GenericGenerator(name = "system-uuid", strategy = "uuid2")
 	public String getId() {
 		return id;
 	}

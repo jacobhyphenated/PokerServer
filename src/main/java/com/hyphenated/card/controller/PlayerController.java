@@ -116,6 +116,10 @@ public class PlayerController {
 		results.put("status", playerStatus );
 		
 		results.put("chips", player.getChips());
+		if(game.getGameStructure().getCurrentBlindLevel() != null){
+			results.put("smallBlind", game.getGameStructure().getCurrentBlindLevel().getSmallBlind());
+			results.put("bigBlind", game.getGameStructure().getCurrentBlindLevel().getBigBlind());
+		}
 		if(game.getCurrentHand() != null){
 			HandEntity hand = game.getCurrentHand();
 			PlayerHand playerHand = null;

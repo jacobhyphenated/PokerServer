@@ -87,7 +87,9 @@ The API consists of two components. The game component, and the player compomant
 
 Requests to the server are made using http request parameters. The response is properly formatted JSON.
 
-###Current Version: 0.4
+###Current Version: 0.5
+
+**New in Version 0.5**: The Player Status API call now returns the small and big blind, giving the player client easier access to the blind information. Version 0.5 is completely backwards compatible with Version 0.4.
 
 **New in Version 0.4**: Sitting out of the game, and sitting back in.  There are new API calls that allow the game controller to "sit out" an idle player.  This player will be skipped in the game action order. In a tournament, the player will still post blinds, but will fold to any bet or raise.  A second API call is added to the player controller, allowing that player to sit back in.
 
@@ -310,6 +312,8 @@ Join a game. If the game is a tournament, you can only join before the game is s
 * *card2* - second hole card (optional)
 * *amountBetRound* - the amount of chips the player has contributed to the pot in the current betting round (optional)
 * *amountToCall* - If there is an outstanding bet, this is the number of chips the player must call to continue (optional)
+* *smallBlind* - the current small blind (optional). [new in 0.5]
+* *bigBlind* - the current big blind (optional). [new in 0.5]
 
 ###Fold (/fold)
 

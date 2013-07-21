@@ -46,6 +46,8 @@ The database is MySQL.
 
 The API was build using Spring MVC and Jackson for JSON marshalling. 
 
+Spring Cache Abstraction is used to cache the Player Status API calls (as this will be by far the most commonly called API function). The caching is invalidated on any method that changes the game state (player actions, dealing cards, new hand, etc). The current implementation uses spring's ConcurrentMapCacheFactoryBean, but the caching strategy will scale if using a properly configured ehcache setup. 
+
 The algorithm used for Texas Holdem hand evaluation uses a precomputed table of values. This is very memory intensive and will overflow some of the default java heap space allocations, specifically eclipse servers and JUnit testing. I find that adding the VM Arguments: _-Xms512m -Xmx1524m_ was more than sufficient to solve the problem.
 
 Setup and Installation

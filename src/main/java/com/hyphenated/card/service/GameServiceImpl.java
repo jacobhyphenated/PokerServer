@@ -38,6 +38,7 @@ import com.hyphenated.card.domain.Game;
 import com.hyphenated.card.domain.GameStructure;
 import com.hyphenated.card.domain.GameType;
 import com.hyphenated.card.domain.Player;
+import com.hyphenated.card.view.GameAction;
 
 @Service
 public class GameServiceImpl implements GameService {
@@ -69,6 +70,7 @@ public class GameServiceImpl implements GameService {
 	
 	@Override
 	@Transactional
+	@GameAction
 	public Game startGame(Game game){
 		game = gameDao.merge(game);
 		if(game.getPlayers().size() < 2){

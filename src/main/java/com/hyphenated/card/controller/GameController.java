@@ -32,6 +32,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -150,6 +151,7 @@ public class GameController {
 	 * example: {"success":true}
 	 */
 	@RequestMapping("/startgame")
+	@CacheEvict(value="game", allEntries=true)
 	public @ResponseBody Map<String,Boolean> startGame(@RequestParam long gameId){
 		Game game = gameService.getGameById(gameId, false);
 		if(!game.isStarted()){
@@ -171,6 +173,7 @@ public class GameController {
 	 * Example: {"handId":xxx}
 	 */
 	@RequestMapping("/starthand")
+	@CacheEvict(value="game", allEntries=true)
 	public @ResponseBody Map<String,Long> startHand(@RequestParam long gameId){
 		Game game = gameService.getGameById(gameId, false);
 		HandEntity hand = handService.startNewHand(game);
@@ -189,6 +192,7 @@ public class GameController {
 	 * The json field values are card1, card2, card3.  Example: {"card1":"Xx","card2":"Xx","card3":"Xx"}
 	 */
 	@RequestMapping("/flop")
+	@CacheEvict(value="game", allEntries=true)
 	public @ResponseBody Map<String,String> flop(@RequestParam long handId){
 		HandEntity hand = handService.getHandById(handId);
 		hand = handService.flop(hand);
@@ -207,6 +211,7 @@ public class GameController {
 	 * Example: {"card4":"Xx"}
 	 */
 	@RequestMapping("/turn")
+	@CacheEvict(value="game", allEntries=true)
 	public @ResponseBody Map<String,String> turn(@RequestParam long handId){
 		HandEntity hand = handService.getHandById(handId);
 		hand = handService.turn(hand);
@@ -221,6 +226,7 @@ public class GameController {
 	 * Example: {"card5":"Xx"}
 	 */
 	@RequestMapping("/river")
+	@CacheEvict(value="game", allEntries=true)
 	public @ResponseBody Map<String,String> river(@RequestParam long handId){
 		HandEntity hand = handService.getHandById(handId);
 		hand = handService.river(hand);
@@ -236,6 +242,7 @@ public class GameController {
 	 * Example: {"success":true}
 	 */
 	@RequestMapping("/endhand")
+	@CacheEvict(value="game", allEntries=true)
 	public @ResponseBody Map<String,Boolean> endHand(@RequestParam long handId){
 		HandEntity hand = handService.getHandById(handId);
 		handService.endHand(hand);
@@ -249,6 +256,7 @@ public class GameController {
 	 * @return {"success":true} if the player was sat out.  Error otherwise.
 	 */
 	@RequestMapping("/sitoutcurrent")
+	@CacheEvict(value="game", allEntries=true)
 	public @ResponseBody Map<String, Boolean> sitOutCurrentPlayer(@RequestParam long handId){
 		HandEntity hand = handService.getHandById(handId);
 		boolean result = handService.sitOutCurrentPlayer(hand);

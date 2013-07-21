@@ -37,6 +37,7 @@ import com.hyphenated.card.domain.Player;
 import com.hyphenated.card.domain.PlayerHand;
 import com.hyphenated.card.domain.PlayerStatus;
 import com.hyphenated.card.util.PlayerUtil;
+import com.hyphenated.card.view.GameAction;
 
 @Service
 public class PlayerActionServiceImpl implements PlayerActionService {
@@ -54,6 +55,7 @@ public class PlayerActionServiceImpl implements PlayerActionService {
 	
 	@Override
 	@Transactional
+	@GameAction
 	public boolean fold(Player player, HandEntity hand) {
 		hand = handDao.merge(hand);
 		
@@ -74,6 +76,7 @@ public class PlayerActionServiceImpl implements PlayerActionService {
 
 	@Override
 	@Transactional
+	@GameAction
 	public boolean check(Player player, HandEntity hand) {
 		hand = handDao.merge(hand);
 		
@@ -95,6 +98,7 @@ public class PlayerActionServiceImpl implements PlayerActionService {
 
 	@Override
 	@Transactional
+	@GameAction
 	public boolean bet(Player player, HandEntity hand, int betAmount) {
 		hand = handDao.merge(hand);
 		if(!player.equals(hand.getCurrentToAct())){
@@ -138,6 +142,7 @@ public class PlayerActionServiceImpl implements PlayerActionService {
 
 	@Override
 	@Transactional
+	@GameAction
 	public boolean call(Player player, HandEntity hand) {
 		hand = handDao.merge(hand);
 		//Cannot call out of turn
@@ -172,13 +177,14 @@ public class PlayerActionServiceImpl implements PlayerActionService {
 	
 	@Override
 	@Transactional
+	@GameAction
 	public void sitIn(Player player){
 		player.setSittingOut(false);
 		playerDao.save(player);
 	}
 
 	@Override
-	@Transactional
+	@Transactional(readOnly=true)
 	public PlayerStatus getPlayerStatus(Player player) {
 		player = playerDao.merge(player);
 		if(player == null){

@@ -49,6 +49,7 @@ import com.hyphenated.card.domain.Player;
 import com.hyphenated.card.domain.PlayerHand;
 import com.hyphenated.card.util.PlayerHandBetAmountComparator;
 import com.hyphenated.card.util.PlayerUtil;
+import com.hyphenated.card.view.GameAction;
 
 @Service
 public class PokerHandServiceImpl implements PokerHandService {
@@ -64,6 +65,7 @@ public class PokerHandServiceImpl implements PokerHandService {
 	
 	@Override
 	@Transactional
+	@GameAction
 	public HandEntity startNewHand(Game game) {
 		game = gameDao.merge(game);
 		HandEntity hand = new HandEntity();
@@ -130,6 +132,7 @@ public class PokerHandServiceImpl implements PokerHandService {
 	
 	@Override
 	@Transactional
+	@GameAction
 	public void endHand(HandEntity hand){
 		hand = handDao.merge(hand);
 		if(!isActionResolved(hand)){
@@ -199,6 +202,7 @@ public class PokerHandServiceImpl implements PokerHandService {
 
 	@Override
 	@Transactional
+	@GameAction
 	public HandEntity flop(HandEntity hand) throws IllegalStateException {
 		if(hand.getBoard().getFlop1() != null){
 			throw new IllegalStateException("Unexpected Flop.");
@@ -222,6 +226,7 @@ public class PokerHandServiceImpl implements PokerHandService {
 	
 	@Override
 	@Transactional
+	@GameAction
 	public HandEntity turn(HandEntity hand) throws IllegalStateException{
 		if(hand.getBoard().getFlop1() == null || hand.getBoard().getTurn()!= null){
 			throw new IllegalStateException("Unexpected Turn.");
@@ -243,6 +248,7 @@ public class PokerHandServiceImpl implements PokerHandService {
 	
 	@Override
 	@Transactional
+	@GameAction
 	public HandEntity river(HandEntity hand) throws IllegalStateException{
 		if(hand.getBoard().getFlop1() == null || hand.getBoard().getTurn() == null 
 				|| hand.getBoard().getRiver() != null){
@@ -265,6 +271,7 @@ public class PokerHandServiceImpl implements PokerHandService {
 	
 	@Override
 	@Transactional
+	@GameAction
 	public boolean sitOutCurrentPlayer(HandEntity hand){
 		hand = handDao.merge(hand);
 		Player currentPlayer = hand.getCurrentToAct();

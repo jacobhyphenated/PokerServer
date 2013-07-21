@@ -28,6 +28,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -35,15 +36,13 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.hyphenated.card.domain.Game;
-import com.hyphenated.card.domain.GameStatus;
-import com.hyphenated.card.domain.HandEntity;
 import com.hyphenated.card.domain.Player;
-import com.hyphenated.card.domain.PlayerHand;
 import com.hyphenated.card.domain.PlayerStatus;
 import com.hyphenated.card.service.GameService;
 import com.hyphenated.card.service.PlayerActionService;
+import com.hyphenated.card.service.PlayerServiceManager;
 import com.hyphenated.card.service.PokerHandService;
-import com.hyphenated.card.util.GameUtil;
+import com.hyphenated.card.view.PlayerStatusObject;
 
 /**
  * Controller class that will handle the front-end API interactions regarding
@@ -57,6 +56,9 @@ public class PlayerController {
 	
 	@Autowired
 	private PlayerActionService playerActionService;
+	
+	@Autowired
+	private PlayerServiceManager playerService;
 	
 	@Autowired
 	private GameService gameService;
@@ -97,51 +99,8 @@ public class PlayerController {
 	 * "amountBetRound":xx,"amountToCall":100}
 	 */
 	@RequestMapping("/status")
-	public @ResponseBody Map<String,? extends Object> getPlayerStatus(@RequestParam long gameId, @RequestParam String playerId){
-		Game game = gameService.getGameById(gameId, false);
-		Player player = playerActionService.getPlayerById(playerId);
-		Map<String,Object> results = new HashMap<String, Object>();
-		
-		//Get the player status.
-		//In the special case of preflop, player is not current to act, see if the player is SB or BB
-		PlayerStatus playerStatus = playerActionService.getPlayerStatus(player);
-		if(playerStatus == PlayerStatus.WAITING && GameUtil.getGameStatus(game) == GameStatus.PREFLOP){
-			if(player.equals(handService.getPlayerInSB(game.getCurrentHand()))){
-				playerStatus = PlayerStatus.POST_SB;
-			}
-			else if(player.equals(handService.getPlayerInBB(game.getCurrentHand()))){
-				playerStatus = PlayerStatus.POST_BB;
-			}
-		}
-		results.put("status", playerStatus );
-		
-		results.put("chips", player.getChips());
-		if(game.getGameStructure().getCurrentBlindLevel() != null){
-			results.put("smallBlind", game.getGameStructure().getCurrentBlindLevel().getSmallBlind());
-			results.put("bigBlind", game.getGameStructure().getCurrentBlindLevel().getBigBlind());
-		}
-		if(game.getCurrentHand() != null){
-			HandEntity hand = game.getCurrentHand();
-			PlayerHand playerHand = null;
-			for(PlayerHand ph : hand.getPlayers()){
-				if(ph.getPlayer().equals(player)){
-					playerHand = ph;
-					break;
-				}
-			}
-			if(playerHand != null){
-				results.put("card1", playerHand.getHand().getCard(0));
-				results.put("card2", playerHand.getHand().getCard(1));
-				results.put("amountBetRound",playerHand.getRoundBetAmount());
-				
-				int toCall = hand.getTotalBetAmount() - playerHand.getRoundBetAmount();
-				toCall = Math.min(toCall, player.getChips());
-				if(toCall > 0){
-					results.put("amountToCall", toCall);					
-				}
-			}
-		}
-		return results;
+	public @ResponseBody PlayerStatusObject getPlayerStatus(@RequestParam long gameId, @RequestParam String playerId){
+		return playerService.buildPlayerStatus(gameId, playerId);
 	}
 	
 	/**
@@ -170,6 +129,7 @@ public class PlayerController {
 	 * Example: {"success":true,"chips":xxx}
 	 */
 	@RequestMapping("/call")
+	@CacheEvict(value="game", allEntries=true)
 	public @ResponseBody Map<String,? extends Object> call(@RequestParam long gameId, @RequestParam String playerId){
 		Game game = gameService.getGameById(gameId, false);
 		Player player = playerActionService.getPlayerById(playerId);
@@ -214,6 +174,7 @@ public class PlayerController {
 	 * Example: {"success":true,"chips":xxx}
 	 */
 	@RequestMapping("/bet")
+	@CacheEvict(value="game", allEntries=true)
 	public @ResponseBody Map<String,? extends Object> bet(@RequestParam long gameId, @RequestParam String playerId, @RequestParam int betAmount){
 		Game game = gameService.getGameById(gameId, false);
 		Player player = playerActionService.getPlayerById(playerId);
@@ -230,10 +191,11 @@ public class PlayerController {
 	 * @return {"success":true} when the player is sat back in the game
 	 */
 	@RequestMapping("/sitin")
+	@CacheEvict(value="game", allEntries=true)
 	public @ResponseBody Map<String, Boolean> sitIn(@RequestParam String playerId){
 		Player player = playerActionService.getPlayerById(playerId);
 		playerActionService.sitIn(player);
 		return Collections.singletonMap("success", true);
 	}
-
+	
 }

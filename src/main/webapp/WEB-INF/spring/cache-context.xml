@@ -1,0 +1,17 @@
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:cache="http://www.springframework.org/schema/cache"
+   xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/cache http://www.springframework.org/schema/cache/spring-cache.xsd">
+ 
+  <cache:annotation-driven />
+  
+ <!-- generic cache manager -->
+<bean id="cacheManager" class="org.springframework.cache.support.SimpleCacheManager">
+  <property name="caches">
+    <set>
+      <bean class="org.springframework.cache.concurrent.ConcurrentMapCacheFactoryBean" name="game"/>
+    </set>
+  </property>
+</bean>
+
+</beans>

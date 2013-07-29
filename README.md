@@ -14,6 +14,7 @@ This is a server program designed to facilitate a home game of Texas Holdem Poke
 * Tracking which player is currently supposed to act as well as what actions are legal for that player
 * Handling the evaluation of the poker hands, determining who wins and loses, handling split pots, and handling side pots when there are multiple all in players
 * Handling the blind structure and timers
+* Exposing all of this functionality in a REST service.
 
 This software is for use with friendly games of poker, for home games where everyone is in the same room.  This was my thought when I designed it, and my thinking when I wrote it. 
 
@@ -24,6 +25,7 @@ What This Project Is Not
 * There is no guarantee of security, and I'm not promising anything. I doubt I can stress this enough
 * This is not an infrustructre project. This is just the java server. To use it, you can set it up however you like, with apache/tomcat or jboss or whatever, but it does not come pre-configured. 
 * This is not designed to replace the normal interaction between players in a poker game, it is designed to augment it.
+* This is not a UI. Some simple front-end projects that consume the service this project provides are available on my github page (http://github.com/jacobhyphenated).
 
 Some Background
 ----------------

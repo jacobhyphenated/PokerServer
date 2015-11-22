@@ -26,10 +26,9 @@ package com.hyphenated.card.eval;
 import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-
-import org.apache.log4j.Logger;
-
 import com.google.common.io.Closeables;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Utility class for loading configuration and resource files
@@ -37,7 +36,7 @@ import com.google.common.io.Closeables;
 public class ConfigurationLoader {
 	
 	private static final int HAND_RANK_SIZE = 32487834;
-	private static Logger log = Logger.getLogger(ConfigurationLoader.class);
+	private static Logger log = LoggerFactory.getLogger(ConfigurationLoader.class);
 
 	/**
 	 * Load hand rank lookup table for poker hands.

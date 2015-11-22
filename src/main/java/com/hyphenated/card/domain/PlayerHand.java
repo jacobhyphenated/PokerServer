@@ -53,6 +53,8 @@ public class PlayerHand implements Comparable<PlayerHand>, Serializable{
 	private Card card2;
 	private int betAmount;
 	private int roundBetAmount;
+	private int turns;
+
 	
 	@Id
 	@GeneratedValue(strategy=GenerationType.TABLE)
@@ -112,7 +114,16 @@ public class PlayerHand implements Comparable<PlayerHand>, Serializable{
 	public void setBetAmount(int betAmount) {
 		this.betAmount = betAmount;
 	}
-	
+
+	@Column(name = "turns")
+	public int getTurns() {
+		return turns;
+	}
+
+	public void setTurns(int turns) {
+		this.turns = turns;
+	}
+
 	@Column(name="round_bet_amount")
 	/**
 	 * Represents the amount of chips the player has contributed to the pot for only this

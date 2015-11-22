@@ -23,116 +23,124 @@ THE SOFTWARE.
 */
 package com.hyphenated.card.dao;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-
-import java.util.List;
-
-import org.junit.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
-
 import com.hyphenated.card.AbstractSpringTest;
 import com.hyphenated.card.domain.Game;
 import com.hyphenated.card.domain.GameType;
 import com.hyphenated.card.domain.Player;
+import com.hyphenated.card.repos.GameRepository;
+import com.hyphenated.card.repos.PlayerRepository;
+import org.apache.commons.collections4.IteratorUtils;
+import org.junit.Assert;
+import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.annotation.Rollback;
+import org.springframework.transaction.annotation.Transactional;
+
+import javax.persistence.EntityManager;
+import java.util.List;
+
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 /**
- * Basic DAO test.  Tests some of the simple CRUD methods of the generic DAO using the GameDao.
- * 
+ * Basic DAO test.  Tests some of the simple CRUD methods of the generic DAO using the gameRepository.
+ *
  * @author jacobhyphenated
  */
 @Transactional
+@Rollback
 public class GameDaoTest extends AbstractSpringTest {
 
-	@Autowired
-	private GameDao gameDao;
-	
-	@Autowired
-	private PlayerDao playerDao;
-	
-	@Test
-	public void testCreateGame(){
-		Game game = gameDao.save(createTestGame());
-		assertNotNull(game);
-		assertTrue(game.getId() > 0);
-		assertTrue(gameDao.findAll().size() == 1);
-	}
-	
-	@Test
-	public void testGetGames(){
-		gameDao.save(createTestGame());
-		List<Game> games = gameDao.findAll();
-		assertTrue(games.size() == 1);
-		assertTrue(games.get(0).getGameType() == GameType.TOURNAMENT);
-		assertTrue(games.get(0).getId() > 0);
-	}
-	
-	@Test
-	public void testAddPlayerToGame(){
-		gameDao.save(createTestGame());
-		Game game = gameDao.findAll().get(0);
-		assertTrue(game.getId() > 0);
-		Player p = new Player();
-		p.setName("test 1");
-		p.setGame(game);
-		p.setChips(5000);
-		assertTrue(p.getId() == null);
-		playerDao.save(p);
-		assertTrue(p.getId() != null);
-		
-		flushAndClear();
-		Game game2 = gameDao.findAll().get(0);
-		assertEquals(1, game2.getPlayers().size() );
-	}
-	
-	@Test
-	public void testAddSecondGame(){
-		gameDao.save(createTestGame());
-		Game game = new Game();
-		game.setGameType(GameType.CASH);
-		game.setName("Second Test Game");
-		game.setPlayersRemaining(0);
-		game.setStarted(false);
-		gameDao.save(game);
-		assertTrue(gameDao.findAll().size() == 2);
-	}
-	
-	@Test
-	public void testRemoveGame(){
-		gameDao.save(createTestGame());
-		Game g = createTestGame();
-		g.setName("test 2");
-		g.setGameType(GameType.CASH);
-		gameDao.save(g);
-		List<Game> games = gameDao.findAll();
-		assertTrue(games.size() == 2);
-		for(Game game : games){
-			if(game.getGameType() == GameType.TOURNAMENT){
-				gameDao.remove(game);
-			}
-		}
-		assertTrue(gameDao.findAll().size() == 1);
-	}
-	
-	@Test
-	public void testModifyGame(){
-		gameDao.save(createTestGame());
-		Game game = gameDao.findAll().get(0);
-		assertTrue(game.getGameType() == GameType.TOURNAMENT);
-		assertTrue(game.getPlayersRemaining() == 0);
-		game.setPlayersRemaining(8);
-		Game gameUpdated = gameDao.merge(game);
-		assertTrue(gameUpdated.getPlayersRemaining() == 8);
-	}
-	
-	private Game createTestGame(){
-		Game game = new Game();
-		game.setName("Test Game - JUnit");
-		game.setGameType(GameType.TOURNAMENT);
-		game.setPlayersRemaining(0);
-		game.setStarted(false);
-		return game;
-	}
+    @Autowired
+    private GameRepository gameRepository;
+
+    @Autowired
+    private PlayerRepository playerRepository;
+
+    @Autowired
+    EntityManager entityManager;
+
+    @Test
+    public void testCreateGame() {
+        Game game = gameRepository.save(createTestGame());
+        assertNotNull(game);
+        assertTrue(game.getId() > 0);
+        assertTrue(gameRepository.count() == 1);
+    }
+
+    @Test
+    public void testGetGames() {
+        gameRepository.save(createTestGame());
+        List<Game> games = IteratorUtils.toList(gameRepository.findAll().iterator());
+        assertTrue(games.size() == 1);
+        assertTrue(games.get(0).getGameType() == GameType.TOURNAMENT);
+        assertTrue(games.get(0).getId() > 0);
+    }
+
+    @Test
+    public void testAddPlayerToGame() {
+        gameRepository.save(createTestGame());
+        Game game = gameRepository.findOne(1l);
+        assertTrue(game.getId() > 0);
+        Player p = new Player();
+        p.setName("test 1");
+        p.setGame(game);
+        p.setChips(5000);
+        assertTrue(p.getId() == null);
+        playerRepository.saveAndFlush(p);
+        assertTrue(p.getId() != null);
+
+        flushAndClear();
+        Game game2 = gameRepository.findOne(1l);
+        Assert.assertEquals(1, game2.getPlayers().size());
+    }
+
+    @Test
+    public void testAddSecondGame() {
+        gameRepository.save(createTestGame());
+        Game game = new Game();
+        game.setGameType(GameType.CASH);
+        game.setName("Second Test Game");
+        game.setPlayersRemaining(0);
+        game.setStarted(false);
+        gameRepository.save(game);
+        assertTrue(gameRepository.count() == 2);
+    }
+
+    @Test
+    public void testRemoveGame() {
+        gameRepository.save(createTestGame());
+        Game g = createTestGame();
+        g.setName("test 2");
+        g.setGameType(GameType.CASH);
+        gameRepository.save(g);
+        List<Game> games = IteratorUtils.toList(gameRepository.findAll().iterator());
+        assertTrue(games.size() == 2);
+        for (Game game : games) {
+            if (game.getGameType() == GameType.TOURNAMENT) {
+                gameRepository.delete(game);
+            }
+        }
+        assertTrue(gameRepository.count() == 1);
+    }
+
+    @Test
+    public void testModifyGame() {
+        gameRepository.save(createTestGame());
+        Game game = gameRepository.findOne(1l);
+        assertTrue(game.getGameType() == GameType.TOURNAMENT);
+        assertTrue(game.getPlayersRemaining() == 0);
+        game.setPlayersRemaining(8);
+        Game gameUpdated = gameRepository.saveAndFlush(game);
+        assertTrue(gameUpdated.getPlayersRemaining() == 8);
+    }
+
+    private Game createTestGame() {
+        Game game = new Game();
+        game.setName("Test Game - JUnit");
+        game.setGameType(GameType.TOURNAMENT);
+        game.setPlayersRemaining(0);
+        game.setStarted(false);
+        return game;
+    }
 }

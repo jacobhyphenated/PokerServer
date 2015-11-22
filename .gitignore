@@ -7,3 +7,5 @@
 target/
 bin/
 .metadata/
+.idea/*
+*.iml

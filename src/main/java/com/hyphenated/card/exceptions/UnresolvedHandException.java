@@ -5,7 +5,9 @@ package com.hyphenated.card.exceptions;
  */
 public class UnresolvedHandException extends IllegalStateException {
 
-    public UnresolvedHandException(String s) {
+	private static final long serialVersionUID = -5608147688555206874L;
+
+	public UnresolvedHandException(String s) {
         super(s);
     }
 }

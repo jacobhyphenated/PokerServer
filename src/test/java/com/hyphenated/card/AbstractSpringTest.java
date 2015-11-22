@@ -23,17 +23,15 @@ THE SOFTWARE.
 */
 package com.hyphenated.card;
 
-import com.hyphenated.card.config.SpringConfig;
-import org.hibernate.SessionFactory;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.AbstractTransactionalJUnit4SpringContextTests;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
+import com.hyphenated.card.config.SpringConfig;
 
 /**
  * Abstract test super class for JUnit tests that need the spring context and

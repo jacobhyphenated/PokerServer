@@ -13,7 +13,7 @@ import org.springframework.transaction.PlatformTransactionManager;
 @EnableScheduling
 public class SchedulingConfig {
 
-    private static final String SCHEDULER_NAME = "POKER_QUARTZ_SCHEDULER";
+//    private static final String SCHEDULER_NAME = "POKER_QUARTZ_SCHEDULER";
     public static final String JOB_GROUP = "QUARTZ_GAME_JOB_GROUP";
     public static final String JOB_NAME_PREFIX = "createJobDetailFactoryBeanFor";
 

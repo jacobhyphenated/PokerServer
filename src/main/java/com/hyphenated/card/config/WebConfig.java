@@ -16,7 +16,7 @@ import org.springframework.web.servlet.view.JstlView;
 
 @Configuration
 @EnableWebMvc
-@ComponentScan(value = "com.nitinsurana.controller", includeFilters = {
+@ComponentScan(value = "com.hyphenated.card.controller", includeFilters = {
         @ComponentScan.Filter(value = Controller.class, type = FilterType.ANNOTATION)
         , @ComponentScan.Filter(value = ControllerAdvice.class, type = FilterType.ANNOTATION)
 })

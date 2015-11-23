@@ -80,8 +80,9 @@ public class GameDaoTest extends AbstractSpringTest {
     @Test
     public void testAddPlayerToGame() {
         gameRepository.save(createTestGame());
-        Game game = gameRepository.findOne(1l);
-        assertTrue(game.getId() > 0);
+        List<Game> games = gameRepository.findByName("Test Game - JUnit");
+        assertTrue(games.size() == 1);
+        Game game = games.get(0);
         Player p = new Player();
         p.setName("test 1");
         p.setGame(game);
@@ -91,7 +92,7 @@ public class GameDaoTest extends AbstractSpringTest {
         assertTrue(p.getId() != null);
 
         flushAndClear();
-        Game game2 = gameRepository.findOne(1l);
+        Game game2 = gameRepository.findByName("Test Game - JUnit").get(0);
         Assert.assertEquals(1, game2.getPlayers().size());
     }
 
@@ -127,7 +128,7 @@ public class GameDaoTest extends AbstractSpringTest {
     @Test
     public void testModifyGame() {
         gameRepository.save(createTestGame());
-        Game game = gameRepository.findOne(1l);
+        Game game = gameRepository.findByName("Test Game - JUnit").get(0);
         assertTrue(game.getGameType() == GameType.TOURNAMENT);
         assertTrue(game.getPlayersRemaining() == 0);
         game.setPlayersRemaining(8);

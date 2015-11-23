@@ -39,11 +39,4 @@
 		<nature>org.eclipse.wst.common.project.facet.core.nature</nature>
 		<nature>org.eclipse.wst.jsdt.core.jsNature</nature>
 	</natures>
-	<linkedResources>
-		<link>
-			<name>WebContent/WEB-INF</name>
-			<type>2</type>
-			<location>/Users/jkanipe/Documents/workspace_juno/pokerserver/src/main/webapp/WEB-INF</location>
-		</link>
-	</linkedResources>
 </projectDescription>

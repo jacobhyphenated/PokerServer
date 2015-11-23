@@ -19,7 +19,7 @@ import java.util.Properties;
  * Created by Nitin on 05-11-2015.
  */
 @Configuration
-@EnableJpaRepositories(basePackages = "com.nitinsurana.repos")
+@EnableJpaRepositories(basePackages = "com.hyphenated.card.repos")
 @EnableTransactionManagement
 public class DataConfig {
 
@@ -35,7 +35,7 @@ public class DataConfig {
     public EntityManagerFactory entityManagerFactory() {
         LocalContainerEntityManagerFactoryBean em = new LocalContainerEntityManagerFactoryBean();
         em.setDataSource(dataSource());
-        em.setPackagesToScan("com.nitinsurana.domain");
+        em.setPackagesToScan("com.hyphenated.card.domain");
         HibernateJpaVendorAdapter hibernateJpaVendorAdapter = new HibernateJpaVendorAdapter();
         hibernateJpaVendorAdapter.getJpaDialect().setPrepareConnection(false);
         em.setJpaVendorAdapter(hibernateJpaVendorAdapter);
@@ -66,6 +66,7 @@ public class DataConfig {
 
     @Bean(name = "dataSource")
     public BasicDataSource dataSource() {
+    	//TODO - properties file for DB config
         BasicDataSource ds = new BasicDataSource();
         ds.setDriverClassName("com.mysql.jdbc.Driver");
         ds.setUrl("jdbc:mysql://localhost:3306/poker");

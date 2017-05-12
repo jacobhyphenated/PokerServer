@@ -33,6 +33,7 @@ import com.hyphenated.card.domain.HandEntity;
 import com.hyphenated.card.domain.Player;
 import com.hyphenated.card.domain.PlayerHand;
 import com.hyphenated.card.domain.PlayerStatus;
+import com.hyphenated.card.domain.TournamentStructure;
 import com.hyphenated.card.util.GameUtil;
 import com.hyphenated.card.view.PlayerStatusObject;
 
@@ -69,9 +70,10 @@ public class PlayerServiceManagerImpl implements PlayerServiceManager {
 		results.setStatus(playerStatus );
 		
 		results.setChips(player.getChips());
-		if(game.getGameStructure().getCurrentBlindLevel() != null){
-			results.setSmallBlind(game.getGameStructure().getCurrentBlindLevel().getSmallBlind());
-			results.setBigBlind(game.getGameStructure().getCurrentBlindLevel().getBigBlind());
+		TournamentStructure structure = (TournamentStructure) game.getGameStructure();
+		if(structure.getCurrentBlindLevel() != null){
+			results.setSmallBlind(structure.getCurrentBlindLevel().getSmallBlind());
+			results.setBigBlind(structure.getCurrentBlindLevel().getBigBlind());
 		}
 		if(game.getCurrentHand() != null){
 			HandEntity hand = game.getCurrentHand();

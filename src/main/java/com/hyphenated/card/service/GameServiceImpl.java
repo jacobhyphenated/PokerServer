@@ -35,99 +35,99 @@ import com.hyphenated.card.dao.GameDao;
 import com.hyphenated.card.dao.PlayerDao;
 import com.hyphenated.card.domain.BlindLevel;
 import com.hyphenated.card.domain.Game;
-import com.hyphenated.card.domain.GameStructure;
 import com.hyphenated.card.domain.GameType;
 import com.hyphenated.card.domain.Player;
+import com.hyphenated.card.domain.TournamentStructure;
 import com.hyphenated.card.view.GameAction;
 
 @Service
 public class GameServiceImpl implements GameService {
-	
+
 	@Autowired
 	private GameDao gameDao;
-	
+
 	@Autowired
 	private PlayerDao playerDao;
 
 	@Override
-	@Transactional(readOnly=true)
+	@Transactional(readOnly = true)
 	public Game getGameById(long id, boolean fetchPlayers) {
 		Game game = gameDao.findById(id);
-		//Player list is lazy fetched.  force fetch for players if necessary
-		if(fetchPlayers){
-			for(Player p : game.getPlayers()){
+		// Player list is lazy fetched. force fetch for players if necessary
+		if (fetchPlayers) {
+			for (Player p : game.getPlayers()) {
 				p.getId();
 			}
 		}
 		return game;
 	}
-	
+
 	@Override
 	@Transactional
-	public Game saveGame(Game game){
+	public Game saveGame(Game game) {
 		return gameDao.save(game);
 	}
-	
+
 	@Override
 	@Transactional
 	@GameAction
-	public Game startGame(Game game){
+	public Game startGame(Game game) {
 		game = gameDao.merge(game);
-		if(game.getPlayers().size() < 2){
+		if (game.getPlayers().size() < 2) {
 			throw new IllegalStateException("Not Enough Players");
 		}
-		if(game.getPlayers().size() > 10){
+		if (game.getPlayers().size() > 10) {
 			throw new IllegalStateException("Too Many Players");
 		}
-		if(game.isStarted()){
+		if (game.isStarted()) {
 			throw new IllegalStateException("Game already started");
 		}
-		
-		//Set started flag
+
+		// Set started flag
 		game.setStarted(true);
-		//Start at the first blind level for the game
-		GameStructure gs = game.getGameStructure();
+		// Start at the first blind level for the game
+		TournamentStructure gs = (TournamentStructure) game.getGameStructure();
 		List<BlindLevel> blinds = gs.getBlindLevels();
 		Collections.sort(blinds);
 		gs.setCurrentBlindLevel(blinds.get(0));
-		
-		//Get all players associated with the game. 
-		//Assign random position.  Save the player.
+
+		// Get all players associated with the game.
+		// Assign random position. Save the player.
 		List<Player> players = new ArrayList<Player>();
 		players.addAll(game.getPlayers());
 		Collections.shuffle(players);
-		for(int i = 0; i < players.size(); i++){
+		for (int i = 0; i < players.size(); i++) {
 			Player p = players.get(i);
-			p.setGamePosition(i+1);
+			p.setGamePosition(i + 1);
 			playerDao.save(p);
 		}
-		
-		//Set Button and Big Blind.  Button is position 1 (index 0)
+
+		// Set Button and Big Blind. Button is position 1 (index 0)
 		Collections.sort(players);
 		game.setPlayerInBTN(players.get(0));
-		
-		//Save and return the updated game
+
+		// Save and return the updated game
 		return gameDao.merge(game);
 	}
-	
+
 	@Override
 	@Transactional
-	public Player addNewPlayerToGame(Game game, Player player){
-		if(game.isStarted() && game.getGameType() == GameType.TOURNAMENT){
+	public Player addNewPlayerToGame(Game game, Player player) {
+		if (game.isStarted() && game.getGameType() == GameType.TOURNAMENT) {
 			throw new IllegalStateException("Tournament in progress, no new players may join");
 		}
 		game = gameDao.merge(game);
-		if(game.getPlayers().size() >= 10){
+		if (game.getPlayers().size() >= 10) {
 			throw new IllegalStateException("Cannot have more than 10 players in one game");
 		}
 		player.setGame(game);
-		//Set up player according to game logic.
-		if(game.getGameType() == GameType.TOURNAMENT){
+		// Set up player according to game logic.
+		if (game.getGameType() == GameType.TOURNAMENT) {
 			player.setChips(game.getGameStructure().getStartingChips());
 		}
-		
+
 		player = playerDao.save(player);
-		if(player == null){
+		if (player == null) {
 			return null;
 		}
 		game.setPlayersRemaining(game.getPlayersRemaining() + 1);
@@ -135,11 +135,11 @@ public class GameServiceImpl implements GameService {
 		player.setGame(game);
 		return player;
 	}
-	
+
 	@Override
 	@Transactional
-	public Player savePlayer(Player player){
+	public Player savePlayer(Player player) {
 		return playerDao.save(player);
 	}
-	
+
 }

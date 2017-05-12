@@ -49,47 +49,50 @@ import com.hyphenated.card.domain.GameType;
 import com.hyphenated.card.domain.HandEntity;
 import com.hyphenated.card.domain.Player;
 import com.hyphenated.card.domain.PlayerHand;
+import com.hyphenated.card.domain.TournamentStructure;
 
 public class HandServiceTest extends AbstractSpringTest {
 
 	@Autowired
 	private PokerHandService handService;
-	
+
 	@Autowired
 	private GameDao gameDao;
 	@Autowired
 	private PlayerDao playerDao;
-	
+
 	@Test
-	public void verifyGameSetup(){
+	public void verifyGameSetup() {
 		Game game = setupGame();
 		assertTrue(game.getId() > 0);
-		assertEquals(4,game.getPlayers().size());
-		assertEquals(BlindLevel.BLIND_10_20, game.getGameStructure().getCurrentBlindLevel());
-		assertNull(game.getGameStructure().getCurrentBlindEndTime());
+		assertEquals(4, game.getPlayers().size());
+		TournamentStructure structure = (TournamentStructure) game.getGameStructure();
+		assertEquals(BlindLevel.BLIND_10_20, structure.getCurrentBlindLevel());
+		assertNull(structure.getCurrentBlindEndTime());
 		assertTrue(game.isStarted());
-		
-		for(Player p : game.getPlayers()){
+
+		for (Player p : game.getPlayers()) {
 			assertTrue(p.getGamePosition() > 0);
 		}
 	}
-	
+
 	@Test
-	public void testFirstHandInGame(){
+	public void testFirstHandInGame() {
 		Game game = setupGame();
-		assertEquals(BlindLevel.BLIND_10_20, game.getGameStructure().getCurrentBlindLevel());
-		assertNull(game.getGameStructure().getCurrentBlindEndTime());
-		
+		TournamentStructure structure = (TournamentStructure) game.getGameStructure();
+		assertEquals(BlindLevel.BLIND_10_20, structure.getCurrentBlindLevel());
+		assertNull(structure.getCurrentBlindEndTime());
+
 		HandEntity hand = handService.startNewHand(game);
 		assertTrue(hand.getId() > 0);
 		assertEquals(BlindLevel.BLIND_10_20, hand.getBlindLevel());
-		assertNotNull(game.getGameStructure().getCurrentBlindEndTime());
-		assertEquals(hand.getBlindLevel(), game.getGameStructure().getCurrentBlindLevel());
+		assertNotNull(structure.getCurrentBlindEndTime());
+		assertEquals(hand.getBlindLevel(), structure.getCurrentBlindLevel());
 		assertEquals(4, hand.getPlayers().size());
 		assertNotNull(hand.getBoard());
 		assertTrue(hand.getBoard().getId() > 0);
 		assertNull(hand.getBoard().getFlop1());
-		
+
 		List<PlayerHand> players = new ArrayList<PlayerHand>();
 		players.addAll(hand.getPlayers());
 		Collections.sort(players);
@@ -97,84 +100,85 @@ public class HandServiceTest extends AbstractSpringTest {
 		assertEquals(players.get(1).getPlayer(), handService.getPlayerInSB(hand));
 		assertEquals(players.get(2).getPlayer(), handService.getPlayerInBB(hand));
 	}
-	
+
 	@Test
-	public void testBlindLevelIncrease(){
+	public void testBlindLevelIncrease() {
 		Game game = setupGame();
 		HandEntity hand = handService.startNewHand(game);
 		assertEquals(BlindLevel.BLIND_10_20, hand.getBlindLevel());
-		assertNotNull(game.getGameStructure().getCurrentBlindEndTime());
+		TournamentStructure structure = (TournamentStructure) game.getGameStructure();
+		assertNotNull(structure.getCurrentBlindEndTime());
 		long firstBoardId = hand.getBoard().getId();
-		
-		game.getGameStructure().setCurrentBlindEndTime(new Date(new Date().getTime() - 100));
+
+		structure.setCurrentBlindEndTime(new Date(new Date().getTime() - 100));
 		HandEntity nextHand = handService.startNewHand(game);
-		
+
 		assertEquals(BlindLevel.BLIND_15_30, nextHand.getBlindLevel());
-		assertEquals(nextHand.getBlindLevel(), game.getGameStructure().getCurrentBlindLevel());
-		assertTrue(game.getGameStructure().getCurrentBlindEndTime().getTime() > new Date().getTime());
+		assertEquals(nextHand.getBlindLevel(), structure.getCurrentBlindLevel());
+		assertTrue(structure.getCurrentBlindEndTime().getTime() > new Date().getTime());
 		assertTrue(nextHand.getBoard().getId() != firstBoardId);
 	}
-	
+
 	@Test
-	public void testFlop(){
+	public void testFlop() {
 		Game game = setupGame();
 		HandEntity hand = handService.startNewHand(game);
 		assertNull(hand.getBoard().getFlop1());
-		
+
 		removeBetValues(hand);
 		hand = handService.flop(hand);
 		assertTrue(hand.getBoard().getFlop1() != null);
 		assertTrue(hand.getBoard().getFlop2() != null);
 		assertTrue(hand.getBoard().getFlop3() != null);
 	}
-	
+
 	@Test
-	public void testTurn(){
+	public void testTurn() {
 		Game game = setupGame();
 		HandEntity hand = handService.startNewHand(game);
 		removeBetValues(hand);
 		hand = handService.flop(hand);
 		assertNull(hand.getBoard().getTurn());
 		assertNotNull(hand.getBoard().getFlop1());
-		
+
 		hand = handService.turn(hand);
 		assertNotNull(hand.getBoard().getTurn());
 		assertNull(hand.getBoard().getRiver());
 	}
-	
+
 	@Test
-	public void testRiver(){
+	public void testRiver() {
 		Game game = setupGame();
 		HandEntity hand = handService.startNewHand(game);
 		removeBetValues(hand);
 		hand = handService.flop(hand);
 		hand = handService.turn(hand);
 		hand = handService.river(hand);
-		
+
 		assertNotNull(hand.getBoard().getFlop3());
 		assertNotNull(hand.getBoard().getTurn());
 		assertNotNull(hand.getBoard().getRiver());
 	}
-	
-	@Test(expected=IllegalStateException.class)
-	public void testDuplicateFlop(){
+
+	@Test(expected = IllegalStateException.class)
+	public void testDuplicateFlop() {
 		Game game = setupGame();
 		HandEntity hand = handService.startNewHand(game);
 		removeBetValues(hand);
 		hand = handService.flop(hand);
 		hand = handService.flop(hand);
 	}
-	
-	@Test(expected=IllegalStateException.class)
-	public void testFaildedTurn(){
+
+	@Test(expected = IllegalStateException.class)
+	public void testFaildedTurn() {
 		Game game = setupGame();
 		HandEntity hand = handService.startNewHand(game);
 		removeBetValues(hand);
 		hand = handService.turn(hand);
 	}
-	
-	@Test(expected=IllegalStateException.class)
-	public void testDuplicateTurn(){
+
+	@Test(expected = IllegalStateException.class)
+	public void testDuplicateTurn() {
 		Game game = setupGame();
 		HandEntity hand = handService.startNewHand(game);
 		removeBetValues(hand);
@@ -182,18 +186,18 @@ public class HandServiceTest extends AbstractSpringTest {
 		hand = handService.turn(hand);
 		hand = handService.turn(hand);
 	}
-	
-	@Test(expected=IllegalStateException.class)
-	public void testFailedRiver(){
+
+	@Test(expected = IllegalStateException.class)
+	public void testFailedRiver() {
 		Game game = setupGame();
 		HandEntity hand = handService.startNewHand(game);
 		removeBetValues(hand);
 		hand = handService.flop(hand);
 		hand = handService.river(hand);
 	}
-	
-	@Test(expected=IllegalStateException.class)
-	public void testDuplicateRiver(){
+
+	@Test(expected = IllegalStateException.class)
+	public void testDuplicateRiver() {
 		Game game = setupGame();
 		HandEntity hand = handService.startNewHand(game);
 		removeBetValues(hand);
@@ -202,17 +206,17 @@ public class HandServiceTest extends AbstractSpringTest {
 		hand = handService.river(hand);
 		hand = handService.river(hand);
 	}
-	
+
 	@Test
-	public void testNextToActAtStart(){
+	public void testNextToActAtStart() {
 		Game game = setupGame();
 		Player btnPlayer = game.getPlayerInBTN();
 		assertNotNull(btnPlayer);
-		
+
 		HandEntity hand = handService.startNewHand(game);
 		Player bbPlayer = handService.getPlayerInBB(hand);
 		assertNotNull(bbPlayer);
-		
+
 		List<PlayerHand> players = new ArrayList<PlayerHand>();
 		players.addAll(hand.getPlayers());
 		Collections.sort(players);
@@ -220,58 +224,58 @@ public class HandServiceTest extends AbstractSpringTest {
 		assertEquals(bbPlayer, players.get(2).getPlayer());
 		assertEquals("Check Next Player to Act is after BB", players.get(3).getPlayer(), hand.getCurrentToAct());
 	}
-	
+
 	@Test
-	public void testSitOutCurrentPlayer(){
+	public void testSitOutCurrentPlayer() {
 		Game game = setupGame();
 		HandEntity hand = handService.startNewHand(game);
 		List<PlayerHand> players = new ArrayList<PlayerHand>();
 		players.addAll(hand.getPlayers());
 		Collections.sort(players);
 		assertEquals("Check Next Player to Act is after BB", players.get(3).getPlayer(), hand.getCurrentToAct());
-		
+
 		handService.sitOutCurrentPlayer(hand);
 		assertTrue(players.get(3).getPlayer().isSittingOut());
 		assertEquals(players.get(0).getPlayer(), hand.getCurrentToAct());
 	}
-	
+
 	@Test
-	public void testSitOutCurrentPlayerWithOtherSitters(){
+	public void testSitOutCurrentPlayerWithOtherSitters() {
 		Game game = setupGame();
 		HandEntity hand = handService.startNewHand(game);
 		List<PlayerHand> players = new ArrayList<PlayerHand>();
 		players.addAll(hand.getPlayers());
 		Collections.sort(players);
 		assertEquals("Check Next Player to Act is after BB", players.get(3).getPlayer(), hand.getCurrentToAct());
-		
+
 		players.get(0).getPlayer().setSittingOut(true);
 		handService.sitOutCurrentPlayer(hand);
 		assertTrue(players.get(3).getPlayer().isSittingOut());
-		//Player 0 is already out, when player 3 is sat out, action moves to 1
+		// Player 0 is already out, when player 3 is sat out, action moves to 1
 		assertEquals(players.get(1).getPlayer(), hand.getCurrentToAct());
 	}
-	
+
 	@Test
-	public void testEndHand(){
+	public void testEndHand() {
 		Game game = setupGame();
 		HandEntity hand = handService.startNewHand(game);
 		removeBetValues(hand);
 		Player bbPlayer = handService.getPlayerInBB(hand);
-		
+
 		List<PlayerHand> players = new ArrayList<PlayerHand>();
 		players.addAll(hand.getPlayers());
 		Collections.sort(players);
 		assertEquals(bbPlayer, players.get(2).getPlayer());
-		
+
 		hand.setBoard(getDummyBoard());
 		handService.endHand(hand);
 		assertEquals(game.getPlayerInBTN(), players.get(1).getPlayer());
-		
+
 		hand = handService.startNewHand(game);
 		removeBetValues(hand);
 		assertEquals(players.get(3).getPlayer(), handService.getPlayerInBB(hand));
 		assertEquals(players.get(2).getPlayer(), handService.getPlayerInSB(hand));
-		
+
 		hand.setBoard(getDummyBoard());
 		handService.endHand(hand);
 		hand = handService.startNewHand(game);
@@ -279,7 +283,7 @@ public class HandServiceTest extends AbstractSpringTest {
 		assertEquals(game.getPlayerInBTN(), players.get(2).getPlayer());
 		assertEquals(players.get(0).getPlayer(), handService.getPlayerInBB(hand));
 		assertEquals(players.get(3).getPlayer(), handService.getPlayerInSB(hand));
-		
+
 		hand.setBoard(getDummyBoard());
 		handService.endHand(hand);
 		hand = handService.startNewHand(game);
@@ -287,7 +291,7 @@ public class HandServiceTest extends AbstractSpringTest {
 		assertEquals(game.getPlayerInBTN(), players.get(3).getPlayer());
 		assertEquals(players.get(1).getPlayer(), handService.getPlayerInBB(hand));
 		assertEquals(players.get(0).getPlayer(), handService.getPlayerInSB(hand));
-		
+
 		hand.setBoard(getDummyBoard());
 		handService.endHand(hand);
 		hand = handService.startNewHand(game);
@@ -296,58 +300,58 @@ public class HandServiceTest extends AbstractSpringTest {
 		assertEquals(players.get(2).getPlayer(), handService.getPlayerInBB(hand));
 		assertEquals(players.get(1).getPlayer(), handService.getPlayerInSB(hand));
 	}
-	
-	private Game setupGame(){
+
+	private Game setupGame() {
 		Game game = new Game();
 		game.setName("Test Game");
 		game.setPlayersRemaining(4);
 		game.setStarted(true);
 		game.setGameType(GameType.TOURNAMENT);
-		GameStructure gs = new GameStructure();
-		CommonTournamentFormats format =  CommonTournamentFormats.TWO_HR_SIXPPL;
+		TournamentStructure gs = new TournamentStructure();
+		CommonTournamentFormats format = CommonTournamentFormats.TWO_HR_SIXPPL;
 		gs.setBlindLength(format.getTimeInMinutes());
 		gs.setBlindLevels(format.getBlindLevels());
 		gs.setStartingChips(2000);
 		gs.setCurrentBlindLevel(BlindLevel.BLIND_10_20);
 		game.setGameStructure(gs);
-		
+
 		Player p1 = new Player();
 		p1.setName("Player 1");
 		p1.setGame(game);
 		p1.setChips(gs.getStartingChips());
 		p1.setGamePosition(1);
 		playerDao.save(p1);
-		
+
 		Player p2 = new Player();
 		p2.setName("Player 2");
 		p2.setGame(game);
 		p2.setChips(gs.getStartingChips());
 		p2.setGamePosition(2);
 		playerDao.save(p2);
-		
+
 		Player p3 = new Player();
 		p3.setName("Player 3");
 		p3.setGame(game);
 		p3.setChips(gs.getStartingChips());
 		p3.setGamePosition(3);
 		playerDao.save(p3);
-		
+
 		Player p4 = new Player();
 		p4.setName("Player 4");
 		p4.setGame(game);
 		p4.setChips(gs.getStartingChips());
 		p4.setGamePosition(4);
 		playerDao.save(p4);
-		
+
 		game.setPlayerInBTN(p1);
 		game = gameDao.save(game);
-		
+
 		flushAndClear();
-		
+
 		return gameDao.findById(game.getId());
 	}
-	
-	private BoardEntity getDummyBoard(){
+
+	private BoardEntity getDummyBoard() {
 		BoardEntity board = new BoardEntity();
 		board.setFlop1(Card.ACE_OF_CLUBS);
 		board.setFlop2(Card.EIGHT_OF_CLUBS);
@@ -356,9 +360,9 @@ public class HandServiceTest extends AbstractSpringTest {
 		board.setRiver(Card.TWO_OF_DIAMONDS);
 		return board;
 	}
-	
-	private void removeBetValues(HandEntity hand){
-		for (PlayerHand ph : hand.getPlayers()){
+
+	private void removeBetValues(HandEntity hand) {
+		for (PlayerHand ph : hand.getPlayers()) {
 			ph.setRoundBetAmount(0);
 		}
 		hand.setTotalBetAmount(0);

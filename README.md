@@ -91,7 +91,7 @@ The API consists of two components. The game component, and the player compomant
 
 Requests to the server are made using http request parameters. The response is properly formatted JSON.
 
-###Current Version: 0.5
+### Current Version: 0.5
 
 **New in Version 0.5**: The Player Status API call now returns the small and big blind, giving the player client easier access to the blind information. Version 0.5 is completely backwards compatible with Version 0.4.
 
@@ -112,15 +112,15 @@ Version 0.2 is completely backwards compatible with Version 0.1. All that was ad
 Game Controller
 ---------------------
 
-###List Structure (/structures)
+### List Structure (/structures)
 
 Get a list of currently available structures for the poker game. These game structures represent the blind structure, the blind length, starting chip stacks, etc.
 
-####_request_
+#### _request_
 
 No parameters
 
-####_response_
+#### _response_
 
 * Array of Game Structures:
  * *name* - A unique identifier for the game structure type
@@ -129,28 +129,28 @@ No parameters
  * *blindLevels* - an array of blind levels, each value a string with the format BLIND_SB_BB
  * *blindLength* - integer representing the length of each blind level in minutes
 
-###Create Game (/create)
+### Create Game (/create)
 
 Create a new game. The game will be put in an unstarted state until players join.
 
-####_request_
+#### _request_
 
 * *gameName* - Name for the game.  There are no major restrictions on this value. It does not have to be unique
 * *gameStructure* - The type of structure your game will follow.  This is a string that corresponsds to the _name_ field of the Game Structure object, like the type you get from the List Structures request
 
-####_response_
+#### _response_
 
 * *gameId* - unique identifier for the game you created. Use this value to reference this particular game for future API calls.
 
-###Game Status (/gamestatus)
+### Game Status (/gamestatus)
 
 Get the status of an existing game. Contains information about the current game state and the players involved in the game.
 
-####_request_
+#### _request_
 
 * *gameId* - unique ID for the game
 
-####_response_
+#### _response_
 
 * *gameStatus* - status representing the current state of the game. Possible values are:
  * NOT\_STARTED
@@ -172,130 +172,130 @@ Get the status of an existing game. Contains information about the current game 
  * *finishPosition* - if the player is out of the game, this is the position they finished in. This will be zero for players still in the game. 
  * *gamePosition* - the seating position.  This determines the order of action for every hand, and should determine the seating.  This is randomized at the start of a tournament.
 
-###Start Game (/startgame)
+### Start Game (/startgame)
 
 Start the game. For tournaments, all players have joined and it is time to begin the game. Players should not be able to join tournaments after the game is started.
 
-####_request_
+#### _request_
 
 * *gameId* - unique ID for the game to be started
 
-####_response_
+#### _response_
 
 * *success* - true if the game was successfully placed in a started state. False otherwise.
 
-###Start Hand (/starthand)
+### Start Hand (/starthand)
 
 Starts a new hand.  This should be called to trigger the dealing of the hand.  After this, players will be assigned cards and the hand will go to preflop actions.
 
-####_request_
+#### _request_
 
 * *gameId* - unique ID of the game where the hand is being dealt
 
-####_response_
+#### _response_
 
 * *handId* - unique ID for the hand that was dealt.  Use this id to reference this particular hand.
 
-###Deal Flop (/flop)
+### Deal Flop (/flop)
 
 Deal the three flop community cards.
 
-####_request_
+#### _request_
 
 * *handId* - unique ID for the hand where the flop is dealt
 
-####_response_
+#### _response_
 
 * *card1* - first flop card
 * *card2* - second flop card
 * *card3* - third flop card
 
-###Deal Turn (/turn)
+### Deal Turn (/turn)
 
 Deal the turn card for the hand
 
-####_request_
+#### _request_
 
 * *handId* - unique ID for the hand where the turn card is dealt
 
-####_response_
+#### _response_
 
 * *card4* - turn card
 
-###Deal Rivier (/river)
+### Deal Rivier (/river)
 
 Deal the river card for the hand
 
-####_request_
+#### _request_
 
 * *handId* - unique ID for the hand where the river card is dealt
 
-####_response_
+#### _response_
 
 * *card5* - river card
 
-###End Hand (/endhand)
+### End Hand (/endhand)
 
 Ends the current hand.  This method should be called after the river card and when all players have taken actions. This should also be called when all players except one have folded.
 
 This ends the current hand, making further operations on the hand impossible. Chips are distributed from the pot to the winning player(s).
 
-####_request_
+#### _request_
 
 * *handId* - unique ID for the hand to be ended
 
-####_response_
+#### _response_
 
 * *success* - true/false
 
-###Sit Out Current Player (/sitoutcurrent) [new in 0.4]
+### Sit Out Current Player (/sitoutcurrent) [new in 0.4]
 
 Sits the current player to act out of the game. This player's action will be skipped until the player is sat back into the game. The player's blinds will still be posted in a tournament, and the player will fold to any bet or raise.
 
-####_request_
+#### _request_
 
 * *handId* - unique ID for the hand with the player that needs to be sat out.
 
-####_response_
+#### _response_
 
 * *success* - true/false
 
-###Ping (/ping)
+### Ping (/ping)
 
 Sometimes it is nice to know that your configuration is correct and everything is working.  This is a simple convenience method to see if you can hit the server.
 
-####_request_
+#### _request_
 
 no request parameters
 
-####_response_
+#### _response_
 
 * *success* - true
 
 Player Controller
 ------------------
 
-###Join Game (/join)
+### Join Game (/join)
 
 Join a game. If the game is a tournament, you can only join before the game is started.
 
-####_request_
+#### _request_
 
 * *gameId* - unique ID of the game to join
 * *playerName* - your name. This name will be the display name for your player.
 
-####_response_
+#### _response_
 
 * *playerId* - unique ID of the player that was created.  Use this to reference the player in the future.
 
-###Player Status (/status)
+### Player Status (/status)
 
-####_request_
+#### _request_
 
 * *gameId* - unique ID of the game
 * *playerId* - unique ID of the player
 
-####_response_
+#### _response_
 
 * *status* - current status of the player
  * NOT_STARTED - game is not started
@@ -319,52 +319,52 @@ Join a game. If the game is a tournament, you can only join before the game is s
 * *smallBlind* - the current small blind (optional). [new in 0.5]
 * *bigBlind* - the current big blind (optional). [new in 0.5]
 
-###Fold (/fold)
+### Fold (/fold)
 
 The player folds their hand
 
-####_request_
+#### _request_
 
 * *gameId* - unique ID for the game
 * *playerId* - unique ID for the player
 
-####_response_
+#### _response_
 
 * *success* - true if the player folds, false if the action is not allowed.
 
 
-###Call (/call)
+### Call (/call)
 
 The player calls the current bet
 
-####_request_
+#### _request_
 
 * *gameId* - unique ID for the game
 * *playerId* - unique ID for the player
 
-####_response_
+#### _response_
 
 * *success* - true if the player called the bet, false if the action is not allowed
 * *chips* - the amount of chips the player has remaining after this action
 
-###Check (/check)
+### Check (/check)
 
 The player checks their action
 
-####_request_
+#### _request_
 
 * *gameId* - unique ID for the game
 * *playerId* - unique ID for the player
 
-####_response_
+#### _response_
 
 * *success* - true if the player checks, false if the action is not allowed
 
-###Bet (/bet)
+### Bet (/bet)
 
 The player places a bet or makes a raise
 
-####_request_
+#### _request_
 
 * *gameId* - unique ID for the game
 * *playerId* - uniqueID for the player
@@ -373,19 +373,19 @@ The player places a bet or makes a raise
  * For example: Player 1 bets 100, then Player 2 raises to 300 total. The betAmount field would be 200.
  * Example 2: in the previous example, Player 1 re-raises to 900 total, the betAmount is 600 (100 + 200 to call + 600 = 900)
 
-####_response_
+#### _response_
 * *success* - true if the bet was placed, false if the action is not allowed
 * *chips* - the amount of chips the player has remaining after this action
 
-###Sit In (/sitin) [new in 0.4]
+### Sit In (/sitin) [new in 0.4]
 
 The player sits back into the game. If the player has been sat out for inactivity or because they were away from the table, this call will allow them to re-join the game.
 
-####_request_
+#### _request_
 
 * *playerId* - unique ID for the player
 
-####_response_
+#### _response_
 
 * *success* - true/false
 
